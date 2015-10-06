@@ -1,0 +1,8 @@
+node_modules
+bower_components
+build
+dest
+app/bower_components
+test/bower_components
+markup/bower_components
+.idea     
