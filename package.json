@@ -1,0 +1,11 @@
+{
+  "name": "GoneStreakin-Front",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-less": "~0.11.0",
+    "grunt-min": "~0.1.0",
+    "grunt-contrib-cssmin": "~0.10.0"
+  }
+}
