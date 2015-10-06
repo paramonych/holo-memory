@@ -14,11 +14,12 @@
     ],
     "files": [
         "./libs/babylon.2.2.d.ts",
+        "./libs/underscore.d.ts",
         "./ts/main-scene.ts"
     ],
     "formatCodeOptions": {
-        "indentSize": 4,
-        "tabSize": 4,
+        "indentSize": 8,
+        "tabSize": 8,
         "newLineCharacter": "\r\n",
         "convertTabsToSpaces": true,
         "insertSpaceAfterCommaDelimiter": true,
