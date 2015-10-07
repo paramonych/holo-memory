@@ -22,6 +22,7 @@ function initScene(): void {
 
   attachCamera(canvas, scene, scale);
   setLight(scene);
+  setControls(scene);
   createNeurons(7, scene, scale);
   //createMediator(scene);
   createPatternSpaceBox(scene, scale);
@@ -44,6 +45,7 @@ function createNeuron(scene: BABYLON.Scene, scale: number): BABYLON.Mesh {
   if(Math.random() > 0.5) {
     var activeNeuronMaterial = new BABYLON.StandardMaterial("active-neuron", scene);
     activeNeuronMaterial.emissiveColor = new BABYLON.Color3(1, .9, 0);
+    activeNeuronMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
 
     neuron.material = activeNeuronMaterial;
   }

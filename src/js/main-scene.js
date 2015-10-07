@@ -11,6 +11,7 @@ function initScene() {
     var scale = 10;
     attachCamera(canvas, scene, scale);
     setLight(scene);
+    setControls(scene);
     createNeurons(7, scene, scale);
     createPatternSpaceBox(scene, scale);
     engine.runRenderLoop(() => scene.render());
@@ -28,6 +29,7 @@ function createNeuron(scene, scale) {
     if (Math.random() > 0.5) {
         var activeNeuronMaterial = new BABYLON.StandardMaterial("active-neuron", scene);
         activeNeuronMaterial.emissiveColor = new BABYLON.Color3(1, .9, 0);
+        activeNeuronMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
         neuron.material = activeNeuronMaterial;
     }
     return neuron;

@@ -14,7 +14,9 @@
     ],
     "files": [
         "./libs/babylon.2.2.d.ts",
+        "./libs/jquery.d.ts",
         "./libs/underscore.d.ts",
+        "./ts/animations.ts",
         "./ts/main-scene.ts"
     ],
     "formatCodeOptions": {

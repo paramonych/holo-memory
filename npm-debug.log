@@ -1,0 +1,112 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.33
+4 verbose node symlink C:\Program Files\nodejs\\node.exe
+5 warn package.json NRU@0.1.0 No description
+6 warn package.json NRU@0.1.0 No repository field.
+7 warn package.json NRU@0.1.0 No README data
+8 verbose readDependencies using package.json deps
+9 verbose install where, deps [ 'C:\\Users\\dobrobot\\Code\\nru',
+9 verbose install   [ 'grunt',
+9 verbose install     'grunt-contrib-clean',
+9 verbose install     'grunt-contrib-copy',
+9 verbose install     'grunt-contrib-watch',
+9 verbose install     'grunt-contrib-less',
+9 verbose install     'grunt-tslint',
+9 verbose install     'gruntify-eslint',
+9 verbose install     'grunt-contrib-uglify',
+9 verbose install     'grunt-contrib-cssmin' ] ]
+10 info preinstall NRU@0.1.0
+11 verbose readDependencies using package.json deps
+12 verbose already installed skipping grunt@~0.4.5 C:\Users\dobrobot\Code\nru
+13 verbose already installed skipping grunt-contrib-clean@~0.6.0 C:\Users\dobrobot\Code\nru
+14 verbose already installed skipping grunt-contrib-copy@~0.8.1 C:\Users\dobrobot\Code\nru
+15 verbose already installed skipping grunt-contrib-watch@~0.6.1 C:\Users\dobrobot\Code\nru
+16 verbose already installed skipping grunt-contrib-less@~1.0.0 C:\Users\dobrobot\Code\nru
+17 verbose already installed skipping grunt-tslint@~0.4.1 C:\Users\dobrobot\Code\nru
+18 verbose cache add [ 'gruntify-eslint@~0.0.5', null ]
+19 verbose cache add name=undefined spec="gruntify-eslint@~0.0.5" args=["gruntify-eslint@~0.0.5",null]
+20 verbose parsed url { protocol: null,
+20 verbose parsed url   slashes: null,
+20 verbose parsed url   auth: null,
+20 verbose parsed url   host: null,
+20 verbose parsed url   port: null,
+20 verbose parsed url   hostname: null,
+20 verbose parsed url   hash: null,
+20 verbose parsed url   search: null,
+20 verbose parsed url   query: null,
+20 verbose parsed url   pathname: 'gruntify-eslint@~0.0.5',
+20 verbose parsed url   path: 'gruntify-eslint@~0.0.5',
+20 verbose parsed url   href: 'gruntify-eslint@~0.0.5' }
+21 verbose already installed skipping grunt-contrib-uglify@~0.9.2 C:\Users\dobrobot\Code\nru
+22 verbose already installed skipping grunt-contrib-cssmin@~0.14.0 C:\Users\dobrobot\Code\nru
+23 verbose cache add name="gruntify-eslint" spec="~0.0.5" args=["gruntify-eslint","~0.0.5"]
+24 verbose parsed url { protocol: null,
+24 verbose parsed url   slashes: null,
+24 verbose parsed url   auth: null,
+24 verbose parsed url   host: null,
+24 verbose parsed url   port: null,
+24 verbose parsed url   hostname: null,
+24 verbose parsed url   hash: null,
+24 verbose parsed url   search: null,
+24 verbose parsed url   query: null,
+24 verbose parsed url   pathname: '~0.0.5',
+24 verbose parsed url   path: '~0.0.5',
+24 verbose parsed url   href: '~0.0.5' }
+25 verbose addNamed [ 'gruntify-eslint', '~0.0.5' ]
+26 verbose addNamed [ null, '>=0.0.5-0 <0.1.0-0' ]
+27 silly lockFile c22496c2-gruntify-eslint-0-0-5 gruntify-eslint@~0.0.5
+28 verbose lock gruntify-eslint@~0.0.5 C:\Users\dobrobot\AppData\Roaming\npm-cache\c22496c2-gruntify-eslint-0-0-5.lock
+29 silly addNameRange { name: 'gruntify-eslint',
+29 silly addNameRange   range: '>=0.0.5-0 <0.1.0-0',
+29 silly addNameRange   hasData: false }
+30 verbose request where is /gruntify-eslint
+31 verbose request registry https://registry.npmjs.org/
+32 verbose request id 311d27d07953ada5
+33 verbose url raw /gruntify-eslint
+34 verbose url resolving [ 'https://registry.npmjs.org/', './gruntify-eslint' ]
+35 verbose url resolved https://registry.npmjs.org/gruntify-eslint
+36 verbose request where is https://registry.npmjs.org/gruntify-eslint
+37 info trying registry request attempt 1 at 01:26:32
+38 http GET https://registry.npmjs.org/gruntify-eslint
+39 http 200 https://registry.npmjs.org/gruntify-eslint
+40 silly registry.get cb [ 200,
+40 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+40 silly registry.get     etag: '"6ZK8QX2TJRVP1YX59I0JYWKH0"',
+40 silly registry.get     'content-type': 'application/json',
+40 silly registry.get     'cache-control': 'max-age=60',
+40 silly registry.get     'content-length': '10459',
+40 silly registry.get     'accept-ranges': 'bytes',
+40 silly registry.get     date: 'Wed, 07 Oct 2015 19:26:33 GMT',
+40 silly registry.get     via: '1.1 varnish',
+40 silly registry.get     age: '0',
+40 silly registry.get     connection: 'keep-alive',
+40 silly registry.get     'x-served-by': 'cache-fra1225-FRA',
+40 silly registry.get     'x-cache': 'MISS',
+40 silly registry.get     'x-cache-hits': '0',
+40 silly registry.get     'x-timer': 'S1444245993.455870,VS0,VE234',
+40 silly registry.get     vary: 'Accept' } ]
+41 silly addNameRange number 2 { name: 'gruntify-eslint',
+41 silly addNameRange   range: '>=0.0.5-0 <0.1.0-0',
+41 silly addNameRange   hasData: true }
+42 silly addNameRange versions [ 'gruntify-eslint',
+42 silly addNameRange   [ '0.1.0', '0.1.1', '1.0.0', '1.0.1', '1.1.0' ] ]
+43 silly lockFile c22496c2-gruntify-eslint-0-0-5 gruntify-eslint@~0.0.5
+44 silly lockFile c22496c2-gruntify-eslint-0-0-5 gruntify-eslint@~0.0.5
+45 error notarget No compatible version found: gruntify-eslint@'>=0.0.5-0 <0.1.0-0'
+45 error notarget Valid install targets:
+45 error notarget ["0.1.0","0.1.1","1.0.0","1.0.1","1.1.0"]
+45 error notarget
+45 error notarget This is most likely not a problem with npm itself.
+45 error notarget In most cases you or one of your dependencies are requesting
+45 error notarget a package version that doesn't exist.
+46 error System Windows_NT 6.1.7601
+47 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install"
+48 error cwd C:\Users\dobrobot\Code\nru
+49 error node -v v0.10.33
+50 error npm -v 1.4.28
+51 error code ETARGET
+52 verbose exit [ 1, true ]
