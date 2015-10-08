@@ -6,3 +6,7 @@ test/bower_components
 markup/bower_components
 .idea     
 npm-debug.log
+*/main.js
+src/js/*.min.js
+src/css/*.min.css
+*/sourcemap.map

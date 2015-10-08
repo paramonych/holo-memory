@@ -11,7 +11,7 @@ var mainHTMLFile = 'src/index.html';
 
 var lessDir = 'src/less/';
 var buildDir = 'build/';
-var libsDir = 'libs/';
+var libsDir = 'src/libs/';
 var allJsLibsDir = 'src/libs/sources/';
 //////// end of paths ///////////////////////////////////////////
 
@@ -22,7 +22,7 @@ module.exports = function(grunt) {
       options: {
           force: true
       },
-      build: [buildDir]
+      build: [buildDir, concatenatedScriptsName, uglifiedScriptsName, sourceMapName]
     },
     copy: {
       options: {
@@ -31,12 +31,10 @@ module.exports = function(grunt) {
       main: {
         files: [
           {src: mainHTMLFile, dest: (buildDir + 'index.html')},
-          {src: [libsDir + 'babylon.2.2.js'],dest: (buildDir + 'js/babylon.2.2.js')},
-          {src: [libsDir+'jquery-2.1.4.min.js'],dest: (buildDir + 'js/jquery-2.1.4.min.js')},
-          {src: [libsDir+'underscore.min.js'],dest: (buildDir + 'js/underscore.min.js')},
-          {src: [libsDir+'knockout-3.3.0.js'],dest: (buildDir + 'js/knockout-3.3.0.js')},
-          {src: uglifiedScriptsName,dest: (buildDir + 'js/main.min.js')},
-          {src: minifiedCssName,dest: (buildDir + 'css/style.min.css')}
+          {src: [allJsLibsDir+'*'], dest: (buildDir + 'js/libs/')},
+          {src: 'src/js/main.min.js' ,dest: (buildDir + 'js/main.min.js')},
+          {src: 'src/js/sourcemap.map',dest: (buildDir + 'js/sourcemap.map')},
+          {src: 'src/css/style.min.css',dest: (buildDir + 'css/style.min.css')}
         ]
       }
     },
@@ -48,7 +46,7 @@ module.exports = function(grunt) {
         compress: true,
         cleancss: true,
         files: {
-          compiledCssName: mainLess
+          'src/css/main.css': mainLess
         }
       }
     },
@@ -78,7 +76,7 @@ module.exports = function(grunt) {
           sourceMapName: sourceMapName
         },
         files: {
-          uglifiedScriptsName: [concatenatedScriptsName]
+          'src/js/main.min.js': [concatenatedScriptsName]
         }
       }
     },
@@ -89,7 +87,7 @@ module.exports = function(grunt) {
           //'keepSpecialComments': 0
         },
         files: {
-          minifiedCssName: [compiledCssName]
+          'src/css/style.min.css': [compiledCssName]
         }
       }
     },
@@ -122,5 +120,5 @@ module.exports = function(grunt) {
   grunt.registerTask('compile-js', [/*'tslint','eslint',*/ 'concat', 'uglify']);
   grunt.registerTask('build', ['clean', 'copy']);
 
-  grunt.registerTask('default', ['compile-less','compile-js', 'build']);
+  grunt.registerTask('default', ['clean', 'compile-less','compile-js', 'copy']);
 };
