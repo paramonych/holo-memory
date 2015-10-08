@@ -10,7 +10,7 @@ function initScene(): void {
   // Get the canvas element from our HTML above
   var canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("renderCanvas");
 
-  // Load the BABYLON 3D engine
+  // Load the BABYLON 3D engine 
   var engine = new BABYLON.Engine(canvas, true);
   // Now create a basic Babylon Scene object
   var scene = new BABYLON.Scene(engine);

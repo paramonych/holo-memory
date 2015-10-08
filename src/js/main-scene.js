@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
     if (BABYLON.Engine.isSupported()) {
         initScene();
     }
@@ -14,7 +14,7 @@ function initScene() {
     setControls(scene);
     createNeurons(7, scene, scale);
     createPatternSpaceBox(scene, scale);
-    engine.runRenderLoop(() => scene.render());
+    engine.runRenderLoop(function () { return scene.render(); });
 }
 function createNeurons(number, scene, scale) {
     var neurons = new Array();
@@ -35,11 +35,11 @@ function createNeuron(scene, scale) {
     return neuron;
 }
 function randomAngleVector() {
-    var angle = () => randomSign() * Math.PI / Math.random();
+    var angle = function () { return randomSign() * Math.PI / Math.random(); };
     return new BABYLON.Vector3(angle(), angle(), angle());
 }
 function randomVector(scale) {
-    var num = () => (scale / 2) * Math.random() * randomSign();
+    var num = function () { return (scale / 2) * Math.random() * randomSign(); };
     return new BABYLON.Vector3(num(), num(), num());
 }
 function randomSign() {

@@ -5,8 +5,8 @@ function setControls(scene: BABYLON.Scene): void {
     BABYLON.Animation.ANIMATIONTYPE_FLOAT,
     BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
 
-  jQuery('#launch').on('click', () => {
+  jQuery('#launch').on('click', function() {
     //scene.beginAnimation(box1, 0, 100, true);
-    console.log('OK!');
+    console.log('OK!!');
   });
 }

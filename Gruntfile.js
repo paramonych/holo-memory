@@ -1,58 +1,95 @@
-module.exports = function(grunt) {
+var concatenatedScriptsName = 'src/js/main.js';
+var uglifiedScriptsName = 'src/js/main.min.js';
+var allScripts = 'src/js/*.js';
+var allTypedScripts = 'src/ts/*.ts';
+var compiledCssName = 'src/css/main.css';
+var minifiedCssName = 'src/css/style.min.css';
+var mainLess = lessDir + '/main.less';
+var allLess = 'src/**/*.less';
+var sourceMapName = 'src/js/sourcemap.map';
+var mainHTMLFile = 'src/index.html';
 
+var lessDir = 'src/less/';
+var buildDir = 'build/';
+var libsDir = 'libs/';
+var allJsLibsDir = 'src/libs/sources/';
+//////// end of paths ///////////////////////////////////////////
+
+module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    clean: ['build/'],
+    clean: {
+      options: {
+          force: true
+      },
+      build: [buildDir]
+    },
     copy: {
+      options: {
+          force: true
+      },
       main: {
-        src: 'src/index.html',
-        dest: 'build/index.html',
+        files: [
+          {src: mainHTMLFile, dest: (buildDir + 'index.html')},
+          {src: [libsDir + 'babylon.2.2.js'],dest: (buildDir + 'js/babylon.2.2.js')},
+          {src: [libsDir+'jquery-2.1.4.min.js'],dest: (buildDir + 'js/jquery-2.1.4.min.js')},
+          {src: [libsDir+'underscore.min.js'],dest: (buildDir + 'js/underscore.min.js')},
+          {src: [libsDir+'knockout-3.3.0.js'],dest: (buildDir + 'js/knockout-3.3.0.js')},
+          {src: uglifiedScriptsName,dest: (buildDir + 'js/main.min.js')},
+          {src: minifiedCssName,dest: (buildDir + 'css/style.min.css')}
+        ]
       }
     },
     less: {
       main: {
         options: {
-          paths: ["src/less"]
+          paths: [lessDir]
         },
         compress: true,
         cleancss: true,
         files: {
-          'src/css/main.css': 'src/less/main.less'
+          compiledCssName: mainLess
         }
       }
     },
     watch: {
       styles: {
-        files: ['src/**/*.less'],
-        tasks: ['less', 'cssmin']
+        files: [allLess],
+        tasks: ['compile-less']
       },
       scripts: {
-        files: ['src/*/*.js'],
-        tasks: ['eslint', 'uglify']
+        files: [allScripts, ('!'+ concatenatedScriptsName), ('!'+ uglifiedScriptsName)],
+        tasks: ['compile-js']
       }
+    },
+    concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: [allScripts],
+        dest: concatenatedScriptsName,
+      },
     },
     uglify: {
       scripts: {
         options: {
-          banner: '',
           sourceMap: true,
-          sourceMapName: 'src/js/sourcemap.map'
+          sourceMapName: sourceMapName
         },
         files: {
-          'src/js/main.min.js': ['src/js/*.js']
+          uglifiedScriptsName: [concatenatedScriptsName]
         }
       }
     },
     cssmin: {
       one: {
         options: {
-          'banner': '',
+          //banner: '',
           //'keepSpecialComments': 0
         },
         files: {
-          'src/css/style.min.css': [
-            'src/css/main.css'
-          ]
+          minifiedCssName: [compiledCssName]
         }
       }
     },
@@ -61,22 +98,29 @@ module.exports = function(grunt) {
         configuration: grunt.file.readJSON("tslint.json")
       },
       files: {
-        src: ['src/ts/*.ts']
+        src: [allTypedScripts]
       }
     },
     eslint: {
-        src: ['src/js/*.js']
+        src: [allScripts]
     }
   });
+
+  ////////////////////////////////////////////
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-tslint');
   grunt.loadNpmTasks('gruntify-eslint');
+  ////////////////////////////////////////////
 
-  grunt.registerTask('default', ['clean', 'copy', 'less', 'cssmin', /*'tslint','eslint',*/ 'uglify']);
+  grunt.registerTask('compile-less', ['less', 'cssmin']);
+  grunt.registerTask('compile-js', [/*'tslint','eslint',*/ 'concat', 'uglify']);
+  grunt.registerTask('build', ['clean', 'copy']);
 
+  grunt.registerTask('default', ['compile-less','compile-js', 'build']);
 };

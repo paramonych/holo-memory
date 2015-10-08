@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es5",
         "module": "commonjs",
         "declaration": false,
         "noImplicitAny": false,
@@ -13,9 +13,10 @@
         "!./node_modules/**/*.ts"
     ],
     "files": [
-        "./libs/babylon.2.2.d.ts",
-        "./libs/jquery.d.ts",
-        "./libs/underscore.d.ts",
+        "./libs/types/babylon.2.2.d.ts",
+        "./libs/types/jquery.d.ts",
+        "./libs/types/knockout.d.ts",
+        "./libs/types/underscore.d.ts",
         "./ts/animations.ts",
         "./ts/main-scene.ts"
     ],
