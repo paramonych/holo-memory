@@ -1,11 +1,12 @@
 var concatenatedScriptsName = 'src/js/main.js';
 var uglifiedScriptsName = 'src/js/main.min.js';
-var allScripts = 'src/js/*.js';
+var allScripts = 'src/js/**/*.js';
 var allTypedScripts = 'src/ts/*.ts';
 var compiledCssName = 'src/css/main.css';
 var minifiedCssName = 'src/css/style.min.css';
 var mainLess = lessDir + '/main.less';
 var allLess = 'src/**/*.less';
+var allHTML = 'src/**/*.html';
 var sourceMapName = 'src/js/sourcemap.map';
 var mainHTMLFile = 'src/index.html';
 
@@ -30,11 +31,16 @@ module.exports = function(grunt) {
       },
       main: {
         files: [
-          {src: mainHTMLFile, dest: (buildDir + 'index.html')},
-          {src: [allJsLibsDir+'*'], dest: (buildDir + 'js/libs/')},
-          {src: 'src/js/main.min.js' ,dest: (buildDir + 'js/main.min.js')},
-          {src: 'src/js/sourcemap.map',dest: (buildDir + 'js/sourcemap.map')},
-          {src: 'src/css/style.min.css',dest: (buildDir + 'css/style.min.css')}
+          {src: mainHTMLFile, dest: (buildDir+'index.html')},
+          {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
+            'babylon.2.2.js',
+            'jquery-2.1.4.min.js',
+            'underscore-min.js',
+            'knockout-3.3.0.js'
+          ], dest: (buildDir+'libs/')},
+          {src: 'src/js/main.min.js', dest: (buildDir + 'js/main.min.js')},
+          {src: 'src/js/sourcemap.map', dest: (buildDir + 'js/sourcemap.map')},
+          {src: 'src/css/style.min.css', dest: (buildDir + 'css/style.min.css')}
         ]
       }
     },
@@ -51,6 +57,10 @@ module.exports = function(grunt) {
       }
     },
     watch: {
+      /*html: {
+        files: [allHTML],
+        tasks: ['clean', 'copy']
+      },*/
       styles: {
         files: [allLess],
         tasks: ['compile-less']

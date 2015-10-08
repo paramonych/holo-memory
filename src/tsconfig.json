@@ -18,7 +18,11 @@
         "./libs/types/knockout.d.ts",
         "./libs/types/underscore.d.ts",
         "./ts/animations.ts",
-        "./ts/main-scene.ts"
+        "./ts/main-scene.ts",
+        "./ts/models/mediator.ts",
+        "./ts/models/neuron.ts",
+        "./ts/models/receptor.ts",
+        "./ts/models/spike.ts"
     ],
     "formatCodeOptions": {
         "indentSize": 8,
