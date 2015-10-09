@@ -1,15 +1,19 @@
+// scripts
 var concatenatedScriptsName = 'src/js/main.js';
 var uglifiedScriptsName = 'src/js/main.min.js';
-var allScripts = 'src/js/**/*.js';
-var allTypedScripts = 'src/ts/*.ts';
+// styles
 var compiledCssName = 'src/css/main.css';
 var minifiedCssName = 'src/css/style.min.css';
 var mainLess = lessDir + '/main.less';
+// all files
+var allScripts = 'src/js/**/*.js';
+var allTypedScripts = 'src/ts/*.ts';
 var allLess = 'src/**/*.less';
 var allHTML = 'src/**/*.html';
+// addings
 var sourceMapName = 'src/js/sourcemap.map';
 var mainHTMLFile = 'src/index.html';
-
+// directories
 var lessDir = 'src/less/';
 var buildDir = 'build/';
 var libsDir = 'src/libs/';
@@ -32,15 +36,16 @@ module.exports = function(grunt) {
       main: {
         files: [
           {src: mainHTMLFile, dest: (buildDir+'index.html')},
+          {src: 'src/js/main.min.js', dest: (buildDir + 'js/main.min.js')},
+          //{src: 'src/js/main.js', dest: (buildDir + 'js/main.js')},
+          {src: 'src/js/sourcemap.map', dest: (buildDir + 'js/sourcemap.map')},
+          {src: 'src/css/style.min.css', dest: (buildDir + 'css/style.min.css')},
           {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
             'babylon.2.2.js',
             'jquery-2.1.4.min.js',
             'underscore-min.js',
             'knockout-3.3.0.js'
-          ], dest: (buildDir+'libs/')},
-          {src: 'src/js/main.min.js', dest: (buildDir + 'js/main.min.js')},
-          {src: 'src/js/sourcemap.map', dest: (buildDir + 'js/sourcemap.map')},
-          {src: 'src/css/style.min.css', dest: (buildDir + 'css/style.min.css')}
+          ], dest: (buildDir+'libs/')}
         ]
       }
     },

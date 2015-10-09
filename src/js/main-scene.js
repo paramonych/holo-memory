@@ -1,51 +1,20 @@
-document.addEventListener("DOMContentLoaded", function () {
-    if (BABYLON.Engine.isSupported()) {
-        initScene();
-    }
-}, false);
+document.addEventListener('DOMContentLoaded', initScene, false);
+var scale = 10;
+var amount = 7;
 function initScene() {
+    if (!BABYLON.Engine.isSupported()) {
+        return;
+    }
     var canvas = document.getElementById("renderCanvas");
     var engine = new BABYLON.Engine(canvas, true);
     var scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color3(.3, .3, .3);
-    var scale = 10;
     attachCamera(canvas, scene, scale);
     setLight(scene);
-    setControls(scene);
-    createNeurons(7, scene, scale);
     createPatternSpaceBox(scene, scale);
+    var cortex = new Cortex(amount, scene, scale);
     engine.runRenderLoop(function () { return scene.render(); });
-}
-function createNeurons(number, scene, scale) {
-    var neurons = new Array();
-    for (var i = 0; i < number; i++) {
-        neurons.push(createNeuron(scene, scale));
-    }
-}
-function createNeuron(scene, scale) {
-    var neuron = BABYLON.Mesh.CreateCylinder("cylinder", scale * 3, 2 / scale, 2 / scale, scale, 1, scene, false);
-    neuron.position = randomVector(scale);
-    neuron.rotation = randomAngleVector();
-    if (Math.random() > 0.5) {
-        var activeNeuronMaterial = new BABYLON.StandardMaterial("active-neuron", scene);
-        activeNeuronMaterial.emissiveColor = new BABYLON.Color3(1, .9, 0);
-        activeNeuronMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
-        neuron.material = activeNeuronMaterial;
-    }
-    return neuron;
-}
-function randomAngleVector() {
-    var angle = function () { return randomSign() * Math.PI / Math.random(); };
-    return new BABYLON.Vector3(angle(), angle(), angle());
-}
-function randomVector(scale) {
-    var num = function () { return (scale / 2) * Math.random() * randomSign(); };
-    return new BABYLON.Vector3(num(), num(), num());
-}
-function randomSign() {
-    var a = Math.random();
-    var b = Math.random();
-    return (a - b) / Math.abs(a - b);
+    bindControls(cortex);
 }
 function attachCamera(canvas, scene, scale) {
     var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 12, 0, scale, new BABYLON.Vector3(0, 0, 0), scene);

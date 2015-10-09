@@ -1,23 +1,22 @@
 class Receptor {
   private mediator: Mediator;
-  private state = toDefaultState();
-  constructor(private position: BABYLON.Vector3) {}
-  public open(): void {
-    this.state.locked = ReceptorLock.Opened;
+  private state: KnockoutObservable<ReceptorState>;
+
+  constructor(private position: BABYLON.Vector3) {
+    this.state = this.toDefaultState();
+  }
+
+  activate() {
+    this.state(ReceptorState.Opened);
+    // TODO: set positioned spike and launch it
+  }
+
+  toDefaultState(): KnockoutObservable<ReceptorState> {
+    return ko.observable(ReceptorState.Closed);
   }
 }
 
-interface ReceptorState {
-  locked: ReceptorLock;
-}
-
-enum ReceptorLock {
+enum ReceptorState {
   'Closed',
   'Opened'
-}
-
-function toDefaultState(): ReceptorState {
-  return {
-    locked: ReceptorLock.Closed
-  };
 }

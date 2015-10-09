@@ -1,20 +1,18 @@
 var Receptor = (function () {
     function Receptor(position) {
         this.position = position;
-        this.state = toDefaultState();
+        this.state = this.toDefaultState();
     }
-    Receptor.prototype.open = function () {
-        this.state.locked = ReceptorLock.Opened;
+    Receptor.prototype.activate = function () {
+        this.state(ReceptorState.Opened);
+    };
+    Receptor.prototype.toDefaultState = function () {
+        return ko.observable(ReceptorState.Closed);
     };
     return Receptor;
 })();
-var ReceptorLock;
-(function (ReceptorLock) {
-    ReceptorLock[ReceptorLock['Closed'] = 0] = 'Closed';
-    ReceptorLock[ReceptorLock['Opened'] = 1] = 'Opened';
-})(ReceptorLock || (ReceptorLock = {}));
-function toDefaultState() {
-    return {
-        locked: ReceptorLock.Closed
-    };
-}
+var ReceptorState;
+(function (ReceptorState) {
+    ReceptorState[ReceptorState['Closed'] = 0] = 'Closed';
+    ReceptorState[ReceptorState['Opened'] = 1] = 'Opened';
+})(ReceptorState || (ReceptorState = {}));

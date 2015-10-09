@@ -1,6 +1,7 @@
-function setControls(scene) {
-    var animationBox = new BABYLON.Animation('myAnimation', "scaling.x", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+function bindControls(cortex) {
     jQuery('#launch').on('click', function () {
         console.log('OK!!');
+        cortex.draw();
+        cortex.react();
     });
 }
