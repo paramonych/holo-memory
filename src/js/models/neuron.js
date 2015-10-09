@@ -32,8 +32,12 @@ var Neuron = (function () {
     };
     Neuron.prototype.react = function () {
         if (this.activatable) {
+            this.reset();
             this.activate();
         }
+    };
+    Neuron.prototype.reset = function () {
+        this.spike.deactivate();
     };
     Neuron.prototype.activate = function () {
         this.state(StateType.Active);

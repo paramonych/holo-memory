@@ -10,7 +10,7 @@ var Spike = (function () {
         this.lifeTime = 2000;
         this.timerId = 0;
         this.grain = 5;
-        this.shift = new BABYLON.Vector3(0.1, 0.1, 0.1);
+        this.shift = new BABYLON.Vector3(0.01, 0.01, 0.01);
         this.toDefaultState();
         this.setMaterials();
         this.constructShoulders();
@@ -31,6 +31,7 @@ var Spike = (function () {
     };
     Spike.prototype.deactivate = function () {
         this.state(StateType.Silent);
+        this.reset();
     };
     Spike.prototype.dispose = function () {
         this.scene.removeMesh(this.shoulders.left);
@@ -46,12 +47,15 @@ var Spike = (function () {
     Spike.prototype.moveShoulders = function (time) {
         var left = this.shoulders.left.position;
         var right = this.shoulders.right.position;
-        var newLeft = new BABYLON.Vector3(left.x + 1, left.y + 1, left.z + 1);
+        var newLeft = left.add(this.shift);
         var newRight = newLeft.negate();
+        this.shoulders.left.position = newLeft;
+        this.shoulders.right.position = newRight;
     };
-    Spike.prototype.resetPosition = function () {
+    Spike.prototype.reset = function () {
         this.shoulders.left.position = this.position;
         this.shoulders.right.position = this.position;
+        this.time(0);
     };
     Spike.prototype.launch = function () {
         var _this = this;
@@ -63,7 +67,6 @@ var Spike = (function () {
         if (currentTime >= this.lifeTime) {
             window.clearInterval(this.timerId);
             this.deactivate();
-            this.resetPosition();
         }
         else {
             this.time(currentTime);
@@ -81,7 +84,7 @@ var Spike = (function () {
     };
     Spike.prototype.setMaterials = function () {
         this.spikeMaterial = new BABYLON.StandardMaterial('silent-spike', this.scene);
-        this.spikeMaterial.alpha = 1;
+        this.spikeMaterial.alpha = 0;
         this.movingSpikeMaterial = new BABYLON.StandardMaterial('moving-spike', this.scene);
         this.movingSpikeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
         this.movingSpikeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);

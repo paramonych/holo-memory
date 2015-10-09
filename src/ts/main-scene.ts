@@ -17,9 +17,9 @@ function initScene(): void {
   createPatternSpaceBox(scene, scale);
 
   let cortex = new Cortex(amount, scene, scale);
-  
-  engine.runRenderLoop(() => scene.render());
 
+  engine.runRenderLoop(() => scene.render());
+  cortex.draw();
   bindControls(cortex);
 }
 

@@ -1,18 +1,18 @@
-var Receptor = (function () {
-    function Receptor(position) {
+var Synapce = (function () {
+    function Synapce(position) {
         this.position = position;
         this.state = this.toDefaultState();
     }
-    Receptor.prototype.activate = function () {
-        this.state(ReceptorState.Opened);
+    Synapce.prototype.activate = function () {
+        this.state(SynapceState.Opened);
     };
-    Receptor.prototype.toDefaultState = function () {
-        return ko.observable(ReceptorState.Closed);
+    Synapce.prototype.toDefaultState = function () {
+        return ko.observable(SynapceState.Closed);
     };
-    return Receptor;
+    return Synapce;
 })();
-var ReceptorState;
-(function (ReceptorState) {
-    ReceptorState[ReceptorState['Closed'] = 0] = 'Closed';
-    ReceptorState[ReceptorState['Opened'] = 1] = 'Opened';
-})(ReceptorState || (ReceptorState = {}));
+var SynapceState;
+(function (SynapceState) {
+    SynapceState[SynapceState['Closed'] = 0] = 'Closed';
+    SynapceState[SynapceState['Opened'] = 1] = 'Opened';
+})(SynapceState || (SynapceState = {}));

@@ -3,7 +3,7 @@
 class Neuron { // This is the single dendrite of the single neuron in fact
   private spike: Spike;
   private state: KnockoutObservable<StateType>;
-  private receptorCluster = new Array<Receptor>();
+  private receptorCluster = new Array<Synapce>();
   private mesh: BABYLON.Mesh;
   private position: BABYLON.Vector3;
   private rotation: BABYLON.Vector3;
@@ -44,8 +44,13 @@ class Neuron { // This is the single dendrite of the single neuron in fact
 
   public react(): void {
     if(this.activatable) {
+      this.reset();
       this.activate();
     }
+  }
+
+  private reset(): void {
+    this.spike.deactivate();
   }
 
   public activate(): void {

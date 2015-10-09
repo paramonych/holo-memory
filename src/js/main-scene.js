@@ -14,6 +14,7 @@ function initScene() {
     createPatternSpaceBox(scene, scale);
     var cortex = new Cortex(amount, scene, scale);
     engine.runRenderLoop(function () { return scene.render(); });
+    cortex.draw();
     bindControls(cortex);
 }
 function attachCamera(canvas, scene, scale) {

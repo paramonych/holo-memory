@@ -8,7 +8,7 @@ class Spike {
   public shoulders: SpikeShoulders;
   private spikeMaterial: BABYLON.StandardMaterial;
   private movingSpikeMaterial: BABYLON.StandardMaterial;
-  private shift = new BABYLON.Vector3(0.1, 0.1, 0.1);
+  private shift = new BABYLON.Vector3(0.01, 0.01, 0.01);
   //private animation: BABYLON.Animation;
 
   constructor(
@@ -41,6 +41,7 @@ class Spike {
   }
   public deactivate(): void {
     this.state(StateType.Silent);
+    this.reset();
   }
 
   public dispose(): void {
@@ -64,13 +65,16 @@ class Spike {
   private moveShoulders(time: number): void {
     let left = this.shoulders.left.position;
     let right = this.shoulders.right.position;
-    let newLeft = new BABYLON.Vector3(left.x+1,left.y+1,left.z+1);
+    let newLeft = left.add(this.shift);
     let newRight = newLeft.negate();
+    this.shoulders.left.position = newLeft;
+    this.shoulders.right.position = newRight;
   }
 
-  private resetPosition(): void {
+  private reset(): void {
     this.shoulders.left.position = this.position;
     this.shoulders.right.position = this.position;
+    this.time(0);
   }
 
   public launch(): void {
@@ -84,7 +88,6 @@ class Spike {
     if(currentTime >= this.lifeTime) {
       window.clearInterval(this.timerId);
       this.deactivate();
-      this.resetPosition();
     } else {
       this.time(currentTime);
     }
@@ -102,7 +105,7 @@ class Spike {
 
   setMaterials(): void {
     this.spikeMaterial = new BABYLON.StandardMaterial('silent-spike', this.scene);
-    this.spikeMaterial.alpha = 1;
+    this.spikeMaterial.alpha = 0;
 
     this.movingSpikeMaterial = new BABYLON.StandardMaterial('moving-spike', this.scene);
     this.movingSpikeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);

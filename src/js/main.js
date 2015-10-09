@@ -1,7 +1,5 @@
 function bindControls(cortex) {
     jQuery('#launch').on('click', function () {
-        console.log('OK!!');
-        cortex.draw();
         cortex.react();
     });
 }
@@ -34,6 +32,7 @@ function initScene() {
     createPatternSpaceBox(scene, scale);
     var cortex = new Cortex(amount, scene, scale);
     engine.runRenderLoop(function () { return scene.render(); });
+    cortex.draw();
     bindControls(cortex);
 }
 function attachCamera(canvas, scene, scale) {
@@ -73,16 +72,16 @@ function createMediator(scene) {
         this.neuronsNum = neuronsNum;
         this.scene = scene;
         this.scale = scale;
+        this.createNeurons();
     }
     Cortex.prototype.createNeurons = function () {
+        _.each(this.neurons, function (n) { return n.dispose(); });
         this.neurons = new Array();
         for (var i = 0; i < this.neuronsNum; i++) {
             this.neurons.push(new Neuron(this.scene, this.scale));
         }
     };
     Cortex.prototype.draw = function () {
-        _.each(this.neurons, function (n) { return n.dispose(); });
-        this.createNeurons();
         _.each(this.neurons, function (neuron) { return neuron.draw(); });
     };
     Cortex.prototype.react = function () {
@@ -131,8 +130,12 @@ function createMediator(scene) {
     };
     Neuron.prototype.react = function () {
         if (this.activatable) {
+            this.reset();
             this.activate();
         }
+    };
+    Neuron.prototype.reset = function () {
+        this.spike.deactivate();
     };
     Neuron.prototype.activate = function () {
         this.state(StateType.Active);
@@ -168,24 +171,24 @@ var StateType;
     StateType[StateType['Active'] = 0] = 'Active';
     StateType[StateType['Silent'] = 1] = 'Silent';
 })(StateType || (StateType = {}));
-;var Receptor = (function () {
-    function Receptor(position) {
+;var Synapce = (function () {
+    function Synapce(position) {
         this.position = position;
         this.state = this.toDefaultState();
     }
-    Receptor.prototype.activate = function () {
-        this.state(ReceptorState.Opened);
+    Synapce.prototype.activate = function () {
+        this.state(SynapceState.Opened);
     };
-    Receptor.prototype.toDefaultState = function () {
-        return ko.observable(ReceptorState.Closed);
+    Synapce.prototype.toDefaultState = function () {
+        return ko.observable(SynapceState.Closed);
     };
-    return Receptor;
+    return Synapce;
 })();
-var ReceptorState;
-(function (ReceptorState) {
-    ReceptorState[ReceptorState['Closed'] = 0] = 'Closed';
-    ReceptorState[ReceptorState['Opened'] = 1] = 'Opened';
-})(ReceptorState || (ReceptorState = {}));
+var SynapceState;
+(function (SynapceState) {
+    SynapceState[SynapceState['Closed'] = 0] = 'Closed';
+    SynapceState[SynapceState['Opened'] = 1] = 'Opened';
+})(SynapceState || (SynapceState = {}));
 ;var Spike = (function () {
     function Spike(scene, position, rotation, neuronLength, neuronState) {
         var _this = this;
@@ -198,7 +201,7 @@ var ReceptorState;
         this.lifeTime = 2000;
         this.timerId = 0;
         this.grain = 5;
-        this.shift = new BABYLON.Vector3(0.1, 0.1, 0.1);
+        this.shift = new BABYLON.Vector3(0.01, 0.01, 0.01);
         this.toDefaultState();
         this.setMaterials();
         this.constructShoulders();
@@ -219,6 +222,7 @@ var ReceptorState;
     };
     Spike.prototype.deactivate = function () {
         this.state(StateType.Silent);
+        this.reset();
     };
     Spike.prototype.dispose = function () {
         this.scene.removeMesh(this.shoulders.left);
@@ -234,12 +238,15 @@ var ReceptorState;
     Spike.prototype.moveShoulders = function (time) {
         var left = this.shoulders.left.position;
         var right = this.shoulders.right.position;
-        var newLeft = new BABYLON.Vector3(left.x + 1, left.y + 1, left.z + 1);
+        var newLeft = left.add(this.shift);
         var newRight = newLeft.negate();
+        this.shoulders.left.position = newLeft;
+        this.shoulders.right.position = newRight;
     };
-    Spike.prototype.resetPosition = function () {
+    Spike.prototype.reset = function () {
         this.shoulders.left.position = this.position;
         this.shoulders.right.position = this.position;
+        this.time(0);
     };
     Spike.prototype.launch = function () {
         var _this = this;
@@ -251,7 +258,6 @@ var ReceptorState;
         if (currentTime >= this.lifeTime) {
             window.clearInterval(this.timerId);
             this.deactivate();
-            this.resetPosition();
         }
         else {
             this.time(currentTime);
@@ -269,7 +275,7 @@ var ReceptorState;
     };
     Spike.prototype.setMaterials = function () {
         this.spikeMaterial = new BABYLON.StandardMaterial('silent-spike', this.scene);
-        this.spikeMaterial.alpha = 1;
+        this.spikeMaterial.alpha = 0;
         this.movingSpikeMaterial = new BABYLON.StandardMaterial('moving-spike', this.scene);
         this.movingSpikeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
         this.movingSpikeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
