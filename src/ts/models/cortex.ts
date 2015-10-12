@@ -13,7 +13,7 @@ class Cortex {
   }
 
   public draw(): void {
-    _.each(this.neurons, (neuron) => neuron.draw());
+    _.each(this.neurons, (neuron) => neuron.build());
   }
 
   react(): void {

@@ -13,6 +13,7 @@ var allHTML = 'src/**/*.html';
 // addings
 var sourceMapName = 'src/js/sourcemap.map';
 var mainHTMLFile = 'src/index.html';
+var debugHTMLFile = 'src/debug.html';
 // directories
 var lessDir = 'src/less/';
 var buildDir = 'build/';
@@ -37,6 +38,7 @@ module.exports = function(grunt) {
       main: {
         files: [
           {src: mainHTMLFile, dest: (buildDir+'index.html')},
+          {src: debugHTMLFile, dest: (buildDir+'debug.html')},
           {src: 'src/js/main.min.js', dest: (buildDir + 'js/main.min.js')},
           //{src: 'src/js/main.js', dest: (buildDir + 'js/main.js')},
           {src: 'src/js/sourcemap.map', dest: (buildDir + 'js/sourcemap.map')},

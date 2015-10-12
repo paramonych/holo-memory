@@ -7,4 +7,4 @@ function randomAngleVector(): BABYLON.Vector3 {
 function randomVector(scale: number): BABYLON.Vector3 {
   var num = () => (scale/2)*Math.random()*randomSign();
   return new BABYLON.Vector3(num(),num(),num());
-}
+} 

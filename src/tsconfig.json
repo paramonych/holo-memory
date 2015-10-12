@@ -12,20 +12,23 @@
         "./**/*.ts",
         "!./node_modules/**/*.ts"
     ],
-    "files": [
-        "libs/types/babylon.2.2.d.ts",
-        "libs/types/jquery.d.ts",
-        "libs/types/knockout.d.ts",
-        "libs/types/underscore.d.ts",
-        "ts/animations.ts",
-        "ts/geometry/math.ts",
-        "ts/geometry/vectors.ts",
-        "ts/main-scene.ts",
-        "ts/models/cortex.ts",
-        "ts/models/mediator.ts",
-        "ts/models/neuron.ts",
-        "ts/models/spike.ts",
-        "ts/models/synapce.ts"
+    'files': [
+        'libs/types/babylon.2.2.d.ts',
+        'libs/types/jquery.d.ts',
+        'libs/types/knockout.d.ts',
+        'libs/types/underscore.d.ts',
+        'libs/types/greensock.d.ts',
+        'ts/animations.ts',
+        'ts/geometry/neuron-mesh.ts',
+        'ts/geometry/spike-mesh.ts',
+        'ts/main-scene.ts',
+        'ts/models/cortex.ts',
+        'ts/models/mediator.ts',
+        'ts/models/neuron.ts',
+        'ts/models/spike.ts',
+        'ts/models/synapce.ts',
+        'ts/utils/math.ts',
+        'ts/utils/vectors.ts'
     ],
     "formatCodeOptions": {
         "indentSize": 8,

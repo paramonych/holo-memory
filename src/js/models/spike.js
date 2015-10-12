@@ -10,21 +10,18 @@ var Spike = (function () {
         this.lifeTime = 2000;
         this.timerId = 0;
         this.grain = 5;
-        this.shift = new BABYLON.Vector3(0.01, 0.01, 0.01);
+        this.mesh = new SpikeMesh(this.scene, this.position, this.rotation, this.neuronLength);
         this.toDefaultState();
-        this.setMaterials();
-        this.constructShoulders();
         this.deactivate();
-        this.time.subscribe(function (time) { return _this.moveShoulders(time); });
+        this.time.subscribe(function (time) { return _this.move(time); });
         neuronState.subscribe(function (state) {
             if (state === StateType.Active) {
                 _this.launch();
             }
         });
     }
-    Spike.prototype.constructShoulders = function () {
-        this.shoulders = shouldersFrom(this.constructShoulderMesh(), this.constructShoulderMesh());
-        this.deactivate();
+    Spike.prototype.move = function (time) {
+        this.mesh.move();
     };
     Spike.prototype.activate = function () {
         this.state(StateType.Active);
@@ -34,28 +31,12 @@ var Spike = (function () {
         this.reset();
     };
     Spike.prototype.dispose = function () {
-        this.scene.removeMesh(this.shoulders.left);
-        this.scene.removeMesh(this.shoulders.right);
-    };
-    Spike.prototype.constructShoulderMesh = function () {
-        var scale = this.neuronLength / 3;
-        var shoulder = BABYLON.Mesh.CreateCylinder('cylinder', scale / 50, 2 / scale, 2 / scale, scale, 1, this.scene, false);
-        shoulder.position = this.position;
-        shoulder.rotation = this.rotation;
-        return shoulder;
-    };
-    Spike.prototype.moveShoulders = function (time) {
-        var left = this.shoulders.left.position;
-        var right = this.shoulders.right.position;
-        var newLeft = left.add(this.shift);
-        var newRight = newLeft.negate();
-        this.shoulders.left.position = newLeft;
-        this.shoulders.right.position = newRight;
+        this.scene.removeMesh(this.mesh.shoulders.left);
+        this.scene.removeMesh(this.mesh.shoulders.right);
     };
     Spike.prototype.reset = function () {
         this.clearTimer();
-        this.shoulders.left.position = this.position;
-        this.shoulders.right.position = this.position;
+        this.mesh.reset();
         this.time(0);
     };
     Spike.prototype.launch = function () {
@@ -82,21 +63,11 @@ var Spike = (function () {
     };
     Spike.prototype.serveState = function (newState) {
         if (newState === StateType.Active) {
-            this.shoulders.left.material = this.movingSpikeMaterial;
-            this.shoulders.right.material = this.movingSpikeMaterial;
+            this.mesh.activate();
         }
         else if (newState === StateType.Silent) {
-            this.shoulders.left.material = this.spikeMaterial;
-            this.shoulders.right.material = this.spikeMaterial;
+            this.mesh.deactivate();
         }
-    };
-    Spike.prototype.setMaterials = function () {
-        this.spikeMaterial = new BABYLON.StandardMaterial('silent-spike', this.scene);
-        this.spikeMaterial.alpha = 0;
-        this.movingSpikeMaterial = new BABYLON.StandardMaterial('moving-spike', this.scene);
-        this.movingSpikeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
-        this.movingSpikeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
-        this.movingSpikeMaterial.alpha = 0.9;
     };
     Spike.prototype.toDefaultState = function () {
         var _this = this;

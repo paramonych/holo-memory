@@ -13,7 +13,7 @@ var Cortex = (function () {
         }
     };
     Cortex.prototype.draw = function () {
-        _.each(this.neurons, function (neuron) { return neuron.draw(); });
+        _.each(this.neurons, function (neuron) { return neuron.build(); });
     };
     Cortex.prototype.react = function () {
         _.each(this.neurons, function (neuron) { return neuron.react(); });
