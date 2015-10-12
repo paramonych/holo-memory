@@ -72,6 +72,7 @@ class Spike {
   }
 
   private reset(): void {
+    this.clearTimer();
     this.shoulders.left.position = this.position;
     this.shoulders.right.position = this.position;
     this.time(0);
@@ -83,14 +84,22 @@ class Spike {
   }
 
   private tick(): void {
-    let currentTime = this.time() + this.grain;
+    let nextTime = this.time() + this.grain;
+    this.time(this.checkTick(nextTime));
+  }
 
-    if(currentTime >= this.lifeTime) {
-      window.clearInterval(this.timerId);
+  private checkTick(nextTime: number): number {
+    if(nextTime >= this.lifeTime) {
+      this.clearTimer();
       this.deactivate();
+      return 0;
     } else {
-      this.time(currentTime);
+      return nextTime;
     }
+  }
+
+  private clearTimer(): void {
+    window.clearInterval(this.timerId);
   }
 
   serveState(newState: StateType): void {

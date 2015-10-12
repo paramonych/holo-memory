@@ -27,7 +27,8 @@ module.exports = function(grunt) {
       options: {
           force: true
       },
-      build: [buildDir, concatenatedScriptsName, uglifiedScriptsName, sourceMapName]
+      build: [buildDir, concatenatedScriptsName, uglifiedScriptsName, sourceMapName],
+      js: [concatenatedScriptsName, uglifiedScriptsName, sourceMapName]
     },
     copy: {
       options: {
@@ -133,7 +134,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('compile-less', ['less', 'cssmin']);
   grunt.registerTask('compile-js', [/*'tslint','eslint',*/ 'concat', 'uglify']);
-  grunt.registerTask('build', ['clean', 'copy']);
+  grunt.registerTask('build', ['clean:build', 'copy', 'clean:js']);
 
-  grunt.registerTask('default', ['clean', 'compile-less','compile-js', 'copy']);
+  grunt.registerTask('default', ['clean:build', 'compile-less','compile-js', 'copy', 'clean:js']);
 };

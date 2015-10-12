@@ -53,6 +53,7 @@ var Spike = (function () {
         this.shoulders.right.position = newRight;
     };
     Spike.prototype.reset = function () {
+        this.clearTimer();
         this.shoulders.left.position = this.position;
         this.shoulders.right.position = this.position;
         this.time(0);
@@ -63,14 +64,21 @@ var Spike = (function () {
         this.timerId = window.setInterval(function () { return _this.tick(); }, this.grain);
     };
     Spike.prototype.tick = function () {
-        var currentTime = this.time() + this.grain;
-        if (currentTime >= this.lifeTime) {
-            window.clearInterval(this.timerId);
+        var nextTime = this.time() + this.grain;
+        this.time(this.checkTick(nextTime));
+    };
+    Spike.prototype.checkTick = function (nextTime) {
+        if (nextTime >= this.lifeTime) {
+            this.clearTimer();
             this.deactivate();
+            return 0;
         }
         else {
-            this.time(currentTime);
+            return nextTime;
         }
+    };
+    Spike.prototype.clearTimer = function () {
+        window.clearInterval(this.timerId);
     };
     Spike.prototype.serveState = function (newState) {
         if (newState === StateType.Active) {

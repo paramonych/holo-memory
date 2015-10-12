@@ -24,8 +24,8 @@
         "ts/models/cortex.ts",
         "ts/models/mediator.ts",
         "ts/models/neuron.ts",
-        "ts/models/receptor.ts",
-        "ts/models/spike.ts"
+        "ts/models/spike.ts",
+        "ts/models/synapce.ts"
     ],
     "formatCodeOptions": {
         "indentSize": 8,
