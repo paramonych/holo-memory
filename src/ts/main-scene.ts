@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', initScene, false);
 
 const scale = 10;
-const amount = 7;
+const amount = 10;
 
 function initScene(): void {
   if (!BABYLON.Engine.isSupported()) {return;}

@@ -1,23 +1,22 @@
 class NeuronMesh {
   public mesh: BABYLON.Mesh;
-  public position: BABYLON.Vector3;
-  public rotation: BABYLON.Vector3;
-  public length: number;
+  public curve: BABYLON.Path3D;
   private neuronMaterial: BABYLON.StandardMaterial;
   private activeNeuronMaterial: BABYLON.StandardMaterial;
+//  public rotation: BABYLON.Vector3;
+//  public position: BABYLON.Vector3;
 
   constructor(private scene: BABYLON.Scene, public scale: number) {
-    this.position = randomVector(scale);
-    this.rotation = randomAngleVector();
-    this.length = scale*3;
     this.setMaterials();
+    this.curve = randomPath(this.scale, this.scale/20, this.scale/60);
+    this.draw();
   }
 
   draw(): void {
     let scale = this.scale;
-    this.mesh = BABYLON.Mesh.CreateCylinder('cylinder', this.length, 2/scale, 2/scale, scale, 1, this.scene, false);
-    this.mesh.position = this.position;
-    this.mesh.rotation = this.rotation;
+    this.mesh = BABYLON.Mesh.CreateTube(
+      'tube', this.curve.path, this.scale/200, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
+    this.mesh.material = this.neuronMaterial;
   }
 
   setMaterials(): void {
@@ -37,5 +36,7 @@ class NeuronMesh {
     this.mesh.material = this.neuronMaterial;
   }
 
-
+  public dispose(): void {
+    this.scene.removeMesh(this.mesh);
+  }
 }

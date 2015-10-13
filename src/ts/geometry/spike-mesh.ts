@@ -5,11 +5,8 @@ class SpikeMesh {
   private shift = new BABYLON.Vector3(0.01, 0.01, 0.01);
 
   constructor(
-    public scene: BABYLON.Scene,
-    public position: BABYLON.Vector3,
-    private rotation: BABYLON.Vector3,
-    private neuronLength: number) {
-
+    public scene: BABYLON.Scene, public scale: number
+  ) {
     this.setMaterials();
     this.constructShoulders();
   }
@@ -20,10 +17,9 @@ class SpikeMesh {
   }
 
   private constructShoulderMesh(): BABYLON.Mesh {
-    let scale = this.neuronLength/3;
+    let scale = this.scale;
     let shoulder = BABYLON.Mesh.CreateCylinder('cylinder', scale/50, 2/scale, 2/scale, scale, 1, this.scene, false);
-    shoulder.position = this.position;
-    shoulder.rotation = this.rotation;
+
     return shoulder;
   }
 
@@ -37,8 +33,8 @@ class SpikeMesh {
   }
 
   public reset(): void {
-    this.shoulders.left.position = this.position;
-    this.shoulders.right.position = this.position;
+  //  this.shoulders.left.position = this.position;
+  //  this.shoulders.right.position = this.position;
   }
 
   public activate(): void {
@@ -59,5 +55,10 @@ class SpikeMesh {
     this.movingSpikeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
     this.movingSpikeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
     this.movingSpikeMaterial.alpha = 0.9;
+  }
+
+  public dispose(): void {
+    this.scene.removeMesh(this.shoulders.left);
+    this.scene.removeMesh(this.shoulders.right);
   }
 }

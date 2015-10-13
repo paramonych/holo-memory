@@ -5,12 +5,6 @@ function bindControls(cortex: Cortex): void {
 }
 
 /*
-GSAP JS Demo
-http://www.greensock.com/gsap-js/
-Animation and Bezier motion:
-http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js
-*/
-/*
 var container = $("#container"),
     tl;
 
@@ -44,7 +38,7 @@ function buildTimeline() {
 
 // --- jQueryUI Controls --- //
 
-$("#slider").slider({
+jQuery("#slider").slider({
   range: false,
   min: 0,
   max: 1,

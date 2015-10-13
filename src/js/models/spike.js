@@ -1,20 +1,18 @@
 var Spike = (function () {
-    function Spike(scene, position, rotation, neuronLength, neuronState) {
+    function Spike(neuron) {
         var _this = this;
-        this.scene = scene;
-        this.position = position;
-        this.rotation = rotation;
-        this.neuronLength = neuronLength;
+        this.neuron = neuron;
         this.speed = 1;
         this.time = ko.observable(0);
         this.lifeTime = 2000;
         this.timerId = 0;
         this.grain = 5;
-        this.mesh = new SpikeMesh(this.scene, this.position, this.rotation, this.neuronLength);
+        var neuronMesh = this.neuron.getMesh();
+        this.mesh = new SpikeMesh(this.neuron.scene, this.neuron.scale);
         this.toDefaultState();
         this.deactivate();
         this.time.subscribe(function (time) { return _this.move(time); });
-        neuronState.subscribe(function (state) {
+        this.neuron.watchState(function (state) {
             if (state === StateType.Active) {
                 _this.launch();
             }
@@ -31,8 +29,7 @@ var Spike = (function () {
         this.reset();
     };
     Spike.prototype.dispose = function () {
-        this.scene.removeMesh(this.mesh.shoulders.left);
-        this.scene.removeMesh(this.mesh.shoulders.right);
+        this.mesh.dispose();
     };
     Spike.prototype.reset = function () {
         this.clearTimer();

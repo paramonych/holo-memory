@@ -6,19 +6,17 @@ class Spike {
   private timerId: number = 0;
   private grain: number = 5; //milliseconds
   public mesh: SpikeMesh;
-  
+
   constructor(
-    public scene: BABYLON.Scene,
-    public position: BABYLON.Vector3,
-    private rotation: BABYLON.Vector3,
-    private neuronLength: number,
-    neuronState: KnockoutObservable<StateType>
+    private neuron: Neuron
   ) {
-    this.mesh = new SpikeMesh(this.scene, this.position, this.rotation, this.neuronLength);
+    let neuronMesh = this.neuron.getMesh();
+    this.mesh = new SpikeMesh(this.neuron.scene, this.neuron.scale );
     this.toDefaultState();
     this.deactivate();
     this.time.subscribe((time) => this.move(time));
-    neuronState.subscribe((state) => {
+
+    this.neuron.watchState((state) => {
       if(state === StateType.Active) {
         this.launch();
       }
@@ -38,8 +36,7 @@ class Spike {
   }
 
   public dispose(): void {
-    this.scene.removeMesh(this.mesh.shoulders.left);
-    this.scene.removeMesh(this.mesh.shoulders.right);
+    this.mesh.dispose();
   }
 
   private reset(): void {

@@ -38,9 +38,7 @@ module.exports = function(grunt) {
       main: {
         files: [
           {src: mainHTMLFile, dest: (buildDir+'index.html')},
-          {src: debugHTMLFile, dest: (buildDir+'debug.html')},
           {src: 'src/js/main.min.js', dest: (buildDir + 'js/main.min.js')},
-          //{src: 'src/js/main.js', dest: (buildDir + 'js/main.js')},
           {src: 'src/js/sourcemap.map', dest: (buildDir + 'js/sourcemap.map')},
           {src: 'src/css/style.min.css', dest: (buildDir + 'css/style.min.css')},
           {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
@@ -48,6 +46,36 @@ module.exports = function(grunt) {
             'jquery-2.1.4.min.js',
             'underscore-min.js',
             'knockout-3.3.0.js'
+          ], dest: (buildDir+'libs/')},
+          {expand: true, flatten: true, cwd: 'src/libs/sources/greensock/',src: [
+            'TweenLite.js',
+            'TweenMax.js',
+            'TimelineMax.js',
+            'easing/EasePack.js',
+            'plugins/BezierPlugin.js'
+          ], dest: (buildDir+'libs/')}
+        ]
+      },
+      debug: {
+        options: {
+            force: true
+        },
+        files: [
+          {src: debugHTMLFile, dest: (buildDir+'debug.html')},
+          {src: 'src/js/main.js', dest: (buildDir + 'js/main.js')},
+          {src: 'src/css/style.min.css', dest: (buildDir + 'css/style.min.css')},
+          {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
+            'babylon.2.2.js',
+            'jquery-2.1.4.min.js',
+            'underscore-min.js',
+            'knockout-3.3.0.js'
+          ], dest: (buildDir+'libs/')},
+          {expand: true, flatten: true, cwd: 'src/libs/sources/greensock/',src: [
+            'TweenLite.js',
+            'TweenMax.js',
+            'TimelineMax.js',
+            'easing/EasePack.js',
+            'plugins/BezierPlugin.js'
           ], dest: (buildDir+'libs/')}
         ]
       }
@@ -136,7 +164,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('compile-less', ['less', 'cssmin']);
   grunt.registerTask('compile-js', [/*'tslint','eslint',*/ 'concat', 'uglify']);
-  grunt.registerTask('build', ['clean:build', 'copy', 'clean:js']);
+  grunt.registerTask('build', ['clean:build', 'copy:main', 'clean:js']);
 
-  grunt.registerTask('default', ['clean:build', 'compile-less','compile-js', 'copy', 'clean:js']);
+  grunt.registerTask('default', ['clean:build', 'compile-less','compile-js', 'copy:main', 'clean:js']);
+  grunt.registerTask('debug', ['clean:build', 'compile-less','compile-js', 'copy:debug', 'clean:js']);
+
 };

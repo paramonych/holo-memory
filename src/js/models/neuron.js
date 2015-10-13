@@ -7,7 +7,7 @@ var Neuron = (function () {
         this.activatable = false;
         this.neuron = new NeuronMesh(this.scene, this.scale);
         this.toDefaultState();
-        this.spike = new Spike(this.scene, this.neuron.position, this.neuron.rotation, this.neuron.length, this.state);
+        this.spike = new Spike(this);
         this.spike.state.subscribe(function (state) {
             if (state === StateType.Silent) {
                 _this.deactivate();
@@ -16,7 +16,7 @@ var Neuron = (function () {
     }
     Neuron.prototype.dispose = function () {
         this.spike.dispose();
-        this.scene.removeMesh(this.neuron.mesh);
+        this.neuron.dispose();
     };
     Neuron.prototype.react = function () {
         this.reset();
@@ -46,6 +46,12 @@ var Neuron = (function () {
         var _this = this;
         this.state = ko.observable(StateType.Silent);
         this.state.subscribe(function (state) { return _this.serveState(state); });
+    };
+    Neuron.prototype.getMesh = function () {
+        return this.neuron.mesh;
+    };
+    Neuron.prototype.watchState = function (action) {
+        this.state.subscribe(action);
     };
     return Neuron;
 })();

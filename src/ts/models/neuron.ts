@@ -9,11 +9,11 @@ class Neuron { // This is the single dendrite of the single neuron in fact
   public activatable = false;
 
   constructor(
-    private scene: BABYLON.Scene, private scale: number
+    public scene: BABYLON.Scene, public scale: number
   ) {
     this.neuron = new NeuronMesh(this.scene, this.scale);
     this.toDefaultState();
-    this.spike = new Spike(this.scene, this.neuron.position, this.neuron.rotation, this.neuron.length, this.state);
+    this.spike = new Spike(this);
     this.spike.state.subscribe((state) => {
       if(state === StateType.Silent) {
         this.deactivate();
@@ -23,7 +23,7 @@ class Neuron { // This is the single dendrite of the single neuron in fact
 
   public dispose(): void {
     this.spike.dispose();
-    this.scene.removeMesh(this.neuron.mesh);
+    this.neuron.dispose();
   }
 
   public react(): void {
@@ -59,6 +59,14 @@ class Neuron { // This is the single dendrite of the single neuron in fact
   toDefaultState(): void {
     this.state = ko.observable(StateType.Silent);
     this.state.subscribe((state) => this.serveState(state));
+  }
+
+  public getMesh(): BABYLON.Mesh {
+    return this.neuron.mesh;
+  }
+
+  public watchState(action: (state: StateType) => void): void {
+    this.state.subscribe(action);
   }
 }
 
