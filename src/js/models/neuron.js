@@ -11,7 +11,7 @@ var Neuron = (function () {
         var _this = this;
         this.spike = new Spike(this, synapce);
         this.spike.state.subscribe(function (state) {
-            if (state === StateType.Silent) {
+            if (!isActiveState(state)) {
                 _this.deactivate();
             }
         });
@@ -27,7 +27,7 @@ var Neuron = (function () {
             var synapce = new Synapce(this, position.clone());
             this.synapces.push(synapce);
             synapce.state.subscribe(function (state) {
-                if (state === StateType.Silent) {
+                if (!isActiveState(state)) {
                 }
             });
         }
@@ -38,14 +38,15 @@ var Neuron = (function () {
         this.neuron.dispose();
     };
     Neuron.prototype.react = function () {
-        this.reset();
-        this.activate();
+        if (isActiveState(this.state())) {
+            this.deactivate();
+        }
+        else {
+            this.activate();
+        }
     };
     Neuron.prototype.build = function () {
         this.neuron.draw();
-    };
-    Neuron.prototype.reset = function () {
-        this.spike.deactivate();
     };
     Neuron.prototype.activate = function () {
         this.state(StateType.Active);
@@ -54,16 +55,19 @@ var Neuron = (function () {
         this.state(StateType.Silent);
     };
     Neuron.prototype.serveState = function (newState) {
-        if (newState === StateType.Active) {
-            this.neuron.activate();
+        if (isActiveState(newState)) {
+            this.spike.launch();
             _.each(this.synapces, function (synapce) {
                 if (randomSign() > 0) {
                     synapce.activate();
                 }
             });
         }
-        else if (newState === StateType.Silent) {
-            this.neuron.deactivate();
+        else {
+            this.spike.deactivate();
+            _.each(this.synapces, function (synapce) {
+                synapce.deactivate();
+            });
         }
     };
     Neuron.prototype.toDefaultState = function () {

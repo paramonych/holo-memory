@@ -18,7 +18,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   private setSpike(synapce: Synapce): void {
     this.spike = new Spike(this, synapce);
     this.spike.state.subscribe((state) => {
-      if(state === StateType.Silent) {
+      if(!isActiveState(state)) {
         this.deactivate();
       }
     });
@@ -35,7 +35,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       let synapce = new Synapce(this, position.clone());
       this.synapces.push(synapce);
       synapce.state.subscribe((state) => {
-          if(state === StateType.Silent) {
+          if(!isActiveState(state)) {
             // TODO: update the blasts map
           }
       });
@@ -49,19 +49,15 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   public react(): void {
-  //  if(this.activatable) {
-      this.reset();
+    if(isActiveState(this.state())) {
+      this.deactivate();
+    } else {
       this.activate();
-  //  }
+    }
   }
 
   public build(): void {
     this.neuron.draw();
-  }
-
-  private reset(): void {
-    // TODO: more reset actions
-    this.spike.deactivate();
   }
 
   public activate(): void {
@@ -72,16 +68,18 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   public serveState(newState: StateType): void {
-    if(newState === StateType.Active) {
-      this.neuron.activate();
-      //this.spike.launch();
+    if(isActiveState(newState)) {
+      this.spike.launch();
       _.each(this.synapces, (synapce) => {
         if(randomSign() > 0) {
           synapce.activate();
         }
       });
-    } else if(newState === StateType.Silent) {
-      this.neuron.deactivate();
+    } else {
+      this.spike.deactivate();
+      _.each(this.synapces, (synapce) => {
+        synapce.deactivate();
+      });
     }
   }
 

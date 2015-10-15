@@ -17,7 +17,6 @@ class Spike implements Disposable, Dualistic {
     this.mesh = new SpikeMesh(scene, scale, synapce.position);
     this.toDefaultState();
     this.deactivate();
-    this.time.subscribe((time) => this.move(time));
   }
 
   public move(time: number): void {
@@ -29,7 +28,6 @@ class Spike implements Disposable, Dualistic {
   }
   public deactivate(): void {
     this.state(StateType.Silent);
-    this.reset();
   }
 
   public dispose(): void {
@@ -44,17 +42,18 @@ class Spike implements Disposable, Dualistic {
 
   public launch(): void {
     this.activate();
-    this.timerId = window.setInterval(() => this.tick(), this.grain);
+  //  this.timerId = window.setInterval(() => this.tick(), this.grain);
+  setTimeout(() => this.deactivate(), 3000);
   }
 
   private tick(): void {
     let nextTime = this.time() + this.grain;
-    this.time(this.checkTick(nextTime));
+    this.move(this.checkTick(nextTime))
   }
 
   private checkTick(nextTime: number): number {
     if(nextTime >= this.lifeTime) {
-      this.clearTimer();
+      this.reset();
       this.deactivate();
       return 0;
     } else {

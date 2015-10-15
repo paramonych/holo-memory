@@ -22,47 +22,37 @@ class Mediator {
 
   private setParticles(): void {
     let cloud = this.cloud;
-
+    let zero = new BABYLON.Vector3(0, 0, 0);
     cloud.particleTexture = this.texture;
+    cloud.emitter = this.synapce.mesh.mesh;
+    cloud.minEmitBox = zero;
+    cloud.maxEmitBox = zero.clone();
 
-      // Where the particles come from
-      cloud.emitter = this.synapce.mesh.mesh; // the starting object, the emitter
-      cloud.minEmitBox = new BABYLON.Vector3(1, 0, 0); // Starting all from
-      cloud.maxEmitBox = new BABYLON.Vector3(-1, 0, 0); // To...
+    cloud.color1 = new BABYLON.Color4(random(), random(), random(), 1);
+  //  cloud.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+  //  cloud.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
 
-      // Colors of all particles
-      cloud.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
-      cloud.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
-      cloud.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+    cloud.minSize = 0.7;
+    cloud.maxSize = 0.7;
 
-      // Size of each particle (random between...
-      cloud.minSize = 0.1;
-      cloud.maxSize = 0.5;
+    cloud.minLifeTime = 1.5;
+    cloud.maxLifeTime = 1.5;
 
-      // Life time of each particle (random between...
-      cloud.minLifeTime = 0.3;
-      cloud.maxLifeTime = 1.5;
+    cloud.emitRate = 17;
+    cloud.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+    //cloud.gravity = new BABYLON.Vector3(0, 0, 0);
 
-      // Emission rate
-      cloud.emitRate = 1500;
+    // Direction of each particle after it has been emitted
+    cloud.direction1 = new BABYLON.Vector3(1, 1, 1);
+    cloud.direction2 = new BABYLON.Vector3(-1, -1, -1);
 
-      // Blend mode : BLENDMODE_ONEONE, or BLENDMODE_STANDARD
-      cloud.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+    // Angular speed, in radians
+    cloud.minAngularSpeed = Math.PI;
+    cloud.maxAngularSpeed = Math.PI;
 
-      // Set the gravity of all particles
-      cloud.gravity = new BABYLON.Vector3(0, 0, 0);
-
-      // Direction of each particle after it has been emitted
-      cloud.direction1 = new BABYLON.Vector3(-7, 8, 3);
-      cloud.direction2 = new BABYLON.Vector3(7, 8, -3);
-
-      // Angular speed, in radians
-      cloud.minAngularSpeed = 0;
-      cloud.maxAngularSpeed = Math.PI;
-
-      // Speed
-      cloud.minEmitPower = 1;
-      cloud.maxEmitPower = 3;
-      cloud.updateSpeed = 0.005;
+    // Speed
+    cloud.minEmitPower = 2;
+    cloud.maxEmitPower = 2;
+    cloud.updateSpeed = 0.01;
   }
 }

@@ -10,11 +10,6 @@ class Synapce implements Disposable, Dualistic {
     this.mesh = new SynapceMesh(scene, scale, position);
     this.setMediator();
     this.deactivate();
-    this.neuron.watchState((state) => {
-      if(state === StateType.Active) {
-        this.activate();
-      }
-    });
   }
 
   private setMediator(): void {
@@ -34,10 +29,10 @@ class Synapce implements Disposable, Dualistic {
   }
 
   public serveState(newState: StateType): void {
-    if(newState === StateType.Active) {
+    if(isActiveState(newState)) {
       this.mesh.activate();
       this.mediator.activate();
-    } else if(newState === StateType.Silent) {
+    } else {
       this.mesh.deactivate();
       this.mediator.deactivate();
     }

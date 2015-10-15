@@ -1,6 +1,5 @@
 var Synapce = (function () {
     function Synapce(neuron, position) {
-        var _this = this;
         this.neuron = neuron;
         this.position = position;
         this.toDefaultState();
@@ -9,11 +8,6 @@ var Synapce = (function () {
         this.mesh = new SynapceMesh(scene, scale, position);
         this.setMediator();
         this.deactivate();
-        this.neuron.watchState(function (state) {
-            if (state === StateType.Active) {
-                _this.activate();
-            }
-        });
     }
     Synapce.prototype.setMediator = function () {
         this.mediator = new Mediator(this);
@@ -30,11 +24,11 @@ var Synapce = (function () {
         this.state.subscribe(function (state) { return _this.serveState(state); });
     };
     Synapce.prototype.serveState = function (newState) {
-        if (newState === StateType.Active) {
+        if (isActiveState(newState)) {
             this.mesh.activate();
             this.mediator.activate();
         }
-        else if (newState === StateType.Silent) {
+        else {
             this.mesh.deactivate();
             this.mediator.deactivate();
         }
