@@ -1,4 +1,4 @@
-class Spike {
+class Spike implements Disposable, Dualistic {
   private speed: number = 1; // micrometers/milliseconds
   public state: KnockoutObservable<StateType>;
   private time = ko.observable<number>(0); // milliseconds

@@ -1,12 +1,10 @@
 
 
-class Neuron { // This is the single dendrite of the single neuron in fact
+class Neuron implements Disposable, Dualistic  { // This is the single dendrite of the single neuron in fact
   private spike: Spike;
-  private state: KnockoutObservable<StateType>;
+  public state: KnockoutObservable<StateType>;
   private synapces = new Array<Synapce>();
   private neuron: NeuronMesh;
-
-  public activatable = false;
 
   constructor(
     public cortex: Cortex
@@ -73,7 +71,7 @@ class Neuron { // This is the single dendrite of the single neuron in fact
     this.state(StateType.Silent);
   }
 
-  serveState(newState: StateType): void {
+  public serveState(newState: StateType): void {
     if(newState === StateType.Active) {
       this.neuron.activate();
       //this.spike.launch();

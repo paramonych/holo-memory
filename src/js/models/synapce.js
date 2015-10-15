@@ -3,7 +3,7 @@ var Synapce = (function () {
         var _this = this;
         this.neuron = neuron;
         this.position = position;
-        this.state = this.toDefaultState();
+        this.toDefaultState();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
         this.mesh = new SynapceMesh(scene, scale, position);
@@ -26,7 +26,7 @@ var Synapce = (function () {
     };
     Synapce.prototype.toDefaultState = function () {
         var _this = this;
-        return ko.observable(StateType.Silent);
+        this.state = ko.observable(StateType.Silent);
         this.state.subscribe(function (state) { return _this.serveState(state); });
     };
     Synapce.prototype.serveState = function (newState) {

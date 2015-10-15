@@ -37,9 +37,10 @@ interface Disposable {
 
 interface Dualistic {
   state: KnockoutObservable<StateType>;
-  activate: (state: StateType) => void;
-  deactivate: (state: StateType) => void;
+  activate: () => void;
+  deactivate: () => void;
   serveState: (state: StateType) => void;
+  toDefaultState: () => void;
 }
 enum StateType {
   'Active',

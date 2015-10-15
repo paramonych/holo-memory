@@ -2,7 +2,6 @@ var Neuron = (function () {
     function Neuron(cortex) {
         this.cortex = cortex;
         this.synapces = new Array();
-        this.activatable = false;
         this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
         this.setSynapces();
