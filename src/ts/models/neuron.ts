@@ -3,16 +3,21 @@
 class Neuron { // This is the single dendrite of the single neuron in fact
   private spike: Spike;
   private state: KnockoutObservable<StateType>;
-  private receptorCluster = new Array<Synapce>();
+  private synapces = new Array<Synapce>();
   private neuron: NeuronMesh;
 
   public activatable = false;
 
   constructor(
-    public scene: BABYLON.Scene, public scale: number
+    public cortex: Cortex
   ) {
-    this.neuron = new NeuronMesh(this.scene, this.scale);
+    this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
+    this.setSpike();
+    this.setSynapces();
+  }
+
+  private setSpike(): void {
     this.spike = new Spike(this);
     this.spike.state.subscribe((state) => {
       if(state === StateType.Silent) {
@@ -21,8 +26,27 @@ class Neuron { // This is the single dendrite of the single neuron in fact
     });
   }
 
+  private setSynapces(): void {
+    let scale = this.cortex.scale;
+    let devideFactor = scale/2;
+    let path = this.neuron.curve.path;
+    let step = Math.floor(path.length/devideFactor);
+    let halfStep = Math.floor(step/2);
+    for(let i=0; i< devideFactor; i++) {
+      let position = path[i*step+halfStep];
+      let synapce = new Synapce(this, position.clone());
+      this.synapces.push(synapce);
+      synapce.state.subscribe((state) => {
+          if(state === StateType.Silent) {
+            // TODO: update the blasts map
+          }
+      });
+    }
+  }
+
   public dispose(): void {
     this.spike.dispose();
+    _.each(this.synapces, (synapce) => {synapce.dispose();});
     this.neuron.dispose();
   }
 
@@ -68,9 +92,4 @@ class Neuron { // This is the single dendrite of the single neuron in fact
   public watchState(action: (state: StateType) => void): void {
     this.state.subscribe(action);
   }
-}
-
-enum StateType {
-  'Active',
-  'Silent'
 }

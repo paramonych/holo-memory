@@ -8,7 +8,9 @@ var Spike = (function () {
         this.timerId = 0;
         this.grain = 5;
         var neuronMesh = this.neuron.getMesh();
-        this.mesh = new SpikeMesh(this.neuron.scene, this.neuron.scale);
+        var scene = this.neuron.cortex.scene;
+        var scale = this.neuron.cortex.scale;
+        this.mesh = new SpikeMesh(scene, scale);
         this.toDefaultState();
         this.deactivate();
         this.time.subscribe(function (time) { return _this.move(time); });

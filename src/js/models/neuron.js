@@ -1,21 +1,41 @@
 var Neuron = (function () {
-    function Neuron(scene, scale) {
-        var _this = this;
-        this.scene = scene;
-        this.scale = scale;
-        this.receptorCluster = new Array();
+    function Neuron(cortex) {
+        this.cortex = cortex;
+        this.synapces = new Array();
         this.activatable = false;
-        this.neuron = new NeuronMesh(this.scene, this.scale);
+        this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
+        this.setSpike();
+        this.setSynapces();
+    }
+    Neuron.prototype.setSpike = function () {
+        var _this = this;
         this.spike = new Spike(this);
         this.spike.state.subscribe(function (state) {
             if (state === StateType.Silent) {
                 _this.deactivate();
             }
         });
-    }
+    };
+    Neuron.prototype.setSynapces = function () {
+        var scale = this.cortex.scale;
+        var devideFactor = scale / 2;
+        var path = this.neuron.curve.path;
+        var step = Math.floor(path.length / devideFactor);
+        var halfStep = Math.floor(step / 2);
+        for (var i = 0; i < devideFactor; i++) {
+            var position = path[i * step + halfStep];
+            var synapce = new Synapce(this, position.clone());
+            this.synapces.push(synapce);
+            synapce.state.subscribe(function (state) {
+                if (state === StateType.Silent) {
+                }
+            });
+        }
+    };
     Neuron.prototype.dispose = function () {
         this.spike.dispose();
+        _.each(this.synapces, function (synapce) { synapce.dispose(); });
         this.neuron.dispose();
     };
     Neuron.prototype.react = function () {
@@ -55,8 +75,3 @@ var Neuron = (function () {
     };
     return Neuron;
 })();
-var StateType;
-(function (StateType) {
-    StateType[StateType['Active'] = 0] = 'Active';
-    StateType[StateType['Silent'] = 1] = 'Silent';
-})(StateType || (StateType = {}));

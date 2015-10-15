@@ -51,6 +51,7 @@ module.exports = function(grunt) {
             'TweenLite.js',
             'TweenMax.js',
             'TimelineMax.js',
+            'TimelineLite.js',
             'easing/EasePack.js',
             'plugins/BezierPlugin.js'
           ], dest: (buildDir+'libs/')}
@@ -74,6 +75,7 @@ module.exports = function(grunt) {
             'TweenLite.js',
             'TweenMax.js',
             'TimelineMax.js',
+            'TimelineLite.js',
             'easing/EasePack.js',
             'plugins/BezierPlugin.js'
           ], dest: (buildDir+'libs/')}

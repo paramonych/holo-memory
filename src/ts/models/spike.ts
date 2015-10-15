@@ -11,7 +11,9 @@ class Spike {
     private neuron: Neuron
   ) {
     let neuronMesh = this.neuron.getMesh();
-    this.mesh = new SpikeMesh(this.neuron.scene, this.neuron.scale );
+    let scene = this.neuron.cortex.scene;
+    let scale = this.neuron.cortex.scale;
+    this.mesh = new SpikeMesh(scene, scale );
     this.toDefaultState();
     this.deactivate();
     this.time.subscribe((time) => this.move(time));

@@ -13,12 +13,12 @@ function randomPointOnSphere(radius: number): BABYLON.Vector3 {
   let num = () => Math.random()*randomSign();
   let vector = new BABYLON.Vector3(num(),num(),num());
   vector.scale(radius);
-  return
+  return vector;
 }
 
 function randomPath(scale: number, deltaRadius: number, deltaSegment: number): BABYLON.Path3D {
   let path = new Array<BABYLON.Vector3>();
-  let next = randomPointOnSphere(scale);//vectorFrom(0,0,0);
+  let next = randomVector(scale);//randomPointOnSphere(scale);//vectorFrom(0,0,0);
   let steps = Math.floor(scale/deltaSegment);
   let xSign = (-1)*next.x/Math.abs(next.x);
   let ySign = (-1)*next.y/Math.abs(next.y);
@@ -29,7 +29,8 @@ function randomPath(scale: number, deltaRadius: number, deltaSegment: number): B
     next = vectorFrom(
       (next.x+xSign*Math.random()*deltaRadius),
       (next.y+ySign*Math.random()*deltaRadius),
-      (next.z+zSign*Math.random()*deltaRadius));
+      (next.z+zSign*Math.random()*deltaRadius)
+    );
   }
   let path3D = new BABYLON.Path3D(path);
   return path3D;

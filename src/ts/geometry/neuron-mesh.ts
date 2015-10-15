@@ -3,8 +3,6 @@ class NeuronMesh {
   public curve: BABYLON.Path3D;
   private neuronMaterial: BABYLON.StandardMaterial;
   private activeNeuronMaterial: BABYLON.StandardMaterial;
-//  public rotation: BABYLON.Vector3;
-//  public position: BABYLON.Vector3;
 
   constructor(private scene: BABYLON.Scene, public scale: number) {
     this.setMaterials();

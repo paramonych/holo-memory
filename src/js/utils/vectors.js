@@ -10,11 +10,11 @@ function randomPointOnSphere(radius) {
     var num = function () { return Math.random() * randomSign(); };
     var vector = new BABYLON.Vector3(num(), num(), num());
     vector.scale(radius);
-    return;
+    return vector;
 }
 function randomPath(scale, deltaRadius, deltaSegment) {
     var path = new Array();
-    var next = randomPointOnSphere(scale);
+    var next = randomVector(scale);
     var steps = Math.floor(scale / deltaSegment);
     var xSign = (-1) * next.x / Math.abs(next.x);
     var ySign = (-1) * next.y / Math.abs(next.y);
