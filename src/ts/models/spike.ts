@@ -8,21 +8,16 @@ class Spike {
   public mesh: SpikeMesh;
 
   constructor(
-    private neuron: Neuron
+    private neuron: Neuron,
+    private synapce: Synapce
   ) {
     let neuronMesh = this.neuron.getMesh();
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
-    this.mesh = new SpikeMesh(scene, scale );
+    this.mesh = new SpikeMesh(scene, scale, synapce.position);
     this.toDefaultState();
     this.deactivate();
     this.time.subscribe((time) => this.move(time));
-
-    this.neuron.watchState((state) => {
-      if(state === StateType.Active) {
-        this.launch();
-      }
-    });
   }
 
   public move(time: number): void {

@@ -13,7 +13,7 @@ class SynapceMesh {
   private draw(): void {
     this.mesh = BABYLON.Mesh.CreateSphere('sphere', 4, this.scale/30, this.scene, false);
     this.mesh.position = this.position;
-    this.activate();
+    this.deactivate();
   }
 
   public activate(): void {
@@ -26,12 +26,12 @@ class SynapceMesh {
 
   setMaterials(): void {
     this.material = new BABYLON.StandardMaterial('silent-spike', this.scene);
-    this.material.alpha = 0;
+    this.material.alpha = 1;
 
     this.activeMaterial = new BABYLON.StandardMaterial('moving-spike', this.scene);
     this.activeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
     this.activeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
-    this.activeMaterial.alpha = 0.9;
+    this.activeMaterial.alpha = 1;
   }
 
   public dispose(): void {

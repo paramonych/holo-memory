@@ -5,12 +5,12 @@ var Neuron = (function () {
         this.activatable = false;
         this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
-        this.setSpike();
         this.setSynapces();
+        this.setSpike(this.synapces[Math.floor(this.synapces.length / 2)]);
     }
-    Neuron.prototype.setSpike = function () {
+    Neuron.prototype.setSpike = function (synapce) {
         var _this = this;
-        this.spike = new Spike(this);
+        this.spike = new Spike(this, synapce);
         this.spike.state.subscribe(function (state) {
             if (state === StateType.Silent) {
                 _this.deactivate();
@@ -57,6 +57,11 @@ var Neuron = (function () {
     Neuron.prototype.serveState = function (newState) {
         if (newState === StateType.Active) {
             this.neuron.activate();
+            _.each(this.synapces, function (synapce) {
+                if (randomSign() > 0) {
+                    synapce.activate();
+                }
+            });
         }
         else if (newState === StateType.Silent) {
             this.neuron.deactivate();

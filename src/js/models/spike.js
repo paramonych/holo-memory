@@ -1,7 +1,8 @@
 var Spike = (function () {
-    function Spike(neuron) {
+    function Spike(neuron, synapce) {
         var _this = this;
         this.neuron = neuron;
+        this.synapce = synapce;
         this.speed = 1;
         this.time = ko.observable(0);
         this.lifeTime = 2000;
@@ -10,15 +11,10 @@ var Spike = (function () {
         var neuronMesh = this.neuron.getMesh();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
-        this.mesh = new SpikeMesh(scene, scale);
+        this.mesh = new SpikeMesh(scene, scale, synapce.position);
         this.toDefaultState();
         this.deactivate();
         this.time.subscribe(function (time) { return _this.move(time); });
-        this.neuron.watchState(function (state) {
-            if (state === StateType.Active) {
-                _this.launch();
-            }
-        });
     }
     Spike.prototype.move = function (time) {
         this.mesh.move();

@@ -8,12 +8,17 @@ class Synapce {
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
     this.mesh = new SynapceMesh(scene, scale, position);
+    this.setMediator();
     this.deactivate();
     this.neuron.watchState((state) => {
       if(state === StateType.Active) {
         this.activate();
       }
     });
+  }
+
+  private setMediator(): void {
+      this.mediator = new Mediator(this);
   }
 
   public activate(): void {
@@ -25,13 +30,16 @@ class Synapce {
 
   toDefaultState(): KnockoutObservable<StateType> {
     return ko.observable(StateType.Silent);
+    this.state.subscribe((state) => this.serveState(state));
   }
 
   private serveState(newState: StateType): void {
     if(newState === StateType.Active) {
       this.mesh.activate();
+      this.mediator.activate();
     } else if(newState === StateType.Silent) {
       this.mesh.deactivate();
+      this.mediator.deactivate();
     }
   }
 

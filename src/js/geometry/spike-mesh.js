@@ -1,8 +1,9 @@
 var SpikeMesh = (function () {
-    function SpikeMesh(scene, scale) {
+    function SpikeMesh(scene, scale, synapcePosition) {
         this.scene = scene;
         this.scale = scale;
         this.shift = new BABYLON.Vector3(0.01, 0.01, 0.01);
+        this.position = synapcePosition.clone();
         this.setMaterials();
         this.constructShoulders();
     }
@@ -11,8 +12,8 @@ var SpikeMesh = (function () {
         this.deactivate();
     };
     SpikeMesh.prototype.constructShoulderMesh = function () {
-        var scale = this.scale;
-        var shoulder = BABYLON.Mesh.CreateCylinder('cylinder', scale / 50, 2 / scale, 2 / scale, scale, 1, this.scene, false);
+        var shoulder = BABYLON.Mesh.CreateSphere('sphere', 4, this.scale / 30, this.scene, false);
+        shoulder.position = this.position;
         return shoulder;
     };
     SpikeMesh.prototype.move = function () {

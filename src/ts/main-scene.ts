@@ -9,6 +9,11 @@ function initScene(): void {
   let canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("renderCanvas");
   let engine = new BABYLON.Engine(canvas, true);
   let scene = new BABYLON.Scene(engine);
+  //scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+  //scene.fogDensity = 0.5;
+  //scene.fogStart = 20.0;
+  //scene.fogEnd = 60.0;
+  //scene.fogColor = new BABYLON.Color3(0.1, 0.9, 0.15);
 
   scene.clearColor = new BABYLON.Color3(.3, .3, .3);
   attachCamera(canvas, scene, scale);

@@ -13,12 +13,12 @@ class Neuron { // This is the single dendrite of the single neuron in fact
   ) {
     this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
-    this.setSpike();
     this.setSynapces();
+    this.setSpike(this.synapces[Math.floor(this.synapces.length/2)]);
   }
 
-  private setSpike(): void {
-    this.spike = new Spike(this);
+  private setSpike(synapce: Synapce): void {
+    this.spike = new Spike(this, synapce);
     this.spike.state.subscribe((state) => {
       if(state === StateType.Silent) {
         this.deactivate();
@@ -62,6 +62,7 @@ class Neuron { // This is the single dendrite of the single neuron in fact
   }
 
   private reset(): void {
+    // TODO: more reset actions
     this.spike.deactivate();
   }
 
@@ -75,6 +76,12 @@ class Neuron { // This is the single dendrite of the single neuron in fact
   serveState(newState: StateType): void {
     if(newState === StateType.Active) {
       this.neuron.activate();
+      //this.spike.launch();
+      _.each(this.synapces, (synapce) => {
+        if(randomSign() > 0) {
+          synapce.activate();
+        }
+      });
     } else if(newState === StateType.Silent) {
       this.neuron.deactivate();
     }

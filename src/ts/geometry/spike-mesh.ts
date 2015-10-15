@@ -3,10 +3,14 @@ class SpikeMesh {
   private spikeMaterial: BABYLON.StandardMaterial;
   private movingSpikeMaterial: BABYLON.StandardMaterial;
   private shift = new BABYLON.Vector3(0.01, 0.01, 0.01);
+  private position: BABYLON.Vector3;
 
   constructor(
-    public scene: BABYLON.Scene, public scale: number
+    public scene: BABYLON.Scene,
+    public scale: number,
+    synapcePosition: BABYLON.Vector3
   ) {
+    this.position = synapcePosition.clone();
     this.setMaterials();
     this.constructShoulders();
   }
@@ -17,8 +21,8 @@ class SpikeMesh {
   }
 
   private constructShoulderMesh(): BABYLON.Mesh {
-    let scale = this.scale;
-    let shoulder = BABYLON.Mesh.CreateCylinder('cylinder', scale/50, 2/scale, 2/scale, scale, 1, this.scene, false);
+    let shoulder = BABYLON.Mesh.CreateSphere('sphere', 4, this.scale/30, this.scene, false);
+    shoulder.position = this.position;
 
     return shoulder;
   }
