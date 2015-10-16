@@ -19,6 +19,7 @@ var lessDir = 'src/less/';
 var buildDir = 'build/';
 var libsDir = 'src/libs/';
 var allJsLibsDir = 'src/libs/sources/';
+var uglifyNameCache = 'obfuscate.json'
 //////// end of paths ///////////////////////////////////////////
 
 module.exports = function(grunt) {
@@ -121,7 +122,14 @@ module.exports = function(grunt) {
       scripts: {
         options: {
           sourceMap: true,
-          sourceMapName: sourceMapName
+          sourceMapName: sourceMapName,
+          mangle: true,
+          mangleProperties: true,
+          reserveDOMCache: true,
+          nameCache: uglifyNameCache,
+          compress: {
+            drop_console: true
+          }
         },
         files: {
           'src/js/main.min.js': [concatenatedScriptsName]

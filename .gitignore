@@ -9,4 +9,5 @@ npm-debug.log
 src/js/main.js
 src/js/*.min.js
 src/css/*.min.css
-./src/js/sourcemap.map
+src/js/sourcemap.map
+obfuscate.json
