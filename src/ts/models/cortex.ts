@@ -43,6 +43,12 @@ interface Dualistic {
   toDefaultState: () => void;
 }
 
+interface ActivatableMesh {
+  material: BABYLON.StandardMaterial;
+  activeMaterial: BABYLON.StandardMaterial;
+  setMaterials: () => void;
+}
+
 enum StateType {
   'Active',
   'Silent'

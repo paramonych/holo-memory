@@ -1,7 +1,7 @@
-class SpikeMesh {
+class SpikeMesh implements ActivatableMesh {
   public shoulders: SpikeShoulders;
-  private spikeMaterial: BABYLON.StandardMaterial;
-  private movingSpikeMaterial: BABYLON.StandardMaterial;
+  public material: BABYLON.StandardMaterial;
+  public activeMaterial: BABYLON.StandardMaterial;
   private shift = new BABYLON.Vector3(0.01, 0.01, 0.01);
   private position: BABYLON.Vector3;
 
@@ -21,7 +21,7 @@ class SpikeMesh {
   }
 
   private constructShoulderMesh(): BABYLON.Mesh {
-    let shoulder = BABYLON.Mesh.CreateSphere('sphere', 4, this.scale/30, this.scene, false);
+    let shoulder = BABYLON.Mesh.CreateSphere('s', 4, this.scale/30, this.scene, false);
     shoulder.position = this.position;
 
     return shoulder;
@@ -42,23 +42,23 @@ class SpikeMesh {
   }
 
   public activate(): void {
-    this.shoulders.left.material = this.movingSpikeMaterial;
-    this.shoulders.right.material = this.movingSpikeMaterial;
+    this.shoulders.left.material = this.activeMaterial;
+    this.shoulders.right.material = this.activeMaterial;
   }
 
   public deactivate(): void {
-    this.shoulders.left.material = this.spikeMaterial;
-    this.shoulders.right.material = this.spikeMaterial;
+    this.shoulders.left.material = this.material;
+    this.shoulders.right.material = this.material;
   }
 
   setMaterials(): void {
-    this.spikeMaterial = new BABYLON.StandardMaterial('silent-spike', this.scene);
-    this.spikeMaterial.alpha = 0;
+    this.material = new BABYLON.StandardMaterial('i', this.scene);
+    this.material.alpha = 0;
 
-    this.movingSpikeMaterial = new BABYLON.StandardMaterial('moving-spike', this.scene);
-    this.movingSpikeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
-    this.movingSpikeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
-    this.movingSpikeMaterial.alpha = 0.9;
+    this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
+    this.activeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
+    this.activeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
+    this.activeMaterial.alpha = 0.9;
   }
 
   public dispose(): void {

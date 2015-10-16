@@ -123,12 +123,19 @@ module.exports = function(grunt) {
         options: {
           sourceMap: true,
           sourceMapName: sourceMapName,
-          mangle: true,
-          mangleProperties: true,
-          reserveDOMCache: true,
+          mangle: {
+              sort: true,
+              toplevel: true,
+              eval: true
+          },
+          //mangleProperties: true,
+          //reserveDOMCache: true,
           nameCache: uglifyNameCache,
           compress: {
-            drop_console: true
+            drop_console: true,
+            drop_debugger: true,
+            dead_code: true,
+            unused: true
           }
         },
         files: {

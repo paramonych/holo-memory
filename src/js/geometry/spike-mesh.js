@@ -12,7 +12,7 @@ var SpikeMesh = (function () {
         this.deactivate();
     };
     SpikeMesh.prototype.constructShoulderMesh = function () {
-        var shoulder = BABYLON.Mesh.CreateSphere('sphere', 4, this.scale / 30, this.scene, false);
+        var shoulder = BABYLON.Mesh.CreateSphere('s', 4, this.scale / 30, this.scene, false);
         shoulder.position = this.position;
         return shoulder;
     };
@@ -27,20 +27,20 @@ var SpikeMesh = (function () {
     SpikeMesh.prototype.reset = function () {
     };
     SpikeMesh.prototype.activate = function () {
-        this.shoulders.left.material = this.movingSpikeMaterial;
-        this.shoulders.right.material = this.movingSpikeMaterial;
+        this.shoulders.left.material = this.activeMaterial;
+        this.shoulders.right.material = this.activeMaterial;
     };
     SpikeMesh.prototype.deactivate = function () {
-        this.shoulders.left.material = this.spikeMaterial;
-        this.shoulders.right.material = this.spikeMaterial;
+        this.shoulders.left.material = this.material;
+        this.shoulders.right.material = this.material;
     };
     SpikeMesh.prototype.setMaterials = function () {
-        this.spikeMaterial = new BABYLON.StandardMaterial('silent-spike', this.scene);
-        this.spikeMaterial.alpha = 0;
-        this.movingSpikeMaterial = new BABYLON.StandardMaterial('moving-spike', this.scene);
-        this.movingSpikeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
-        this.movingSpikeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
-        this.movingSpikeMaterial.alpha = 0.9;
+        this.material = new BABYLON.StandardMaterial('i', this.scene);
+        this.material.alpha = 0;
+        this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
+        this.activeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
+        this.activeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
+        this.activeMaterial.alpha = 0.9;
     };
     SpikeMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.shoulders.left);

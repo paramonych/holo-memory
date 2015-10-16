@@ -1,7 +1,7 @@
-class SynapceMesh {
+class SynapceMesh implements ActivatableMesh {
   public mesh: BABYLON.Mesh;
-  private material: BABYLON.StandardMaterial;
-  private activeMaterial: BABYLON.StandardMaterial;
+  public material: BABYLON.StandardMaterial;
+  public activeMaterial: BABYLON.StandardMaterial;
 
   constructor(
     public scene: BABYLON.Scene, public scale: number, private position: BABYLON.Vector3
@@ -11,7 +11,7 @@ class SynapceMesh {
   }
 
   private draw(): void {
-    this.mesh = BABYLON.Mesh.CreateSphere('sphere', 4, this.scale/30, this.scene, false);
+    this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale/30, this.scene, false);
     this.mesh.position = this.position;
     this.deactivate();
   }
@@ -25,10 +25,10 @@ class SynapceMesh {
   }
 
   setMaterials(): void {
-    this.material = new BABYLON.StandardMaterial('silent-spike', this.scene);
+    this.material = new BABYLON.StandardMaterial('i', this.scene);
     this.material.alpha = 1;
 
-    this.activeMaterial = new BABYLON.StandardMaterial('moving-spike', this.scene);
+    this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
     this.activeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
     this.activeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
     this.activeMaterial.alpha = 1;

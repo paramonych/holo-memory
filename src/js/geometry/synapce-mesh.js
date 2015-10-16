@@ -7,7 +7,7 @@ var SynapceMesh = (function () {
         this.draw();
     }
     SynapceMesh.prototype.draw = function () {
-        this.mesh = BABYLON.Mesh.CreateSphere('sphere', 4, this.scale / 30, this.scene, false);
+        this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale / 30, this.scene, false);
         this.mesh.position = this.position;
         this.deactivate();
     };
@@ -18,9 +18,9 @@ var SynapceMesh = (function () {
         this.mesh.material = this.material;
     };
     SynapceMesh.prototype.setMaterials = function () {
-        this.material = new BABYLON.StandardMaterial('silent-spike', this.scene);
+        this.material = new BABYLON.StandardMaterial('i', this.scene);
         this.material.alpha = 1;
-        this.activeMaterial = new BABYLON.StandardMaterial('moving-spike', this.scene);
+        this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
         this.activeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
         this.activeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
         this.activeMaterial.alpha = 1;
