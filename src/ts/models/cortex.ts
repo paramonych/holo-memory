@@ -26,10 +26,14 @@ class Cortex implements Disposable {
   }
 }
 
+//// NRU INTERFACES GOES BELOW //////////////////////////////////////
+
 interface NeuroBlast {
   position: BABYLON.Vector3,
   signCode: Mediator
 }
+
+//// COMMON INTERFACES GOES BELOW ///////////////////////////////////
 
 interface Disposable {
   dispose: () => void

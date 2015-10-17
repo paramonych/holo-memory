@@ -2,6 +2,43 @@ function bindControls(cortex: Cortex): void {
   jQuery('#launch').on('click', function() {
     cortex.react();
   });
+
+  bindTimeline();
+}
+
+function bindTimeline(): void {
+    //instantiate a TimelineLite
+  let tl = new TimelineLite();
+
+  //use position parameter "+=0.5" to schedule next tween 0.5 seconds after previous tweens end
+  //tl.from(feature, 0.5, {scale:.5, autoAlpha:0}, "+=0.5");
+  //use position parameter "-=0.5" to schedule next tween 0.25 seconds before previous tweens end. great for overlapping
+  //tl.from(description, 0.5, {left:100, autoAlpha:0}, "-=0.25");
+
+  jQuery("#play").click(function() { tl.play()});
+  jQuery("#pause").click(function() { tl.pause()});
+  jQuery("#restart").click(function() { tl.restart()});
+
+  //when the timeline updates, call the updateSlider function
+//  tl.eventCallback("onUpdate", updateSlider);
+
+  jQuery("#slider").slider({
+    range: false,
+    min: 0,
+    max: 100,
+    step:.1/*,
+    slide: function ( event, ui ) {
+      tl.pause();
+      //adjust the timeline's progress() based on slider value
+      tl.progress( ui.value/100 );
+    }*/
+  });
+
+  function updateSlider() {
+    jQuery("#slider").slider("value", tl.progress() *100);
+  }
+
+//  tl.progress(1);
 }
 
 /*

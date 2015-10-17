@@ -1,10 +1,16 @@
+// directories
+var lessDir = 'src/less/';
+var buildDir = 'build/';
+var libsDir = 'src/libs/';
+var allJsLibsDir = 'src/libs/sources/';
 // scripts
 var concatenatedScriptsName = 'src/js/main.js';
 var uglifiedScriptsName = 'src/js/main.min.js';
 // styles
 var compiledCssName = 'src/css/main.css';
+var jqueryUI = 'src/css/jquery-ui.css';
 var minifiedCssName = 'src/css/style.min.css';
-var mainLess = lessDir + '/main.less';
+var mainLess = 'src/less/main.less';
 // all files
 var allScripts = 'src/js/**/*.js';
 var allTypedScripts = 'src/ts/*.ts';
@@ -14,11 +20,7 @@ var allHTML = 'src/**/*.html';
 var sourceMapName = 'src/js/sourcemap.map';
 var mainHTMLFile = 'src/index.html';
 var debugHTMLFile = 'src/debug.html';
-// directories
-var lessDir = 'src/less/';
-var buildDir = 'build/';
-var libsDir = 'src/libs/';
-var allJsLibsDir = 'src/libs/sources/';
+
 var uglifyNameCache = 'obfuscate.json'
 //////// end of paths ///////////////////////////////////////////
 
@@ -30,7 +32,8 @@ module.exports = function(grunt) {
           force: true
       },
       build: [buildDir, concatenatedScriptsName, uglifiedScriptsName, sourceMapName],
-      js: [concatenatedScriptsName, uglifiedScriptsName, sourceMapName]
+      js: [concatenatedScriptsName, uglifiedScriptsName, sourceMapName],
+      css: [compiledCssName, minifiedCssName]
     },
     copy: {
       options: {
@@ -45,6 +48,7 @@ module.exports = function(grunt) {
           {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
             'babylon.2.2.js',
             'jquery-2.1.4.min.js',
+            'jquery-ui.min.js',
             'underscore-min.js',
             'knockout-3.3.0.js'
           ], dest: (buildDir+'libs/')},
@@ -69,6 +73,7 @@ module.exports = function(grunt) {
           {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
             'babylon.2.2.js',
             'jquery-2.1.4.min.js',
+            'jquery-ui.min.js',
             'underscore-min.js',
             'knockout-3.3.0.js'
           ], dest: (buildDir+'libs/')},
@@ -86,12 +91,21 @@ module.exports = function(grunt) {
     less: {
       main: {
         options: {
-          paths: [lessDir]
+          paths: [lessDir],
+          force: true
         },
         compress: true,
         cleancss: true,
         files: {
           'src/css/main.css': mainLess
+        }
+      }
+    },
+    cssmin: {
+      one: {
+        options: {},
+        files: {
+          'src/css/style.min.css': [compiledCssName, jqueryUI]
         }
       }
     },
@@ -143,17 +157,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    cssmin: {
-      one: {
-        options: {
-          //banner: '',
-          //'keepSpecialComments': 0
-        },
-        files: {
-          'src/css/style.min.css': [compiledCssName]
-        }
-      }
-    },
     tslint: {
       options: {
         configuration: grunt.file.readJSON("tslint.json")
@@ -182,8 +185,9 @@ module.exports = function(grunt) {
   grunt.registerTask('compile-less', ['less', 'cssmin']);
   grunt.registerTask('compile-js', [/*'tslint','eslint',*/ 'concat', 'uglify']);
   grunt.registerTask('build', ['clean:build', 'copy:main', 'clean:js']);
+  grunt.registerTask('clean-final', ['clean:js', 'clean:css']);
 
-  grunt.registerTask('default', ['clean:build', 'compile-less','compile-js', 'copy:main', 'clean:js']);
-  grunt.registerTask('debug', ['clean:build', 'compile-less','compile-js', 'copy:debug', 'clean:js']);
+  grunt.registerTask('default', ['clean:build', 'compile-less','compile-js', 'copy:main', 'clean-final']);
+  grunt.registerTask('debug', ['clean:build', 'compile-less','compile-js', 'copy:debug', 'clean-final']);
 
 };

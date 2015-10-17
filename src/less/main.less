@@ -1,3 +1,5 @@
+@top: 30px;
+
 html, body {
   overflow: hidden;
   width: 100%;
@@ -14,28 +16,31 @@ html, body {
   touch-action: none;
 }
 
-#launch {
+button {
   z-index: 2;
   position: absolute;
-  top: 20px;
   left: 20px;
 }
 
+#launch {
+  top: @top*2;
+}
+#play {
+  top: @top*3;
+}
+#pause {
+  top: @top*4;
+}
+#restart {
+  top: @top*5;
+}
+
 #slider{
-  posistion:relative;
-  width:700px;
-  top:20px;
-  left:25px;
+  z-index: 2;
+  width: 50%;
+  margin:@top*3/4 auto;
 }
 
-.ui-slider .ui-slider-handle {
-  width: 40px !important;
-  margin-left: -20px !important;
-  height:40px !important;
-  margin-top:-10px !important;
-}
-
-button {
-  width:100px;
-  padding:10px;
+.ui-widget-content {
+  background-color:rgba(255, 255, 255, 0.2);
 }
