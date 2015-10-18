@@ -55,6 +55,7 @@ function createPatternSpaceBox(scene: BABYLON.Scene, scale: number): BABYLON.Mes
   var borderBox = BABYLON.Mesh.CreateBox("borders", scale, scene);
   borderBox.position = new BABYLON.Vector3(0,0,0);
   var borderBoxMaterial = new BABYLON.StandardMaterial("wire", scene);
+  borderBoxMaterial.ambientColor = new BABYLON.Color3(1, 1, 1);
   borderBoxMaterial.wireframe = true;
   borderBoxMaterial.alpha = 0.5;
   borderBox.material = borderBoxMaterial;

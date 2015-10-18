@@ -1,10 +1,7 @@
 class Spike implements Disposable, Dualistic {
   private speed: number = 1; // micrometers/milliseconds
   public state: KnockoutObservable<StateType>;
-  private time = ko.observable<number>(0); // milliseconds
   private lifeTime: number = 2000; // milliseconds
-  private timerId: number = 0;
-  private grain: number = 5; //milliseconds
   public mesh: SpikeMesh;
 
   constructor(
@@ -14,13 +11,9 @@ class Spike implements Disposable, Dualistic {
     let neuronMesh = this.neuron.getMesh();
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
-    this.mesh = new SpikeMesh(scene, scale, synapce.position);
+    this.mesh = new SpikeMesh(scene, scale, synapce, neuron);
     this.toDefaultState();
     this.deactivate();
-  }
-
-  public move(time: number): void {
-    this.mesh.move();
   }
 
   public activate(): void {
@@ -34,35 +27,10 @@ class Spike implements Disposable, Dualistic {
     this.mesh.dispose();
   }
 
-  private reset(): void {
-    this.clearTimer();
-    this.mesh.reset();
-    this.time(0);
-  }
-
   public launch(): void {
     this.activate();
-  //  this.timerId = window.setInterval(() => this.tick(), this.grain);
-  setTimeout(() => this.deactivate(), 3000);
-  }
-
-  private tick(): void {
-    let nextTime = this.time() + this.grain;
-    this.move(this.checkTick(nextTime))
-  }
-
-  private checkTick(nextTime: number): number {
-    if(nextTime >= this.lifeTime) {
-      this.reset();
-      this.deactivate();
-      return 0;
-    } else {
-      return nextTime;
-    }
-  }
-
-  private clearTimer(): void {
-    window.clearInterval(this.timerId);
+    setTimeout(() => this.deactivate(), 3000);
+    this.mesh.activate();
   }
 
   serveState(newState: StateType): void {

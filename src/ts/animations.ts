@@ -7,39 +7,39 @@ function bindControls(cortex: Cortex): void {
 }
 
 function bindTimeline(): void {
+  let $slider = jQuery('#slider');
     //instantiate a TimelineLite
-  let tl = new TimelineLite();
+  let timeline = new TimelineMax();
 
   //use position parameter "+=0.5" to schedule next tween 0.5 seconds after previous tweens end
   //tl.from(feature, 0.5, {scale:.5, autoAlpha:0}, "+=0.5");
   //use position parameter "-=0.5" to schedule next tween 0.25 seconds before previous tweens end. great for overlapping
   //tl.from(description, 0.5, {left:100, autoAlpha:0}, "-=0.25");
 
-  jQuery("#play").click(function() { tl.play()});
-  jQuery("#pause").click(function() { tl.pause()});
-  jQuery("#restart").click(function() { tl.restart()});
+  jQuery("#play").click(function() { timeline.play()});
+  jQuery("#pause").click(function() { timeline.pause()});
+  jQuery("#restart").click(function() { timeline.restart()});
 
   //when the timeline updates, call the updateSlider function
-//  tl.eventCallback("onUpdate", updateSlider);
+  timeline.eventCallback("onUpdate", function() {
+    let progress = timeline.progress() * 100;
+    if(progress) {
+      $slider.slider("value", progress);
+    }
+  });
 
-  jQuery("#slider").slider({
+  $slider.slider({
     range: false,
     min: 0,
     max: 100,
-    step:.1/*,
+    step:.1,
     slide: function ( event, ui ) {
-      tl.pause();
-      //adjust the timeline's progress() based on slider value
-      tl.progress( ui.value/100 );
-    }*/
+      timeline.pause();
+      timeline.progress( ui.value/100 );
+    }
   });
-
-  function updateSlider() {
-    jQuery("#slider").slider("value", tl.progress() *100);
-  }
-
-//  tl.progress(1);
 }
+
 
 /*
 var container = $("#container"),
