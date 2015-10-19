@@ -47,3 +47,9 @@ function shouldersFrom(left, right) {
         right: right
     };
 }
+function shoulderFrom(mesh, light) {
+    return {
+        mesh: mesh,
+        light: light
+    };
+}

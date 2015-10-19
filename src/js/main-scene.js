@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', initScene, false);
 var scale = 10;
-var amount = 10;
+var amount = 1;
 function initScene() {
     if (!BABYLON.Engine.isSupported()) {
         return;
@@ -9,10 +9,10 @@ function initScene() {
     var engine = new BABYLON.Engine(canvas, true);
     var scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color3(.3, .3, .3);
-    attachCamera(canvas, scene, scale);
-    setLight(scene);
+    var camera = attachCamera(canvas, scene, scale);
+    var light = setLight(scene);
     createPatternSpaceBox(scene, scale);
-    var cortex = new Cortex(amount, scene, scale);
+    var cortex = new Cortex(amount, scene, scale, camera, engine);
     engine.runRenderLoop(function () { return scene.render(); });
     cortex.draw();
     bindControls(cortex);
@@ -26,6 +26,7 @@ function attachCamera(canvas, scene, scale) {
     camera.lowerRadiusLimit = scale / 2;
     camera.alpha = 5.5;
     camera.attachControl(canvas, false);
+    return camera;
 }
 function setLight(scene) {
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
@@ -34,6 +35,7 @@ function setLight(scene) {
     lamp.intensity = .4;
     lamp.diffuse = new BABYLON.Color3(0, .1, .1);
     lamp.specular = new BABYLON.Color3(0, 0, .1);
+    return lamp;
 }
 function createPatternSpaceBox(scene, scale) {
     var borderBox = BABYLON.Mesh.CreateBox("borders", scale, scene);

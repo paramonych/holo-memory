@@ -2580,6 +2580,7 @@ declare module BABYLON {
         unbind(): void;
         clone(name: string): Material;
         dispose(forceDisposeEffect?: boolean): void;
+        diffuseTexture: BaseTexture;
     }
 }
 

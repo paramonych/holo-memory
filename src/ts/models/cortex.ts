@@ -1,7 +1,12 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   public blasts: NeuroBlast[];
-  constructor(private neuronsNum: number, public scene: BABYLON.Scene, public scale: number) {
+  constructor(
+    private neuronsNum: number,
+    public scene: BABYLON.Scene,
+    public scale: number,
+    public camera: BABYLON.ArcRotateCamera,
+    public engine: BABYLON.Engine) {
     this.createNeurons();
   }
 

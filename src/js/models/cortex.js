@@ -1,8 +1,10 @@
 var Cortex = (function () {
-    function Cortex(neuronsNum, scene, scale) {
+    function Cortex(neuronsNum, scene, scale, camera, engine) {
         this.neuronsNum = neuronsNum;
         this.scene = scene;
         this.scale = scale;
+        this.camera = camera;
+        this.engine = engine;
         this.createNeurons();
     }
     Cortex.prototype.createNeurons = function () {

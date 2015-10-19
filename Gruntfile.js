@@ -45,7 +45,10 @@ module.exports = function(grunt) {
           {src: 'src/js/main.min.js', dest: (buildDir + 'js/main.min.js')},
           //{src: 'src/js/sourcemap.map', dest: (buildDir + 'js/sourcemap.map')},
           {src: 'src/css/style.min.css', dest: (buildDir + 'css/style.min.css')},
-          {src: 'src/pix/star.jpg', dest: (buildDir + 'pix/star.jpg')},
+          {expand: true, flatten: true, cwd: 'src/textures/',src: [
+            'sun.png',
+            'star.jpg'
+          ], dest: (buildDir+'textures/')},
           {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
             'babylon.2.2.js',
             'jquery-2.1.4.min.js',
@@ -71,7 +74,10 @@ module.exports = function(grunt) {
           {src: debugHTMLFile, dest: (buildDir+'debug.html')},
           {src: 'src/js/main.js', dest: (buildDir + 'js/main.js')},
           {src: 'src/css/style.min.css', dest: (buildDir + 'css/style.min.css')},
-          {src: 'src/pix/star.jpg', dest: (buildDir + 'pix/star.jpg')},
+          {expand: true, flatten: true, cwd: 'src/textures/',src: [
+            'sun.png',
+            'star.jpg'
+          ], dest: (buildDir+'textures/')},
           {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
             'babylon.2.2.js',
             'jquery-2.1.4.min.js',

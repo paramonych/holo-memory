@@ -48,13 +48,31 @@ class Spike implements Disposable, Dualistic {
 }
 
 interface SpikeShoulders {
-  left: BABYLON.Mesh,
-  right: BABYLON.Mesh
+  left: SpikeShoulder,
+  right: SpikeShoulder
 }
 
-function shouldersFrom(left: BABYLON.Mesh, right: BABYLON.Mesh): SpikeShoulders {
+interface SpikeShoulder {
+  mesh: BABYLON.Mesh,
+  light: BABYLON.PointLight
+}
+
+function shouldersFrom(
+  left: SpikeShoulder,
+  right: SpikeShoulder
+): SpikeShoulders {
   return {
     left: left,
     right: right
+  };
+}
+
+function shoulderFrom(
+  mesh: BABYLON.Mesh,
+  light: BABYLON.PointLight
+): SpikeShoulder {
+  return {
+    mesh: mesh,
+    light: light
   };
 }
