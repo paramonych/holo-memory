@@ -1,7 +1,7 @@
 
 
 class Neuron implements Disposable, Dualistic  { // This is the single dendrite of the single neuron in fact
-  private spike: Spike;
+  public spike: Spike;
   public state: KnockoutObservable<StateType>;
   private synapces = new Array<Synapce>();
   public neuron: NeuronMesh;
@@ -11,12 +11,12 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   ) {
     this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
+    this.setSpike();
     this.setSynapces();
-    this.setSpike(this.synapces[Math.floor(this.synapces.length/2)]);
   }
 
-  private setSpike(synapce: Synapce): void {
-    this.spike = new Spike(this, synapce);
+  private setSpike(): void {
+    this.spike = new Spike(this);
     this.spike.state.subscribe((state) => {
       if(!isActiveState(state)) {
         this.deactivate();
@@ -70,16 +70,16 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public serveState(newState: StateType): void {
     if(isActiveState(newState)) {
       this.spike.launch();
-      _.each(this.synapces, (synapce) => {
+      /*_.each(this.synapces, (synapce) => {
         if(randomSign() > 0) {
           synapce.activate();
         }
-      });
+      });*/
     } else {
       this.spike.deactivate();
-      _.each(this.synapces, (synapce) => {
+      /*_.each(this.synapces, (synapce) => {
         synapce.deactivate();
-      });
+      });*/
     }
   }
 

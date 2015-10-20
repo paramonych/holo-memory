@@ -10,6 +10,17 @@ class Synapce implements Disposable, Dualistic {
     this.mesh = new SynapceMesh(scene, scale, position);
     this.setMediator();
     this.deactivate();
+    this.startWatchForSpike();
+  }
+
+  private startWatchForSpike(): void {
+    this.neuron.spike.moved.subscribe((frontPosition) => {
+      if(this.mesh.affect(frontPosition)) {
+        this.activate();
+      } else {
+        this.deactivate();
+      }
+    });
   }
 
   private setMediator(): void {

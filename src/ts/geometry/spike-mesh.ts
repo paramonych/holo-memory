@@ -11,11 +11,10 @@ class SpikeMesh implements ActivatableMesh {
   constructor(
     public scene: BABYLON.Scene,
     public scale: number,
-    public synapce: Synapce,
-    public neuron: Neuron
+    public spike: Spike
   ) {
     this.curve = new Array<BABYLON.Vector3>();
-    _.each(this.neuron.neuron.curve.path, (next) => {
+    _.each(this.spike.neuron.neuron.curve.path, (next) => {
       this.curve.push(next.clone());
     });
 
@@ -117,6 +116,11 @@ class SpikeMesh implements ActivatableMesh {
             y: positionRight.y,
             z: positionRight.z
         }, i * (duration / quantity));
+
+        this.spike.reportMovement(doubleVectorFrom(
+          new BABYLON.Vector3(positionLeft.x, positionLeft.y, positionLeft.z),
+          new BABYLON.Vector3(positionRight.x, positionRight.y, positionRight.z)
+        ));
     }
 
     //~ timeline.play();
@@ -150,4 +154,16 @@ function arrayClone(array: Array<any>): Array<any> {
     result.push(array[s].clone());
   }
   return result;
+}
+
+interface DoubleVector{
+  one: BABYLON.Vector3;
+  two: BABYLON.Vector3;
+}
+
+function doubleVectorFrom(o: BABYLON.Vector3, t: BABYLON.Vector3): DoubleVector {
+  return  {
+    one: o,
+    two: t
+  };
 }

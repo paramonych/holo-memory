@@ -11,6 +11,17 @@ var SynapceMesh = (function () {
         this.mesh.position = this.position;
         this.deactivate();
     };
+    SynapceMesh.prototype.affect = function (frontPosition) {
+        return this.isCloseEnough(frontPosition.one) || this.isCloseEnough(frontPosition.two);
+    };
+    SynapceMesh.prototype.isCloseEnough = function (vector) {
+        var delta = this.scale / 4;
+        var x = Math.abs(this.position.x - vector.x);
+        var y = Math.abs(this.position.y - vector.y);
+        var z = Math.abs(this.position.z - vector.z);
+        console.debug('delta', x, y, z, delta);
+        return x < delta && y < delta && z < delta;
+    };
     SynapceMesh.prototype.activate = function () {
         this.mesh.material = this.activeMaterial;
     };

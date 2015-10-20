@@ -4,7 +4,7 @@ var Mediator = (function () {
         this.synapce = synapce;
         this.scene = this.synapce.neuron.cortex.scene;
         this.texture = new BABYLON.Texture(particleUrl, this.scene);
-        this.cloud = new BABYLON.ParticleSystem("cloud", 2000, this.scene);
+        this.cloud = new BABYLON.ParticleSystem("cloud", 1000, this.scene);
         this.setParticles();
     }
     Mediator.prototype.activate = function () {

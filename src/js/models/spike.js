@@ -1,21 +1,24 @@
 var Spike = (function () {
-    function Spike(neuron, synapce) {
+    function Spike(neuron) {
         this.neuron = neuron;
-        this.synapce = synapce;
         this.speed = 1;
         this.lifeTime = 2000;
         var neuronMesh = this.neuron.getMesh();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
-        this.mesh = new SpikeMesh(scene, scale, synapce, neuron);
+        this.mesh = new SpikeMesh(scene, scale, this);
         this.toDefaultState();
         this.deactivate();
+        this.moved = ko.observable(doubleVectorFrom(new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 0, 0)));
     }
     Spike.prototype.activate = function () {
         this.state(StateType.Active);
     };
     Spike.prototype.deactivate = function () {
         this.state(StateType.Silent);
+    };
+    Spike.prototype.reportMovement = function (vectors) {
+        this.moved(vectors);
     };
     Spike.prototype.dispose = function () {
         this.mesh.dispose();

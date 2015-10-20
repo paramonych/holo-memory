@@ -3,17 +3,19 @@ class Spike implements Disposable, Dualistic {
   public state: KnockoutObservable<StateType>;
   private lifeTime: number = 2000; // milliseconds
   public mesh: SpikeMesh;
+  public moved: KnockoutObservable<DoubleVector>;
 
   constructor(
-    private neuron: Neuron,
-    private synapce: Synapce
+    public neuron: Neuron
   ) {
     let neuronMesh = this.neuron.getMesh();
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
-    this.mesh = new SpikeMesh(scene, scale, synapce, neuron);
+    this.mesh = new SpikeMesh(scene, scale, this);
     this.toDefaultState();
     this.deactivate();
+
+    this.moved = ko.observable(doubleVectorFrom(new BABYLON.Vector3(0,0,0),new BABYLON.Vector3(0,0,0)));
   }
 
   public activate(): void {
@@ -21,6 +23,10 @@ class Spike implements Disposable, Dualistic {
   }
   public deactivate(): void {
     this.state(StateType.Silent);
+  }
+
+  public reportMovement(vectors: DoubleVector): void {
+    this.moved(vectors);
   }
 
   public dispose(): void {

@@ -1,13 +1,12 @@
 var sunUrl = 'http://site1.2013321.brim.ru/nru/textures/sun.png';
 var SpikeMesh = (function () {
-    function SpikeMesh(scene, scale, synapce, neuron) {
+    function SpikeMesh(scene, scale, spike) {
         var _this = this;
         this.scene = scene;
         this.scale = scale;
-        this.synapce = synapce;
-        this.neuron = neuron;
+        this.spike = spike;
         this.curve = new Array();
-        _.each(this.neuron.neuron.curve.path, function (next) {
+        _.each(this.spike.neuron.neuron.curve.path, function (next) {
             _this.curve.push(next.clone());
         });
         this.position = this.curve[Math.floor(this.curve.length / 2)].clone();
@@ -90,6 +89,7 @@ var SpikeMesh = (function () {
                 y: positionRight.y,
                 z: positionRight.z
             }, i * (duration / quantity));
+            this.spike.reportMovement(doubleVectorFrom(new BABYLON.Vector3(positionLeft.x, positionLeft.y, positionLeft.z), new BABYLON.Vector3(positionRight.x, positionRight.y, positionRight.z)));
         }
     };
     SpikeMesh.prototype.setMaterials = function () {
@@ -117,4 +117,10 @@ function arrayClone(array) {
         result.push(array[s].clone());
     }
     return result;
+}
+function doubleVectorFrom(o, t) {
+    return {
+        one: o,
+        two: t
+    };
 }

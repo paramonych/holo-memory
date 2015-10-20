@@ -16,6 +16,19 @@ class SynapceMesh implements ActivatableMesh {
     this.deactivate();
   }
 
+  public affect(frontPosition: DoubleVector): boolean {
+    return this.isCloseEnough(frontPosition.one) || this.isCloseEnough(frontPosition.two);
+  }
+
+  private isCloseEnough(vector: BABYLON.Vector3): boolean {
+    let delta = this.scale/4;
+    let x = Math.abs(this.position.x - vector.x);
+    let y = Math.abs(this.position.y - vector.y);
+    let z = Math.abs(this.position.z - vector.z);
+    console.debug('delta', x, y, z, delta);
+    return x < delta && y < delta && z < delta;
+  }
+
   public activate(): void {
     this.mesh.material = this.activeMaterial;
   }
