@@ -19,16 +19,16 @@ var SpikeMesh = (function () {
         this.deactivate();
     };
     SpikeMesh.prototype.constructShoulderMesh = function (isLeft) {
-        var shoulder = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 10, this.scene, false);
-        shoulder.position = isLeft ? this.curve[0].clone() : this.curve[this.curve.length - 1].clone();
+        var shoulder = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 40, this.scene, false);
+        shoulder.position = this.position.clone();
         var light = this.getLight(isLeft);
         light.parent = shoulder;
         return shoulderFrom(shoulder, light);
     };
     SpikeMesh.prototype.getLight = function (isLeft) {
         var light = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 1, 0), this.scene);
-        light.diffuse = isLeft ? new BABYLON.Color3(1, 0.5, 0.1) : new BABYLON.Color3(1, 0.5, 0.1);
-        light.specular = new BABYLON.Color3(1, 1, 0.9);
+        light.diffuse = new BABYLON.Color3(1, 0.8, 0);
+        light.specular = new BABYLON.Color3(0.9, 0.9, 1);
         light.intensity = 0;
         return light;
     };
@@ -44,10 +44,10 @@ var SpikeMesh = (function () {
         var right = this.shoulders.right;
         if (isActive) {
             this.activeLeftMaterial;
-            left.mesh.material = this.activeLeftMaterial;
+            left.mesh.material = this.activeMaterial;
             right.mesh.material = this.activeMaterial;
-            left.light.intensity = 1;
-            right.light.intensity = 1;
+            left.light.intensity = .4;
+            right.light.intensity = .4;
         }
         else {
             left.mesh.material = this.material;
@@ -61,9 +61,10 @@ var SpikeMesh = (function () {
         var timelineRight = new TimelineLite();
         var quantity = 100;
         var duration = 2;
-        var pathLeft = this.curve;
-        var pathRight = reversedArrayClone(this.curve);
+        var length = this.curve.length;
         var pos = Math.floor(this.curve.length / 2);
+        var pathLeft = reversedArrayClone(this.curve.slice(0, pos));
+        var pathRight = arrayClone(this.curve.slice(pos, length));
         var positionLeft = {
             x: pathLeft[0].x,
             y: pathLeft[0].y,
@@ -76,7 +77,7 @@ var SpikeMesh = (function () {
         };
         var tweenLeft = TweenLite.to(positionLeft, quantity, { bezier: pathLeft, ease: Linear.easeNone });
         var tweenRight = TweenLite.to(positionRight, quantity, { bezier: pathRight, ease: Linear.easeNone });
-        for (var i = 0; i < quantity / 2; i++) {
+        for (var i = 0; i < quantity; i++) {
             tweenLeft.time(i);
             timelineLeft.set(this.shoulders.left.mesh.position, {
                 x: positionLeft.x,
@@ -93,11 +94,9 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.setMaterials = function () {
         this.material = new BABYLON.StandardMaterial('i', this.scene);
-        this.material.alpha = 1;
+        this.material.alpha = 0;
         this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
-        this.activeMaterial.emissiveColor = new BABYLON.Color3(1, 0, 0);
-        this.activeLeftMaterial = new BABYLON.StandardMaterial('a', this.scene);
-        this.activeLeftMaterial.emissiveColor = new BABYLON.Color3(0, 1, 0);
+        this.activeMaterial.emissiveColor = new BABYLON.Color3(1, 0.8, 0.3);
     };
     SpikeMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.shoulders.left.mesh);
@@ -108,6 +107,13 @@ var SpikeMesh = (function () {
 function reversedArrayClone(array) {
     var result = new Array();
     for (var s = array.length - 1; s >= 0; s--) {
+        result.push(array[s].clone());
+    }
+    return result;
+}
+function arrayClone(array) {
+    var result = new Array();
+    for (var s = 0; s < array.length; s++) {
         result.push(array[s].clone());
     }
     return result;
