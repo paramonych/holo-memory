@@ -57,10 +57,8 @@ module.exports = function(grunt) {
             'knockout-3.3.0.js'
           ], dest: (buildDir+'libs/')},
           {expand: true, flatten: true, cwd: 'src/libs/sources/greensock/',src: [
-            'TweenLite.js',
             'TweenMax.js',
             'TimelineMax.js',
-            'TimelineLite.js',
             'easing/EasePack.js',
             'plugins/BezierPlugin.js'
           ], dest: (buildDir+'libs/')}
@@ -86,10 +84,8 @@ module.exports = function(grunt) {
             'knockout-3.3.0.js'
           ], dest: (buildDir+'libs/')},
           {expand: true, flatten: true, cwd: 'src/libs/sources/greensock/',src: [
-            'TweenLite.js',
             'TweenMax.js',
             'TimelineMax.js',
-            'TimelineLite.js',
             'easing/EasePack.js',
             'plugins/BezierPlugin.js'
           ], dest: (buildDir+'libs/')}

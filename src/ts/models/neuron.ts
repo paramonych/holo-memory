@@ -11,11 +11,12 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   ) {
     this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
-    this.setSpike();
-    this.setSynapces();
+    this.createSpike();
+    this.createSynapces();
+    this.startWatchForSpike();
   }
 
-  private setSpike(): void {
+  private createSpike(): void {
     this.spike = new Spike(this);
     this.spike.state.subscribe((state) => {
       if(!isActiveState(state)) {
@@ -24,7 +25,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     });
   }
 
-  private setSynapces(): void {
+  private createSynapces(): void {
     let scale = this.cortex.scale;
     let devideFactor = scale/2;
     let path = this.neuron.curve.path;
@@ -40,6 +41,18 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
           }
       });
     }
+  }
+
+  private startWatchForSpike(): void {
+    this.spike.moved.subscribe((frontPosition) => {
+      _.chain(this.synapces)
+       .filter((s) => !s.isActive())
+       .each((s) => {
+         if(s.mesh.affect(frontPosition)) {
+           s.activate();
+         }
+       });
+    });
   }
 
   public dispose(): void {

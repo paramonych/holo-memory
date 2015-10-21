@@ -4,10 +4,11 @@ var Neuron = (function () {
         this.synapces = new Array();
         this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
-        this.setSpike();
-        this.setSynapces();
+        this.createSpike();
+        this.createSynapces();
+        this.startWatchForSpike();
     }
-    Neuron.prototype.setSpike = function () {
+    Neuron.prototype.createSpike = function () {
         var _this = this;
         this.spike = new Spike(this);
         this.spike.state.subscribe(function (state) {
@@ -16,7 +17,7 @@ var Neuron = (function () {
             }
         });
     };
-    Neuron.prototype.setSynapces = function () {
+    Neuron.prototype.createSynapces = function () {
         var scale = this.cortex.scale;
         var devideFactor = scale / 2;
         var path = this.neuron.curve.path;
@@ -31,6 +32,18 @@ var Neuron = (function () {
                 }
             });
         }
+    };
+    Neuron.prototype.startWatchForSpike = function () {
+        var _this = this;
+        this.spike.moved.subscribe(function (frontPosition) {
+            _.chain(_this.synapces)
+                .filter(function (s) { return !s.isActive(); })
+                .each(function (s) {
+                if (s.mesh.affect(frontPosition)) {
+                    s.activate();
+                }
+            });
+        });
     };
     Neuron.prototype.dispose = function () {
         this.spike.dispose();

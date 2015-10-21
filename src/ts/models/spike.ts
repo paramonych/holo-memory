@@ -1,7 +1,7 @@
 class Spike implements Disposable, Dualistic {
   private speed: number = 1; // micrometers/milliseconds
   public state: KnockoutObservable<StateType>;
-  private lifeTime: number = 2000; // milliseconds
+  public tense: TimelineMax;
   public mesh: SpikeMesh;
   public moved: KnockoutObservable<DoubleVector>;
 
@@ -11,10 +11,10 @@ class Spike implements Disposable, Dualistic {
     let neuronMesh = this.neuron.getMesh();
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
+    this.tense = new TimelineMax();
     this.mesh = new SpikeMesh(scene, scale, this);
     this.toDefaultState();
     this.deactivate();
-
     this.moved = ko.observable(doubleVectorFrom(new BABYLON.Vector3(0,0,0),new BABYLON.Vector3(0,0,0)));
   }
 
@@ -51,34 +51,4 @@ class Spike implements Disposable, Dualistic {
     this.state = ko.observable(StateType.Silent);
     this.state.subscribe((state) => this.serveState(state));
   }
-}
-
-interface SpikeShoulders {
-  left: SpikeShoulder,
-  right: SpikeShoulder
-}
-
-interface SpikeShoulder {
-  mesh: BABYLON.Mesh,
-  light: BABYLON.PointLight
-}
-
-function shouldersFrom(
-  left: SpikeShoulder,
-  right: SpikeShoulder
-): SpikeShoulders {
-  return {
-    left: left,
-    right: right
-  };
-}
-
-function shoulderFrom(
-  mesh: BABYLON.Mesh,
-  light: BABYLON.PointLight
-): SpikeShoulder {
-  return {
-    mesh: mesh,
-    light: light
-  };
 }

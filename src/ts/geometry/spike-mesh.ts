@@ -67,8 +67,8 @@ class SpikeMesh implements ActivatableMesh {
       this.activeLeftMaterial
       left.mesh.material = this.activeMaterial;
       right.mesh.material = this.activeMaterial;
-      left.light.intensity = .4;
-      right.light.intensity = .4;
+      left.light.intensity = .25;
+      right.light.intensity = .25;
     } else {
       left.mesh.material = this.material;
       right.mesh.material = this.material;
@@ -78,8 +78,6 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private showMovingSpike(): void {
-    let timelineLeft = new TimelineLite();
-    let timelineRight = new TimelineLite();
     let quantity = 100;
     let duration = 2;
 
@@ -104,14 +102,14 @@ class SpikeMesh implements ActivatableMesh {
 
     for (let i = 0; i < quantity; i++) {
         tweenLeft.time(i);
-        timelineLeft.set(this.shoulders.left.mesh.position, {
+        this.spike.tense.set(this.shoulders.left.mesh.position, {
             x: positionLeft.x,
             y: positionLeft.y,
             z: positionLeft.z
         }, i * (duration / quantity));
 
         tweenRight.time(i);
-        timelineRight.set(this.shoulders.right.mesh.position, {
+        this.spike.tense.set(this.shoulders.right.mesh.position, {
             x: positionRight.x,
             y: positionRight.y,
             z: positionRight.z
@@ -138,32 +136,4 @@ class SpikeMesh implements ActivatableMesh {
     this.scene.removeMesh(this.shoulders.left.mesh);
     this.scene.removeMesh(this.shoulders.right.mesh);
   }
-}
-
-function reversedArrayClone(array: Array<any>): Array<any> {
-  let result = new Array<any>();
-  for(let s=array.length-1; s>=0; s--) {
-    result.push(array[s].clone());
-  }
-  return result;
-}
-
-function arrayClone(array: Array<any>): Array<any> {
-  let result = new Array<any>();
-  for(let s=0; s<array.length; s++) {
-    result.push(array[s].clone());
-  }
-  return result;
-}
-
-interface DoubleVector{
-  one: BABYLON.Vector3;
-  two: BABYLON.Vector3;
-}
-
-function doubleVectorFrom(o: BABYLON.Vector3, t: BABYLON.Vector3): DoubleVector {
-  return  {
-    one: o,
-    two: t
-  };
 }

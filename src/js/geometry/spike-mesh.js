@@ -45,8 +45,8 @@ var SpikeMesh = (function () {
             this.activeLeftMaterial;
             left.mesh.material = this.activeMaterial;
             right.mesh.material = this.activeMaterial;
-            left.light.intensity = .4;
-            right.light.intensity = .4;
+            left.light.intensity = .25;
+            right.light.intensity = .25;
         }
         else {
             left.mesh.material = this.material;
@@ -56,8 +56,6 @@ var SpikeMesh = (function () {
         }
     };
     SpikeMesh.prototype.showMovingSpike = function () {
-        var timelineLeft = new TimelineLite();
-        var timelineRight = new TimelineLite();
         var quantity = 100;
         var duration = 2;
         var length = this.curve.length;
@@ -78,13 +76,13 @@ var SpikeMesh = (function () {
         var tweenRight = TweenLite.to(positionRight, quantity, { bezier: pathRight, ease: Linear.easeNone });
         for (var i = 0; i < quantity; i++) {
             tweenLeft.time(i);
-            timelineLeft.set(this.shoulders.left.mesh.position, {
+            this.spike.tense.set(this.shoulders.left.mesh.position, {
                 x: positionLeft.x,
                 y: positionLeft.y,
                 z: positionLeft.z
             }, i * (duration / quantity));
             tweenRight.time(i);
-            timelineRight.set(this.shoulders.right.mesh.position, {
+            this.spike.tense.set(this.shoulders.right.mesh.position, {
                 x: positionRight.x,
                 y: positionRight.y,
                 z: positionRight.z
@@ -104,23 +102,3 @@ var SpikeMesh = (function () {
     };
     return SpikeMesh;
 })();
-function reversedArrayClone(array) {
-    var result = new Array();
-    for (var s = array.length - 1; s >= 0; s--) {
-        result.push(array[s].clone());
-    }
-    return result;
-}
-function arrayClone(array) {
-    var result = new Array();
-    for (var s = 0; s < array.length; s++) {
-        result.push(array[s].clone());
-    }
-    return result;
-}
-function doubleVectorFrom(o, t) {
-    return {
-        one: o,
-        two: t
-    };
-}

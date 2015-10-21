@@ -1,19 +1,16 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   public blasts: NeuroBlast[];
-  constructor(
-    private neuronsNum: number,
-    public scene: BABYLON.Scene,
-    public scale: number,
-    public camera: BABYLON.ArcRotateCamera,
-    public engine: BABYLON.Engine) {
+  private neuronsAmount = 1;
+
+  constructor(public scene: BABYLON.Scene, public scale: number) {
     this.createNeurons();
   }
 
   private createNeurons(): void {
       _.each(this.neurons, (n) => n.dispose());
       this.neurons = new Array<Neuron>();
-      for(let i=0; i< this.neuronsNum; i++) {
+      for(let i=0; i< this.neuronsAmount; i++) {
         this.neurons.push( new Neuron(this));
       }
   }
@@ -29,40 +26,4 @@ class Cortex implements Disposable {
   public dispose(): void {
     _.each(this.neurons, (neuron) => {neuron.dispose();});
   }
-}
-
-//// NRU INTERFACES GOES BELOW //////////////////////////////////////
-
-interface NeuroBlast {
-  position: BABYLON.Vector3,
-  signCode: Mediator
-}
-
-//// COMMON INTERFACES GOES BELOW ///////////////////////////////////
-
-interface Disposable {
-  dispose: () => void
-}
-
-interface Dualistic {
-  state: KnockoutObservable<StateType>;
-  activate: () => void;
-  deactivate: () => void;
-  serveState: (state: StateType) => void;
-  toDefaultState: () => void;
-}
-
-interface ActivatableMesh {
-  material: BABYLON.StandardMaterial;
-  activeMaterial: BABYLON.StandardMaterial;
-  setMaterials: () => void;
-}
-
-enum StateType {
-  'Active',
-  'Silent'
-}
-
-function isActiveState(state: StateType): boolean {
-  return state === StateType.Active;
 }

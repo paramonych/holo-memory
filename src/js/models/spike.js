@@ -2,10 +2,10 @@ var Spike = (function () {
     function Spike(neuron) {
         this.neuron = neuron;
         this.speed = 1;
-        this.lifeTime = 2000;
         var neuronMesh = this.neuron.getMesh();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
+        this.tense = new TimelineMax();
         this.mesh = new SpikeMesh(scene, scale, this);
         this.toDefaultState();
         this.deactivate();
@@ -44,15 +44,3 @@ var Spike = (function () {
     };
     return Spike;
 })();
-function shouldersFrom(left, right) {
-    return {
-        left: left,
-        right: right
-    };
-}
-function shoulderFrom(mesh, light) {
-    return {
-        mesh: mesh,
-        light: light
-    };
-}

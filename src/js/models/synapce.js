@@ -8,19 +8,7 @@ var Synapce = (function () {
         this.mesh = new SynapceMesh(scene, scale, position);
         this.setMediator();
         this.deactivate();
-        this.startWatchForSpike();
     }
-    Synapce.prototype.startWatchForSpike = function () {
-        var _this = this;
-        this.neuron.spike.moved.subscribe(function (frontPosition) {
-            if (_this.mesh.affect(frontPosition)) {
-                _this.activate();
-            }
-            else {
-                _this.deactivate();
-            }
-        });
-    };
     Synapce.prototype.setMediator = function () {
         this.mediator = new Mediator(this);
     };
@@ -44,6 +32,9 @@ var Synapce = (function () {
             this.mesh.deactivate();
             this.mediator.deactivate();
         }
+    };
+    Synapce.prototype.isActive = function () {
+        return isActiveState(this.state());
     };
     Synapce.prototype.dispose = function () {
         this.mesh.dispose();

@@ -1,16 +1,14 @@
 var Cortex = (function () {
-    function Cortex(neuronsNum, scene, scale, camera, engine) {
-        this.neuronsNum = neuronsNum;
+    function Cortex(scene, scale) {
         this.scene = scene;
         this.scale = scale;
-        this.camera = camera;
-        this.engine = engine;
+        this.neuronsAmount = 1;
         this.createNeurons();
     }
     Cortex.prototype.createNeurons = function () {
         _.each(this.neurons, function (n) { return n.dispose(); });
         this.neurons = new Array();
-        for (var i = 0; i < this.neuronsNum; i++) {
+        for (var i = 0; i < this.neuronsAmount; i++) {
             this.neurons.push(new Neuron(this));
         }
     };
@@ -25,11 +23,3 @@ var Cortex = (function () {
     };
     return Cortex;
 })();
-var StateType;
-(function (StateType) {
-    StateType[StateType['Active'] = 0] = 'Active';
-    StateType[StateType['Silent'] = 1] = 'Silent';
-})(StateType || (StateType = {}));
-function isActiveState(state) {
-    return state === StateType.Active;
-}

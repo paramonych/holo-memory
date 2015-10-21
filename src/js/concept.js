@@ -1,21 +1,20 @@
-document.addEventListener('DOMContentLoaded', initScene, false);
-var scale = 10;
-var amount = 1;
-function initScene() {
+document.addEventListener('DOMContentLoaded', plant, false);
+function plant() {
     if (!BABYLON.Engine.isSupported()) {
         return;
     }
-    var canvas = document.getElementById("renderCanvas");
+    var canvas = jQuery(ids.canvas)[0];
     var engine = new BABYLON.Engine(canvas, true);
     var scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color3(.3, .3, .3);
-    var camera = attachCamera(canvas, scene, scale);
-    var light = setLight(scene);
+    var scale = 10;
+    attachCamera(canvas, scene, scale);
+    setLight(scene);
     createPatternSpaceBox(scene, scale);
-    var cortex = new Cortex(amount, scene, scale, camera, engine);
-    engine.runRenderLoop(function () { return scene.render(); });
-    cortex.draw();
-    bindControls(cortex);
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+    wireUI(new Space(scene, scale), new Time());
 }
 function attachCamera(canvas, scene, scale) {
     var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 12, 0, scale, new BABYLON.Vector3(0, 0, 0), scene);
@@ -47,8 +46,34 @@ function createPatternSpaceBox(scene, scale) {
     borderBox.material = borderBoxMaterial;
     return borderBox;
 }
-function createMediator(scene) {
-    var sphere = BABYLON.Mesh.CreateSphere("sphere1", 2, 2, scene);
-    sphere.position.y = 1;
-    return sphere;
+function wireUI(space, time) {
+    var knobs = getUIControls();
+    knobs.launch.on('click', function () {
+        space.cortex.react();
+        time.flow();
+    });
+    knobs.play.click(function () { time.flow(); });
+    knobs.pause.click(function () { time.stop(); });
+    knobs.restart.click(function () { time.loop(); });
+    time.tense.eventCallback("onUpdate", function () {
+        var progress = time.tense.progress() * 100;
+        if (progress) {
+            knobs.slider.slider("value", progress);
+        }
+    });
+    knobs.slider.slider({
+        range: false,
+        min: 0,
+        max: 100,
+        step: .1
+    });
+    space.expose(time);
+}
+function getUIControls() {
+    var launch = jQuery(ids.launch);
+    var play = jQuery(ids.play);
+    var pause = jQuery(ids.pause);
+    var restart = jQuery(ids.restart);
+    var slider = jQuery(ids.slider);
+    return knobsFrom(launch, play, pause, restart, slider);
 }
