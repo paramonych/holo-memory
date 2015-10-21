@@ -41,6 +41,7 @@
         "ts/static/selectors.ts",
         "ts/utils/arrays.ts",
         "ts/utils/math.ts",
+        "ts/utils/rendering.ts",
         "ts/utils/vectors.ts"
     ],
     "formatCodeOptions": {
