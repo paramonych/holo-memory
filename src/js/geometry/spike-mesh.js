@@ -58,6 +58,7 @@ var SpikeMesh = (function () {
     SpikeMesh.prototype.showMovingSpike = function () {
         var quantity = 100;
         var duration = 2;
+        var tense = this.spike.neuron.tense;
         var length = this.curve.length;
         var pos = Math.floor(this.curve.length / 2);
         var pathLeft = reversedArrayClone(this.curve.slice(0, pos));
@@ -76,19 +77,20 @@ var SpikeMesh = (function () {
         var tweenRight = TweenLite.to(positionRight, quantity, { bezier: pathRight, ease: Linear.easeNone });
         for (var i = 0; i < quantity; i++) {
             tweenLeft.time(i);
-            this.spike.tense.set(this.shoulders.left.mesh.position, {
+            tense.set(this.shoulders.left.mesh.position, {
                 x: positionLeft.x,
                 y: positionLeft.y,
                 z: positionLeft.z
             }, i * (duration / quantity));
             tweenRight.time(i);
-            this.spike.tense.set(this.shoulders.right.mesh.position, {
+            tense.set(this.shoulders.right.mesh.position, {
                 x: positionRight.x,
                 y: positionRight.y,
                 z: positionRight.z
             }, i * (duration / quantity));
             this.spike.reportMovement(doubleVectorFrom(new BABYLON.Vector3(positionLeft.x, positionLeft.y, positionLeft.z), new BABYLON.Vector3(positionRight.x, positionRight.y, positionRight.z)));
         }
+        tense.play();
     };
     SpikeMesh.prototype.setMaterials = function () {
         this.material = new BABYLON.StandardMaterial('i', this.scene);

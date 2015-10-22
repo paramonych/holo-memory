@@ -81,6 +81,8 @@ class SpikeMesh implements ActivatableMesh {
     let quantity = 100;
     let duration = 2;
 
+    let tense = this.spike.neuron.tense;
+
     let length = this.curve.length;
     let pos = Math.floor(this.curve.length/2);
     let pathLeft = reversedArrayClone(this.curve.slice(0,pos));
@@ -102,14 +104,14 @@ class SpikeMesh implements ActivatableMesh {
 
     for (let i = 0; i < quantity; i++) {
         tweenLeft.time(i);
-        this.spike.tense.set(this.shoulders.left.mesh.position, {
+        tense.set(this.shoulders.left.mesh.position, {
             x: positionLeft.x,
             y: positionLeft.y,
             z: positionLeft.z
         }, i * (duration / quantity));
 
         tweenRight.time(i);
-        this.spike.tense.set(this.shoulders.right.mesh.position, {
+        tense.set(this.shoulders.right.mesh.position, {
             x: positionRight.x,
             y: positionRight.y,
             z: positionRight.z
@@ -121,7 +123,7 @@ class SpikeMesh implements ActivatableMesh {
         ));
     }
 
-    //~ timeline.play();
+    tense.play();
   }
 
   setMaterials(): void {

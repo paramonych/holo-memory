@@ -5,7 +5,6 @@ var Spike = (function () {
         var neuronMesh = this.neuron.getMesh();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
-        this.tense = new TimelineMax();
         this.mesh = new SpikeMesh(scene, scale, this);
         this.toDefaultState();
         this.deactivate();

@@ -5,10 +5,12 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public state: KnockoutObservable<StateType>;
   private synapces = new Array<Synapce>();
   public neuron: NeuronMesh;
+  public tense: TimelineMax;
 
   constructor(
     public cortex: Cortex
   ) {
+    this.tense = new TimelineMax({repeat: 1, paused : true});
     this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
     this.createSpike();

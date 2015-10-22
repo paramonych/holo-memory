@@ -2,6 +2,7 @@ var Neuron = (function () {
     function Neuron(cortex) {
         this.cortex = cortex;
         this.synapces = new Array();
+        this.tense = new TimelineMax({ repeat: 1, paused: true });
         this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
         this.createSpike();
