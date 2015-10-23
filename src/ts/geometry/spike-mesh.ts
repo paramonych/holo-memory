@@ -5,6 +5,7 @@ class SpikeMesh implements ActivatableMesh {
   public material: BABYLON.StandardMaterial;
   public activeMaterial: BABYLON.StandardMaterial;
   public activeLeftMaterial: BABYLON.StandardMaterial;
+  private numberPosition: number;
   private position: BABYLON.Vector3;
   private curve: Array<BABYLON.Vector3>;
 
@@ -18,9 +19,37 @@ class SpikeMesh implements ActivatableMesh {
       this.curve.push(next.clone());
     });
 
-    this.position = this.curve[ Math.floor(this.curve.length/2)].clone();
     this.setMaterials();
     this.constructShoulders();
+
+    this.setPositionInCurve();
+    this.setPosition(this.curve[this.numberPosition]);
+    this.spike.neuron.tense.eventCallback('onComplete', () => {
+      this.resetPosition();
+    });
+  }
+
+  private setPositionInCurve(): void {
+    this.numberPosition = Math.floor(this.curve.length/2);
+    if(this.position !== void 0 ) {
+      _.each(this.curve, (next, index) => {
+        if(compareVectors(next, this.position)) {
+          this.numberPosition = index;
+        }
+      });
+    }
+  }
+
+  private resetPosition(): void {
+    this.position = void 0;
+    this.setPositionInCurve();
+    this.position = this.curve[this.numberPosition].clone();
+  }
+
+  public setPosition(position: BABYLON.Vector3): void {
+    this.position = position.clone();
+    this.setPositionInCurve();
+    this.positionShoulders();
   }
 
   private constructShoulders(): void {
@@ -32,14 +61,14 @@ class SpikeMesh implements ActivatableMesh {
 
   private constructShoulderMesh(isLeft: boolean): SpikeShoulder {
     let shoulder = BABYLON.Mesh.CreateSphere('s', 8, this.scale/40, this.scene, false);
-
-    // TODO: remove this positioning and add another shoulder to animation circuit
-    shoulder.position = this.position.clone();
     let light = this.getLight(isLeft);
-
     light.parent = shoulder;
-
     return shoulderFrom(shoulder, light);
+  }
+
+  private positionShoulders(): void {
+    this.shoulders.left.mesh.position = this.position.clone();
+    this.shoulders.right.mesh.position = this.position.clone();
   }
 
   private getLight(isLeft: boolean): BABYLON.PointLight {
@@ -78,26 +107,16 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private showMovingSpike(): void {
-    let quantity = 100;
+    let quantity = this.curve.length*2;
     let duration = 2;
 
     let tense = this.spike.neuron.tense;
 
-    let length = this.curve.length;
-    let pos = Math.floor(this.curve.length/2);
-    let pathLeft = reversedArrayClone(this.curve.slice(0,pos));
-    let pathRight = arrayClone(this.curve.slice(pos, length));
+    let pathLeft = reversedArrayClone(this.curve.slice(0, this.numberPosition));
+    let pathRight = arrayClone(this.curve.slice(this.numberPosition, this.curve.length));
 
-    let positionLeft = {
-        x: pathLeft[0].x,
-        y: pathLeft[0].y,
-        z: pathLeft[0].z
-    };
-    let positionRight = {
-        x: pathRight[0].x,
-        y: pathRight[0].y,
-        z: pathRight[0].z
-    };
+    let positionLeft = {x:this.position.x, y:this.position.y, z:this.position.z};
+    let positionRight = {x:this.position.x, y:this.position.y, z:this.position.z};
 
     let tweenLeft = TweenLite.to(positionLeft, quantity, {bezier:pathLeft, ease:Linear.easeNone});
     let tweenRight = TweenLite.to(positionRight, quantity, {bezier:pathRight, ease:Linear.easeNone});
@@ -117,10 +136,10 @@ class SpikeMesh implements ActivatableMesh {
             z: positionRight.z
         }, i * (duration / quantity));
 
-        this.spike.reportMovement(doubleVectorFrom(
+      /*  this.spike.reportMovement(doubleVectorFrom(
           new BABYLON.Vector3(positionLeft.x, positionLeft.y, positionLeft.z),
           new BABYLON.Vector3(positionRight.x, positionRight.y, positionRight.z)
-        ));
+        ));*/
     }
 
     tense.play();

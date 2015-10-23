@@ -39,3 +39,8 @@ function randomPath(scale: number, deltaRadius: number, deltaSegment: number): B
 function vectorFrom(x: number, y: number, z: number): BABYLON.Vector3 {
   return new BABYLON.Vector3(x,y,z);
 }
+
+function compareVectors(one: BABYLON.Vector3, two: BABYLON.Vector3): boolean {
+  var sum = one.add(two.negate());
+  return sum.x === 0 && sum.y === 0 && sum.z === 0;
+}

@@ -10,7 +10,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   constructor(
     public cortex: Cortex
   ) {
-    this.tense = new TimelineMax({repeat: 1, paused : true});
+    this.tense = new TimelineMax({repeat: 0, paused : true});
     this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
     this.createSpike();

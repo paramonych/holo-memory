@@ -9,20 +9,48 @@ var SpikeMesh = (function () {
         _.each(this.spike.neuron.neuron.curve.path, function (next) {
             _this.curve.push(next.clone());
         });
-        this.position = this.curve[Math.floor(this.curve.length / 2)].clone();
         this.setMaterials();
         this.constructShoulders();
+        this.setPositionInCurve();
+        this.setPosition(this.curve[this.numberPosition]);
+        this.spike.neuron.tense.eventCallback('onComplete', function () {
+            _this.resetPosition();
+        });
     }
+    SpikeMesh.prototype.setPositionInCurve = function () {
+        var _this = this;
+        this.numberPosition = Math.floor(this.curve.length / 2);
+        if (this.position !== void 0) {
+            _.each(this.curve, function (next, index) {
+                if (compareVectors(next, _this.position)) {
+                    _this.numberPosition = index;
+                }
+            });
+        }
+    };
+    SpikeMesh.prototype.resetPosition = function () {
+        this.position = void 0;
+        this.setPositionInCurve();
+        this.position = this.curve[this.numberPosition].clone();
+    };
+    SpikeMesh.prototype.setPosition = function (position) {
+        this.position = position.clone();
+        this.setPositionInCurve();
+        this.positionShoulders();
+    };
     SpikeMesh.prototype.constructShoulders = function () {
         this.shoulders = shouldersFrom(this.constructShoulderMesh(true), this.constructShoulderMesh(false));
         this.deactivate();
     };
     SpikeMesh.prototype.constructShoulderMesh = function (isLeft) {
         var shoulder = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 40, this.scene, false);
-        shoulder.position = this.position.clone();
         var light = this.getLight(isLeft);
         light.parent = shoulder;
         return shoulderFrom(shoulder, light);
+    };
+    SpikeMesh.prototype.positionShoulders = function () {
+        this.shoulders.left.mesh.position = this.position.clone();
+        this.shoulders.right.mesh.position = this.position.clone();
     };
     SpikeMesh.prototype.getLight = function (isLeft) {
         var light = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 1, 0), this.scene);
@@ -56,23 +84,13 @@ var SpikeMesh = (function () {
         }
     };
     SpikeMesh.prototype.showMovingSpike = function () {
-        var quantity = 100;
+        var quantity = this.curve.length * 2;
         var duration = 2;
         var tense = this.spike.neuron.tense;
-        var length = this.curve.length;
-        var pos = Math.floor(this.curve.length / 2);
-        var pathLeft = reversedArrayClone(this.curve.slice(0, pos));
-        var pathRight = arrayClone(this.curve.slice(pos, length));
-        var positionLeft = {
-            x: pathLeft[0].x,
-            y: pathLeft[0].y,
-            z: pathLeft[0].z
-        };
-        var positionRight = {
-            x: pathRight[0].x,
-            y: pathRight[0].y,
-            z: pathRight[0].z
-        };
+        var pathLeft = reversedArrayClone(this.curve.slice(0, this.numberPosition));
+        var pathRight = arrayClone(this.curve.slice(this.numberPosition, this.curve.length));
+        var positionLeft = { x: this.position.x, y: this.position.y, z: this.position.z };
+        var positionRight = { x: this.position.x, y: this.position.y, z: this.position.z };
         var tweenLeft = TweenLite.to(positionLeft, quantity, { bezier: pathLeft, ease: Linear.easeNone });
         var tweenRight = TweenLite.to(positionRight, quantity, { bezier: pathRight, ease: Linear.easeNone });
         for (var i = 0; i < quantity; i++) {
@@ -88,7 +106,6 @@ var SpikeMesh = (function () {
                 y: positionRight.y,
                 z: positionRight.z
             }, i * (duration / quantity));
-            this.spike.reportMovement(doubleVectorFrom(new BABYLON.Vector3(positionLeft.x, positionLeft.y, positionLeft.z), new BABYLON.Vector3(positionRight.x, positionRight.y, positionRight.z)));
         }
         tense.play();
     };

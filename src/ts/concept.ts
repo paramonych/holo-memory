@@ -30,7 +30,7 @@ function wireUI(space: Space, time: Time): void {
 
   knobs.launch.on('click', function() {
     space.cortex.react();
-    time.flow();
+    //time.flow();
   });
 
   knobs.play.click(function() { time.flow()});
