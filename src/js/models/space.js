@@ -7,6 +7,7 @@ var Space = (function () {
     Space.prototype.expose = function (time) {
         this.time = time;
         this.cortex.draw();
+        this.cortex.chargeTense(time);
     };
     return Space;
 })();

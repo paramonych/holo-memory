@@ -24,7 +24,9 @@ class SpikeMesh implements ActivatableMesh {
 
     this.setPositionInCurve();
     this.setPosition(this.curve[this.numberPosition]);
+    this.setSpikeshoulders();
     this.spike.neuron.tense.eventCallback('onComplete', () => {
+      console.debug('spike moving complete', this.position.x, this.position.y, this.position.z);
       this.resetPosition();
     });
   }
@@ -81,7 +83,7 @@ class SpikeMesh implements ActivatableMesh {
 
   public activate(): void {
     this.styleAsActive(true);
-    this.showMovingSpike();
+    //this.showMovingSpike();
   }
 
   public deactivate(): void {
@@ -106,7 +108,7 @@ class SpikeMesh implements ActivatableMesh {
     }
   }
 
-  private showMovingSpike(): void {
+/*  private showMovingSpike(): void {
     let quantity = this.curve.length*2;
     let duration = 2;
 
@@ -140,9 +142,34 @@ class SpikeMesh implements ActivatableMesh {
           new BABYLON.Vector3(positionLeft.x, positionLeft.y, positionLeft.z),
           new BABYLON.Vector3(positionRight.x, positionRight.y, positionRight.z)
         ));*/
-    }
+  /*  }
 
     tense.play();
+  }*/
+
+  private setSpikeshoulders(): void {
+     let duration = 2;
+
+     let tense = this.spike.neuron.tense;
+
+     let pathLeft = reversedArrayClone(this.curve.slice(0, this.numberPosition));
+     let pathRight = arrayClone(this.curve.slice(this.numberPosition, this.curve.length));
+
+     let positionLeft = {x:this.position.x, y:this.position.y, z:this.position.z};
+     let positionRight = {x:this.position.x, y:this.position.y, z:this.position.z};
+
+     tense.to(positionLeft, duration,
+       {bezier:pathLeft, ease:Linear.easeNone, onUpdate:() => { this.shiftLeftShoulder(positionLeft);}});
+     tense.to(positionRight, duration,
+       {bezier:pathRight, ease:Linear.easeNone, onUpdate:() => { this.shiftRightShoulder(positionRight);}});
+  }
+
+  shiftLeftShoulder(position: {x: number, y: number, z: number}): void {
+    console.debug('shiftLeftShoulder',  position.x, position.y, position.z);
+  }
+
+  shiftRightShoulder(position: {x: number, y: number, z: number}): void {
+    console.debug('shiftRightShoulder', position.x, position.y, position.z);
   }
 
   setMaterials(): void {

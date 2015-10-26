@@ -15,6 +15,11 @@ var Cortex = (function () {
     Cortex.prototype.draw = function () {
         _.each(this.neurons, function (neuron) { return neuron.build(); });
     };
+    Cortex.prototype.chargeTense = function (time) {
+        _.each(this.neurons, function (n) {
+            time.tense.add(n.tense);
+        });
+    };
     Cortex.prototype.react = function () {
         _.each(this.neurons, function (neuron) { return neuron.react(); });
     };

@@ -8,5 +8,6 @@ class Space {
   public expose(time: Time): void {
     this.time = time;
     this.cortex.draw();
+    this.cortex.chargeTense(time);
   }
 }

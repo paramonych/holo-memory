@@ -6,7 +6,7 @@ class Time {
   }
 
   public flow(): void {
-    this.tense.play();
+    this.tense.play(0);
   }
 
   public stop(): void {
