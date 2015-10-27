@@ -29,7 +29,6 @@ function wireUI(space: Space, time: Time): void {
   let knobs = getUIControls();
 
   knobs.launch.on('click', function() {
-    //space.cortex.react();
     time.flow();
   });
 
@@ -39,7 +38,11 @@ function wireUI(space: Space, time: Time): void {
 
   //when the timeline updates, call the updateSlider function
   time.tense.eventCallback("onUpdate", function() {
-    let progress = time.tense.progress() * 100;
+    let pg = time.tense.progress();
+    
+    console.debug('pg', pg);
+
+    let progress = pg * 100;
     if(progress) {
       knobs.slider.slider("value", progress);
     }

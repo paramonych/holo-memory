@@ -54,14 +54,6 @@ var Neuron = (function () {
         _.each(this.synapces, function (synapce) { synapce.dispose(); });
         this.neuron.dispose();
     };
-    Neuron.prototype.react = function () {
-        if (isActiveState(this.state())) {
-            this.deactivate();
-        }
-        else {
-            this.activate();
-        }
-    };
     Neuron.prototype.build = function () {
         this.neuron.draw();
     };

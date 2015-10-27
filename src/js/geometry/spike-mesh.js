@@ -83,7 +83,7 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.chargeTense = function () {
         var _this = this;
-        var duration = 0.7;
+        var duration = 1.5;
         var tense = this.spike.neuron.tense;
         var pathLeft = reversedArrayClone(this.curve.slice(0, this.numberPosition));
         var pathRight = arrayClone(this.curve.slice(this.numberPosition, this.curve.length));

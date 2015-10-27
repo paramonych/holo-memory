@@ -25,10 +25,6 @@ class Cortex implements Disposable {
     });
   }
 
-  react(): void {
-    _.each(this.neurons, (neuron) => neuron.react());
-  }
-
   public dispose(): void {
     _.each(this.neurons, (neuron) => {neuron.dispose();});
   }

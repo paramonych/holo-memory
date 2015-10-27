@@ -69,14 +69,6 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     this.neuron.dispose();
   }
 
-  public react(): void {
-    if(isActiveState(this.state())) {
-      this.deactivate();
-    } else {
-      this.activate();
-    }
-  }
-
   public build(): void {
     this.neuron.draw();
   }
@@ -91,16 +83,8 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public serveState(newState: StateType): void {
     if(isActiveState(newState)) {
       this.spike.activate();
-      /*_.each(this.synapces, (synapce) => {
-        if(randomSign() > 0) {
-          synapce.activate();
-        }
-      });*/
     } else {
       this.spike.deactivate();
-      /*_.each(this.synapces, (synapce) => {
-        synapce.deactivate();
-      });*/
     }
   }
 

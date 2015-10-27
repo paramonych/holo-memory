@@ -106,7 +106,7 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private chargeTense(): void {
-     let duration = 0.7;
+     let duration = 1.5;
 
      let tense = this.spike.neuron.tense
 

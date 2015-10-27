@@ -25,7 +25,9 @@ function wireUI(space, time) {
     knobs.pause.click(function () { time.stop(); });
     knobs.restart.click(function () { time.loop(); });
     time.tense.eventCallback("onUpdate", function () {
-        var progress = time.tense.progress() * 100;
+        var pg = time.tense.progress();
+        console.debug('pg', pg);
+        var progress = pg * 100;
         if (progress) {
             knobs.slider.slider("value", progress);
         }

@@ -20,9 +20,6 @@ var Cortex = (function () {
             time.tense.add(function () { return n.tense.play(); }, 0);
         });
     };
-    Cortex.prototype.react = function () {
-        _.each(this.neurons, function (neuron) { return neuron.react(); });
-    };
     Cortex.prototype.dispose = function () {
         _.each(this.neurons, function (neuron) { neuron.dispose(); });
     };
