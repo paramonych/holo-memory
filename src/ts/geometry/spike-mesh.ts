@@ -24,12 +24,7 @@ class SpikeMesh implements ActivatableMesh {
 
     this.setPositionInCurve();
     this.setPosition(this.curve[this.numberPosition]);
-    //this.chargeTense();
-    this.spike.neuron.tense.eventCallback('onComplete', () => {
-      console.debug('spike moving complete', this.position.x, this.position.y, this.position.z);
-      this.resetPosition();
-      this.deactivate();
-    });
+    this.chargeTense();
   }
 
   private setPositionInCurve(): void {
@@ -84,10 +79,11 @@ class SpikeMesh implements ActivatableMesh {
 
   public activate(): void {
     this.styleAsActive(true);
-    this.chargeTense();
+    //this.chargeTense();
   }
 
   public deactivate(): void {
+    this.resetPosition();
     this.styleAsActive(false);
   }
 
@@ -109,49 +105,10 @@ class SpikeMesh implements ActivatableMesh {
     }
   }
 
-/*  private showMovingSpike(): void {
-    let quantity = this.curve.length*2;
-    let duration = 2;
-
-    let tense = this.spike.neuron.tense;
-
-    let pathLeft = reversedArrayClone(this.curve.slice(0, this.numberPosition));
-    let pathRight = arrayClone(this.curve.slice(this.numberPosition, this.curve.length));
-
-    let positionLeft = {x:this.position.x, y:this.position.y, z:this.position.z};
-    let positionRight = {x:this.position.x, y:this.position.y, z:this.position.z};
-
-    let tweenLeft = TweenLite.to(positionLeft, quantity, {bezier:pathLeft, ease:Linear.easeNone});
-    let tweenRight = TweenLite.to(positionRight, quantity, {bezier:pathRight, ease:Linear.easeNone});
-
-    for (let i = 0; i < quantity; i++) {
-        tweenLeft.time(i);
-        tense.set(this.shoulders.left.mesh.position, {
-            x: positionLeft.x,
-            y: positionLeft.y,
-            z: positionLeft.z
-        }, i * (duration / quantity));
-
-        tweenRight.time(i);
-        tense.set(this.shoulders.right.mesh.position, {
-            x: positionRight.x,
-            y: positionRight.y,
-            z: positionRight.z
-        }, i * (duration / quantity));
-
-      /*  this.spike.reportMovement(doubleVectorFrom(
-          new BABYLON.Vector3(positionLeft.x, positionLeft.y, positionLeft.z),
-          new BABYLON.Vector3(positionRight.x, positionRight.y, positionRight.z)
-        ));*/
-  /*  }
-
-    tense.play();
-  }*/
-
   private chargeTense(): void {
-     let duration = 2;
+     let duration = 0.7;
 
-     let tense = this.spike.neuron.tense;
+     let tense = this.spike.neuron.tense
 
      let pathLeft = reversedArrayClone(this.curve.slice(0, this.numberPosition));
      let pathRight = arrayClone(this.curve.slice(this.numberPosition, this.curve.length));
@@ -159,20 +116,23 @@ class SpikeMesh implements ActivatableMesh {
      let positionLeft = {x:this.position.x, y:this.position.y, z:this.position.z};
      let positionRight = {x:this.position.x, y:this.position.y, z:this.position.z};
 
-     tense.to(positionLeft, duration,
-       {bezier:pathLeft, ease:Linear.easeNone, onUpdate:() => { this.shiftLeftShoulder(positionLeft);}});
-     tense.to(positionRight, duration,
-       {bezier:pathRight, ease:Linear.easeNone, onUpdate:() => { this.shiftRightShoulder(positionRight);}});
+     tense.eventCallback( 'onStart',() => this.activate());
+     tense.eventCallback( 'onUpdate',() => this.shiftShoulders(positionLeft, positionRight));
+     tense.eventCallback('onComplete', () => this.deactivate());
 
-     tense.play();
+     let leftShoulderTween = TweenMax.to(positionLeft, duration, {bezier:pathLeft, ease:Linear.easeNone});
+     let rightShoulderTween = TweenMax.to(positionRight, duration, {bezier:pathRight, ease:Linear.easeNone});
+
+     tense.add(leftShoulderTween, 0).add(rightShoulderTween, 0);
   }
 
-  shiftLeftShoulder(position: {x: number, y: number, z: number}): void {
-    console.debug('shiftLeftShoulder',  position.x, position.y, position.z);
-  }
-
-  shiftRightShoulder(position: {x: number, y: number, z: number}): void {
-    console.debug('shiftRightShoulder', position.x, position.y, position.z);
+  private shiftShoulders(leftPos: SpikePosition, rightPos: SpikePosition): void {
+    this.shoulders.left.mesh.position.x = leftPos.x;
+    this.shoulders.left.mesh.position.y = leftPos.y;
+    this.shoulders.left.mesh.position.z = leftPos.z;
+    this.shoulders.right.mesh.position.x = rightPos.x;
+    this.shoulders.right.mesh.position.y = rightPos.y;
+    this.shoulders.right.mesh.position.z = rightPos.z;
   }
 
   setMaterials(): void {

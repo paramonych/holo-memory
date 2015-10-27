@@ -13,11 +13,7 @@ var SpikeMesh = (function () {
         this.constructShoulders();
         this.setPositionInCurve();
         this.setPosition(this.curve[this.numberPosition]);
-        this.spike.neuron.tense.eventCallback('onComplete', function () {
-            console.debug('spike moving complete', _this.position.x, _this.position.y, _this.position.z);
-            _this.resetPosition();
-            _this.deactivate();
-        });
+        this.chargeTense();
     }
     SpikeMesh.prototype.setPositionInCurve = function () {
         var _this = this;
@@ -63,9 +59,9 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.activate = function () {
         this.styleAsActive(true);
-        this.chargeTense();
     };
     SpikeMesh.prototype.deactivate = function () {
+        this.resetPosition();
         this.styleAsActive(false);
     };
     SpikeMesh.prototype.styleAsActive = function (isActive) {
@@ -87,21 +83,26 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.chargeTense = function () {
         var _this = this;
-        var duration = 2;
+        var duration = 0.7;
         var tense = this.spike.neuron.tense;
         var pathLeft = reversedArrayClone(this.curve.slice(0, this.numberPosition));
         var pathRight = arrayClone(this.curve.slice(this.numberPosition, this.curve.length));
         var positionLeft = { x: this.position.x, y: this.position.y, z: this.position.z };
         var positionRight = { x: this.position.x, y: this.position.y, z: this.position.z };
-        tense.to(positionLeft, duration, { bezier: pathLeft, ease: Linear.easeNone, onUpdate: function () { _this.shiftLeftShoulder(positionLeft); } });
-        tense.to(positionRight, duration, { bezier: pathRight, ease: Linear.easeNone, onUpdate: function () { _this.shiftRightShoulder(positionRight); } });
-        tense.play();
+        tense.eventCallback('onStart', function () { return _this.activate(); });
+        tense.eventCallback('onUpdate', function () { return _this.shiftShoulders(positionLeft, positionRight); });
+        tense.eventCallback('onComplete', function () { return _this.deactivate(); });
+        var leftShoulderTween = TweenMax.to(positionLeft, duration, { bezier: pathLeft, ease: Linear.easeNone });
+        var rightShoulderTween = TweenMax.to(positionRight, duration, { bezier: pathRight, ease: Linear.easeNone });
+        tense.add(leftShoulderTween, 0).add(rightShoulderTween, 0);
     };
-    SpikeMesh.prototype.shiftLeftShoulder = function (position) {
-        console.debug('shiftLeftShoulder', position.x, position.y, position.z);
-    };
-    SpikeMesh.prototype.shiftRightShoulder = function (position) {
-        console.debug('shiftRightShoulder', position.x, position.y, position.z);
+    SpikeMesh.prototype.shiftShoulders = function (leftPos, rightPos) {
+        this.shoulders.left.mesh.position.x = leftPos.x;
+        this.shoulders.left.mesh.position.y = leftPos.y;
+        this.shoulders.left.mesh.position.z = leftPos.z;
+        this.shoulders.right.mesh.position.x = rightPos.x;
+        this.shoulders.right.mesh.position.y = rightPos.y;
+        this.shoulders.right.mesh.position.z = rightPos.z;
     };
     SpikeMesh.prototype.setMaterials = function () {
         this.material = new BABYLON.StandardMaterial('i', this.scene);

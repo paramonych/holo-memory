@@ -17,7 +17,7 @@ var Cortex = (function () {
     };
     Cortex.prototype.chargeTense = function (time) {
         _.each(this.neurons, function (n) {
-            time.tense.add(n.tense);
+            time.tense.add(function () { return n.tense.play(); }, 0);
         });
     };
     Cortex.prototype.react = function () {

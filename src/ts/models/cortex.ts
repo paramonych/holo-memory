@@ -21,7 +21,7 @@ class Cortex implements Disposable {
 
   public chargeTense(time: Time): void {
     _.each(this.neurons, (n) => {
-      time.tense.add(n.tense);
+      time.tense.add(() => n.tense.play(), 0);
     });
   }
 
