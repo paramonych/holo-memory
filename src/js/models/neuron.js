@@ -70,7 +70,7 @@ var Neuron = (function () {
     };
     Neuron.prototype.serveState = function (newState) {
         if (isActiveState(newState)) {
-            this.spike.launch();
+            this.spike.activate();
         }
         else {
             this.spike.deactivate();

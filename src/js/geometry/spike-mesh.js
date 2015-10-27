@@ -13,10 +13,10 @@ var SpikeMesh = (function () {
         this.constructShoulders();
         this.setPositionInCurve();
         this.setPosition(this.curve[this.numberPosition]);
-        this.setSpikeshoulders();
         this.spike.neuron.tense.eventCallback('onComplete', function () {
             console.debug('spike moving complete', _this.position.x, _this.position.y, _this.position.z);
             _this.resetPosition();
+            _this.deactivate();
         });
     }
     SpikeMesh.prototype.setPositionInCurve = function () {
@@ -63,6 +63,7 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.activate = function () {
         this.styleAsActive(true);
+        this.chargeTense();
     };
     SpikeMesh.prototype.deactivate = function () {
         this.styleAsActive(false);
@@ -84,7 +85,7 @@ var SpikeMesh = (function () {
             right.light.intensity = 0;
         }
     };
-    SpikeMesh.prototype.setSpikeshoulders = function () {
+    SpikeMesh.prototype.chargeTense = function () {
         var _this = this;
         var duration = 2;
         var tense = this.spike.neuron.tense;
@@ -94,6 +95,7 @@ var SpikeMesh = (function () {
         var positionRight = { x: this.position.x, y: this.position.y, z: this.position.z };
         tense.to(positionLeft, duration, { bezier: pathLeft, ease: Linear.easeNone, onUpdate: function () { _this.shiftLeftShoulder(positionLeft); } });
         tense.to(positionRight, duration, { bezier: pathRight, ease: Linear.easeNone, onUpdate: function () { _this.shiftRightShoulder(positionRight); } });
+        tense.play();
     };
     SpikeMesh.prototype.shiftLeftShoulder = function (position) {
         console.debug('shiftLeftShoulder', position.x, position.y, position.z);

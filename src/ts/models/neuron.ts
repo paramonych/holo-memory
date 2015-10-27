@@ -84,7 +84,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
 
   public serveState(newState: StateType): void {
     if(isActiveState(newState)) {
-      this.spike.launch();
+      this.spike.activate();
       /*_.each(this.synapces, (synapce) => {
         if(randomSign() > 0) {
           synapce.activate();

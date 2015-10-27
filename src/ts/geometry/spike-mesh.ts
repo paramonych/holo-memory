@@ -24,10 +24,11 @@ class SpikeMesh implements ActivatableMesh {
 
     this.setPositionInCurve();
     this.setPosition(this.curve[this.numberPosition]);
-    this.setSpikeshoulders();
+    //this.chargeTense();
     this.spike.neuron.tense.eventCallback('onComplete', () => {
       console.debug('spike moving complete', this.position.x, this.position.y, this.position.z);
       this.resetPosition();
+      this.deactivate();
     });
   }
 
@@ -83,7 +84,7 @@ class SpikeMesh implements ActivatableMesh {
 
   public activate(): void {
     this.styleAsActive(true);
-    //this.showMovingSpike();
+    this.chargeTense();
   }
 
   public deactivate(): void {
@@ -147,7 +148,7 @@ class SpikeMesh implements ActivatableMesh {
     tense.play();
   }*/
 
-  private setSpikeshoulders(): void {
+  private chargeTense(): void {
      let duration = 2;
 
      let tense = this.spike.neuron.tense;
@@ -162,6 +163,8 @@ class SpikeMesh implements ActivatableMesh {
        {bezier:pathLeft, ease:Linear.easeNone, onUpdate:() => { this.shiftLeftShoulder(positionLeft);}});
      tense.to(positionRight, duration,
        {bezier:pathRight, ease:Linear.easeNone, onUpdate:() => { this.shiftRightShoulder(positionRight);}});
+
+     tense.play();
   }
 
   shiftLeftShoulder(position: {x: number, y: number, z: number}): void {
