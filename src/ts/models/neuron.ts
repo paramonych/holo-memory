@@ -10,7 +10,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   constructor(
     public cortex: Cortex
   ) {
-    this.tense = new TimelineMax({repeat: 0, paused : true});
+    this.chargeTense();
     this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
     this.createSpike();
@@ -43,6 +43,12 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
           }
       });
     }
+  }
+
+  private chargeTense(): void {
+    this.tense = new TimelineMax({repeat: 0, paused : true});
+    // TODO: add label for all synapces
+    //  this.tense.addCallback(() => this.affectNearestSynapce(), nextSynapceLabel);
   }
 
   private startWatchForSpike(): void {
@@ -84,7 +90,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
 
   public serveState(newState: StateType): void {
     if(isActiveState(newState)) {
-      this.spike.launch();
+      this.spike.activate();
       /*_.each(this.synapces, (synapce) => {
         if(randomSign() > 0) {
           synapce.activate();

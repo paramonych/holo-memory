@@ -19,7 +19,7 @@ function plantConcept() {
 function wireUI(space, time) {
     var knobs = getUIControls();
     knobs.launch.on('click', function () {
-        space.cortex.react();
+        time.flow();
     });
     knobs.play.click(function () { time.flow(); });
     knobs.pause.click(function () { time.stop(); });

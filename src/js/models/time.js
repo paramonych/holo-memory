@@ -3,7 +3,7 @@ var Time = (function () {
         this.tense = new TimelineMax({ repeat: 1, paused: true });
     }
     Time.prototype.flow = function () {
-        this.tense.play();
+        this.tense.play(0);
     };
     Time.prototype.stop = function () {
         this.tense.pause();

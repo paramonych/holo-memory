@@ -22,12 +22,6 @@ var Spike = (function () {
     Spike.prototype.dispose = function () {
         this.mesh.dispose();
     };
-    Spike.prototype.launch = function () {
-        var _this = this;
-        this.activate();
-        setTimeout(function () { return _this.deactivate(); }, 3000);
-        this.mesh.activate();
-    };
     Spike.prototype.serveState = function (newState) {
         if (newState === StateType.Active) {
             this.mesh.activate();

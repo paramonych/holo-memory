@@ -2,7 +2,7 @@ var Neuron = (function () {
     function Neuron(cortex) {
         this.cortex = cortex;
         this.synapces = new Array();
-        this.tense = new TimelineMax({ repeat: 0, paused: true });
+        this.chargeTense();
         this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
         this.createSpike();
@@ -33,6 +33,9 @@ var Neuron = (function () {
                 }
             });
         }
+    };
+    Neuron.prototype.chargeTense = function () {
+        this.tense = new TimelineMax({ repeat: 0, paused: true });
     };
     Neuron.prototype.startWatchForSpike = function () {
         var _this = this;
@@ -70,7 +73,7 @@ var Neuron = (function () {
     };
     Neuron.prototype.serveState = function (newState) {
         if (isActiveState(newState)) {
-            this.spike.launch();
+            this.spike.activate();
         }
         else {
             this.spike.deactivate();
