@@ -30,6 +30,9 @@ var Spike = (function () {
             this.mesh.deactivate();
         }
     };
+    Spike.prototype.reset = function () {
+        this.mesh.reset();
+    };
     Spike.prototype.toDefaultState = function () {
         var _this = this;
         this.state = ko.observable(StateType.Silent);

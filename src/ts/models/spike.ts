@@ -39,6 +39,10 @@ class Spike implements Disposable, Dualistic {
     }
   }
 
+  public reset(): void {
+    this.mesh.reset();
+  }
+
   toDefaultState(): void {
     this.state = ko.observable(StateType.Silent);
     this.state.subscribe((state) => this.serveState(state));

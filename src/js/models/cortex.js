@@ -1,7 +1,8 @@
 var Cortex = (function () {
-    function Cortex(scene, scale) {
+    function Cortex(scene, scale, lifetime) {
         this.scene = scene;
         this.scale = scale;
+        this.lifetime = lifetime;
         this.neuronsAmount = 1;
         this.createNeurons();
     }
@@ -20,8 +21,25 @@ var Cortex = (function () {
             time.tense.add(function () { return n.tense.play(); }, 0);
         });
     };
-    Cortex.prototype.react = function () {
-        _.each(this.neurons, function (neuron) { return neuron.react(); });
+    Cortex.prototype.freezeTense = function (time) {
+        _.each(this.neurons, function (n) {
+            n.tense.pause(time.tense.progress() * time.duration);
+        });
+    };
+    Cortex.prototype.resumeTense = function (time) {
+        _.each(this.neurons, function (n) {
+            n.tense.resume();
+        });
+    };
+    Cortex.prototype.restartTense = function (time) {
+        _.each(this.neurons, function (n) {
+            n.restartTense();
+        });
+    };
+    Cortex.prototype.shiftTense = function (time, progress) {
+        _.each(this.neurons, function (n) {
+            n.tense.progress(progress);
+        });
     };
     Cortex.prototype.dispose = function () {
         _.each(this.neurons, function (neuron) { neuron.dispose(); });

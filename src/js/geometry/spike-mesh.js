@@ -11,8 +11,7 @@ var SpikeMesh = (function () {
         });
         this.setMaterials();
         this.constructShoulders();
-        this.setPositionInCurve();
-        this.setPosition(this.curve[this.numberPosition]);
+        this.resetPosition();
         this.chargeTense();
     }
     SpikeMesh.prototype.setPositionInCurve = function () {
@@ -26,10 +25,14 @@ var SpikeMesh = (function () {
             });
         }
     };
+    SpikeMesh.prototype.reset = function () {
+        this.resetPosition();
+    };
     SpikeMesh.prototype.resetPosition = function () {
         this.position = void 0;
         this.setPositionInCurve();
         this.position = this.curve[this.numberPosition].clone();
+        this.setPosition(this.position);
     };
     SpikeMesh.prototype.setPosition = function (position) {
         this.position = position.clone();
@@ -83,8 +86,8 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.chargeTense = function () {
         var _this = this;
-        var duration = 0.7;
         var tense = this.spike.neuron.tense;
+        var duration = this.spike.neuron.cortex.lifetime;
         var pathLeft = reversedArrayClone(this.curve.slice(0, this.numberPosition));
         var pathRight = arrayClone(this.curve.slice(this.numberPosition, this.curve.length));
         var positionLeft = { x: this.position.x, y: this.position.y, z: this.position.z };

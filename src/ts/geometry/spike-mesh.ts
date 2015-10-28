@@ -21,9 +21,8 @@ class SpikeMesh implements ActivatableMesh {
 
     this.setMaterials();
     this.constructShoulders();
+    this.resetPosition();
 
-    this.setPositionInCurve();
-    this.setPosition(this.curve[this.numberPosition]);
     this.chargeTense();
   }
 
@@ -38,10 +37,15 @@ class SpikeMesh implements ActivatableMesh {
     }
   }
 
+  public reset(): void {
+    this.resetPosition();
+  }
+
   private resetPosition(): void {
     this.position = void 0;
     this.setPositionInCurve();
     this.position = this.curve[this.numberPosition].clone();
+    this.setPosition(this.position);
   }
 
   public setPosition(position: BABYLON.Vector3): void {
@@ -79,7 +83,6 @@ class SpikeMesh implements ActivatableMesh {
 
   public activate(): void {
     this.styleAsActive(true);
-    //this.chargeTense();
   }
 
   public deactivate(): void {
@@ -106,9 +109,8 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private chargeTense(): void {
-     let duration = 0.7;
-
-     let tense = this.spike.neuron.tense
+     let tense = this.spike.neuron.tense;
+     let duration = this.spike.neuron.cortex.lifetime;
 
      let pathLeft = reversedArrayClone(this.curve.slice(0, this.numberPosition));
      let pathRight = arrayClone(this.curve.slice(this.numberPosition, this.curve.length));

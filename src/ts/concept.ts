@@ -15,6 +15,7 @@ function plantConcept(): void {
   scene.clearColor = new BABYLON.Color3(.3, .3, .3);
 
   let scale = 10;
+  let lifetime = 2;
   attachCamera(canvas, scene, scale);
   setLight(scene);
   createPatternSpaceBox(scene, scale);
@@ -22,24 +23,38 @@ function plantConcept(): void {
   engine.runRenderLoop(() => {
     scene.render();
   });
-  wireUI(new Space(scene, scale), new Time());
+  wireUI(new Space(scene, scale, lifetime), new Time(lifetime));
 }
 
 function wireUI(space: Space, time: Time): void {
   let knobs = getUIControls();
 
   knobs.launch.on('click', function() {
-    //space.cortex.react();
-    time.flow();
+    let next = knobs.launch.data('type');
+    let html = knobs.launch.html();
+    knobs.launch.data('type', html);
+    knobs.launch.html(next);
+
+    if(next === void 0) {
+      knobs.launch.html('PAUSE');
+      time.flow();
+    } else if(next === 'PAUSE') {
+      time.resume(space);
+    } else if(next === 'PLAY') {
+      knobs.launch.html(next);
+      time.pause(space);
+    }
   });
 
-  knobs.play.click(function() { time.flow()});
-  knobs.pause.click(function() { time.stop()});
-  knobs.restart.click(function() { time.loop()});
+  knobs.restart.on('click',function() {
+    knobs.launch.html('PAUSE');
+    knobs.launch.data('type', 'PLAY');
+    time.restart(space);
+  });
 
-  //when the timeline updates, call the updateSlider function
   time.tense.eventCallback("onUpdate", function() {
-    let progress = time.tense.progress() * 100;
+    let pg = time.tense.progress();
+    let progress = pg * 100;
     if(progress) {
       knobs.slider.slider("value", progress);
     }
@@ -49,7 +64,10 @@ function wireUI(space: Space, time: Time): void {
     range: false,
     min: 0,
     max: 100,
-    step:.1
+    step:.1,
+    slide: function ( event, ui ) {
+      time.shiftTo(space, ui.value/100);
+    }
   });
 
   space.expose(time);
@@ -57,9 +75,7 @@ function wireUI(space: Space, time: Time): void {
 
 function getUIControls(): Knobs {
   let launch = jQuery(ids.launch);
-  let play = jQuery(ids.play);
-  let pause = jQuery(ids.pause);
   let restart = jQuery(ids.restart);
   let slider = jQuery(ids.slider);
-  return knobsFrom(launch, play, pause, restart, slider);
+  return knobsFrom(launch, void 0, void 0, restart, slider);
 }

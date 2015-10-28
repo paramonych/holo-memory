@@ -18,6 +18,10 @@ var Neuron = (function () {
             }
         });
     };
+    Neuron.prototype.restartTense = function () {
+        this.tense.restart();
+        this.spike.reset();
+    };
     Neuron.prototype.createSynapces = function () {
         var scale = this.cortex.scale;
         var devideFactor = scale / 2;
@@ -53,14 +57,6 @@ var Neuron = (function () {
         this.spike.dispose();
         _.each(this.synapces, function (synapce) { synapce.dispose(); });
         this.neuron.dispose();
-    };
-    Neuron.prototype.react = function () {
-        if (isActiveState(this.state())) {
-            this.deactivate();
-        }
-        else {
-            this.activate();
-        }
     };
     Neuron.prototype.build = function () {
         this.neuron.draw();
