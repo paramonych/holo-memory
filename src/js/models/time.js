@@ -7,15 +7,21 @@ var Time = (function () {
     Time.prototype.flow = function () {
         this.tense.play(0);
     };
-    Time.prototype.stop = function (space) {
+    Time.prototype.resume = function (space) {
+        this.tense.resume();
+        space.resume(this);
+    };
+    Time.prototype.pause = function (space) {
         this.tense.pause();
         space.freeze(this);
     };
     Time.prototype.shiftTo = function (space, point) {
+        this.tense.progress(point);
         space.shift(this, point);
     };
-    Time.prototype.loop = function () {
+    Time.prototype.restart = function (space) {
         this.tense.restart();
+        space.restart(this);
     };
     return Time;
 })();

@@ -10,16 +10,23 @@ class Time {
     this.tense.play(0);
   }
 
-  public stop(space: Space): void {
+  public resume(space: Space): void {
+    this.tense.resume();
+    space.resume(this);
+  }
+
+  public pause(space: Space): void {
     this.tense.pause();
     space.freeze(this);
   }
 
   public shiftTo(space: Space, point: number): void {
+    this.tense.progress(point);
     space.shift(this, point);
   }
 
-  public loop(): void {
+  public restart(space: Space): void {
     this.tense.restart();
+    space.restart(this);
   }
 }

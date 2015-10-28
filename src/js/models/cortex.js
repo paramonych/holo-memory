@@ -26,9 +26,19 @@ var Cortex = (function () {
             n.tense.pause(time.tense.progress() * time.duration);
         });
     };
+    Cortex.prototype.resumeTense = function (time) {
+        _.each(this.neurons, function (n) {
+            n.tense.resume();
+        });
+    };
+    Cortex.prototype.restartTense = function (time) {
+        _.each(this.neurons, function (n) {
+            n.restartTense();
+        });
+    };
     Cortex.prototype.shiftTense = function (time, progress) {
         _.each(this.neurons, function (n) {
-            n.tense.pause(progress * time.duration);
+            n.tense.progress(progress);
         });
     };
     Cortex.prototype.dispose = function () {

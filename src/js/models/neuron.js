@@ -18,6 +18,10 @@ var Neuron = (function () {
             }
         });
     };
+    Neuron.prototype.restartTense = function () {
+        this.tense.restart();
+        this.spike.reset();
+    };
     Neuron.prototype.createSynapces = function () {
         var scale = this.cortex.scale;
         var devideFactor = scale / 2;

@@ -37,6 +37,10 @@ class SpikeMesh implements ActivatableMesh {
     }
   }
 
+  public reset(): void {
+    this.resetPosition();
+  }
+
   private resetPosition(): void {
     this.position = void 0;
     this.setPositionInCurve();

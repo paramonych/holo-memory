@@ -18,6 +18,14 @@ class Space {
     this.cortex.freezeTense(time);
   }
 
+  public resume(time: Time): void {
+    this.cortex.resumeTense(time);
+  }
+
+  public restart(time: Time): void {
+    this.cortex.restartTense(time);
+  }
+
   public shift(time: Time, progress: number): void {
     this.cortex.shiftTense(time, progress);
   }

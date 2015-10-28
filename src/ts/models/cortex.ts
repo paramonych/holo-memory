@@ -34,9 +34,21 @@ class Cortex implements Disposable {
     });
   }
 
+  public resumeTense(time: Time): void {
+    _.each(this.neurons, (n) => {
+      n.tense.resume();
+    });
+  }
+
+  public restartTense(time: Time): void {
+    _.each(this.neurons, (n) => {
+      n.restartTense();
+    });
+  }
+
   public shiftTense(time: Time, progress: number): void {
     _.each(this.neurons, (n) => {
-      n.tense.pause(progress*time.duration);
+      n.tense.progress(progress);
     });
   }
 

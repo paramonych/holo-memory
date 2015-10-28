@@ -25,6 +25,9 @@ var SpikeMesh = (function () {
             });
         }
     };
+    SpikeMesh.prototype.reset = function () {
+        this.resetPosition();
+    };
     SpikeMesh.prototype.resetPosition = function () {
         this.position = void 0;
         this.setPositionInCurve();

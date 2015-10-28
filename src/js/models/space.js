@@ -13,6 +13,12 @@ var Space = (function () {
     Space.prototype.freeze = function (time) {
         this.cortex.freezeTense(time);
     };
+    Space.prototype.resume = function (time) {
+        this.cortex.resumeTense(time);
+    };
+    Space.prototype.restart = function (time) {
+        this.cortex.restartTense(time);
+    };
     Space.prototype.shift = function (time, progress) {
         this.cortex.shiftTense(time, progress);
     };

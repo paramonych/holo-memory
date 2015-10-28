@@ -27,6 +27,11 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     });
   }
 
+  public restartTense(): void {
+    this.tense.restart();
+    this.spike.reset();
+  }
+
   private createSynapces(): void {
     let scale = this.cortex.scale;
     let devideFactor = scale/2;

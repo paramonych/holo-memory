@@ -35,15 +35,22 @@ function wireUI(space: Space, time: Time): void {
     knobs.launch.data('type', html);
     knobs.launch.html(next);
 
-    if(next === 'PAUSE') {
+    if(next === void 0) {
+      knobs.launch.html('PAUSE');
       time.flow();
-    } else {
+    } else if(next === 'PAUSE') {
+      time.resume(space);
+    } else if(next === 'PLAY') {
       knobs.launch.html(next);
-      time.stop(space);
+      time.pause(space);
     }
   });
 
-  knobs.restart.on('click',function() { time.loop(); });
+  knobs.restart.on('click',function() {
+    knobs.launch.html('PAUSE');
+    knobs.launch.data('type', 'PLAY');
+    time.restart(space);
+  });
 
   time.tense.eventCallback("onUpdate", function() {
     let pg = time.tense.progress();
