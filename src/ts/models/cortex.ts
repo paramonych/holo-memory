@@ -3,7 +3,10 @@ class Cortex implements Disposable {
   public blasts: NeuroBlast[];
   private neuronsAmount = 1;
 
-  constructor(public scene: BABYLON.Scene, public scale: number) {
+  constructor(
+    public scene: BABYLON.Scene,
+    public scale: number,
+    public lifetime: number) {
     this.createNeurons();
   }
 
@@ -22,6 +25,18 @@ class Cortex implements Disposable {
   public chargeTense(time: Time): void {
     _.each(this.neurons, (n) => {
       time.tense.add(() => n.tense.play(), 0);
+    });
+  }
+
+  public freezeTense(time: Time): void {
+    _.each(this.neurons, (n) => {
+      n.tense.pause(time.tense.progress()*time.duration);
+    });
+  }
+
+  public shiftTense(time: Time, progress: number): void {
+    _.each(this.neurons, (n) => {
+      n.tense.pause(progress*time.duration);
     });
   }
 

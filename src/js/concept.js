@@ -8,25 +8,33 @@ function plantConcept() {
     var scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color3(.3, .3, .3);
     var scale = 10;
+    var lifetime = 2;
     attachCamera(canvas, scene, scale);
     setLight(scene);
     createPatternSpaceBox(scene, scale);
     engine.runRenderLoop(function () {
         scene.render();
     });
-    wireUI(new Space(scene, scale), new Time());
+    wireUI(new Space(scene, scale, lifetime), new Time(lifetime));
 }
 function wireUI(space, time) {
     var knobs = getUIControls();
     knobs.launch.on('click', function () {
-        time.flow();
+        var next = knobs.launch.data('type');
+        var html = knobs.launch.html();
+        knobs.launch.data('type', html);
+        knobs.launch.html(next);
+        if (next === 'PAUSE') {
+            time.flow();
+        }
+        else {
+            knobs.launch.html(next);
+            time.stop(space);
+        }
     });
-    knobs.play.click(function () { time.flow(); });
-    knobs.pause.click(function () { time.stop(); });
-    knobs.restart.click(function () { time.loop(); });
+    knobs.restart.on('click', function () { time.loop(); });
     time.tense.eventCallback("onUpdate", function () {
         var pg = time.tense.progress();
-        console.debug('pg', pg);
         var progress = pg * 100;
         if (progress) {
             knobs.slider.slider("value", progress);
@@ -36,15 +44,16 @@ function wireUI(space, time) {
         range: false,
         min: 0,
         max: 100,
-        step: .1
+        step: .1,
+        slide: function (event, ui) {
+            time.shiftTo(space, ui.value / 100);
+        }
     });
     space.expose(time);
 }
 function getUIControls() {
     var launch = jQuery(ids.launch);
-    var play = jQuery(ids.play);
-    var pause = jQuery(ids.pause);
     var restart = jQuery(ids.restart);
     var slider = jQuery(ids.slider);
-    return knobsFrom(launch, play, pause, restart, slider);
+    return knobsFrom(launch, void 0, void 0, restart, slider);
 }

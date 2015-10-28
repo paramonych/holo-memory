@@ -1,13 +1,20 @@
 var Space = (function () {
-    function Space(scene, scale) {
+    function Space(scene, scale, lifetime) {
         this.scene = scene;
         this.scale = scale;
-        this.cortex = new Cortex(scene, scale);
+        this.lifetime = lifetime;
+        this.cortex = new Cortex(scene, scale, lifetime);
     }
     Space.prototype.expose = function (time) {
         this.time = time;
         this.cortex.draw();
         this.cortex.chargeTense(time);
+    };
+    Space.prototype.freeze = function (time) {
+        this.cortex.freezeTense(time);
+    };
+    Space.prototype.shift = function (time, progress) {
+        this.cortex.shiftTense(time, progress);
     };
     return Space;
 })();
