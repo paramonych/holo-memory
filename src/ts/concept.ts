@@ -12,7 +12,7 @@ function plantConcept(): void {
   //scene.fogEnd = 60.0;
   //scene.fogColor = new BABYLON.Color3(0.1, 0.9, 0.15);
 
-  scene.clearColor = new BABYLON.Color3(.3, .3, .3);
+  scene.clearColor = new BABYLON.Color3(0.07, 0.07, 0.07);
 
   let scale = 10;
   let lifetime = 2;

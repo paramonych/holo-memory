@@ -6,7 +6,7 @@ function plantConcept() {
     var canvas = jQuery(ids.canvas)[0];
     var engine = new BABYLON.Engine(canvas, true);
     var scene = new BABYLON.Scene(engine);
-    scene.clearColor = new BABYLON.Color3(.3, .3, .3);
+    scene.clearColor = new BABYLON.Color3(0.07, 0.07, 0.07);
     var scale = 10;
     var lifetime = 2;
     attachCamera(canvas, scene, scale);

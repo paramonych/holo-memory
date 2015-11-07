@@ -1,7 +1,7 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   public blasts: NeuroBlast[];
-  private neuronsAmount = 1;
+  private neuronsAmount = 3;
 
   constructor(
     public scene: BABYLON.Scene,

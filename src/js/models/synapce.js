@@ -15,6 +15,11 @@ var Synapce = (function () {
     Synapce.prototype.activate = function () {
         this.state(StateType.Active);
     };
+    Synapce.prototype.activateUntil = function (timeInMillis) {
+        var _this = this;
+        this.state(StateType.Active);
+        setTimeout(function () { return _this.deactivate(); }, timeInMillis);
+    };
     Synapce.prototype.deactivate = function () {
         this.state(StateType.Silent);
     };

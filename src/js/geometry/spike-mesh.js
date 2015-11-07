@@ -44,7 +44,7 @@ var SpikeMesh = (function () {
         this.deactivate();
     };
     SpikeMesh.prototype.constructShoulderMesh = function (isLeft) {
-        var shoulder = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 40, this.scene, false);
+        var shoulder = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 45, this.scene, false);
         var light = this.getLight(isLeft);
         light.parent = shoulder;
         return shoulderFrom(shoulder, light);
@@ -55,7 +55,7 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.getLight = function (isLeft) {
         var light = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 1, 0), this.scene);
-        light.diffuse = new BABYLON.Color3(1, 0.8, 0);
+        light.diffuse = new BABYLON.Color3(1, 0.5, 0);
         light.specular = new BABYLON.Color3(0.9, 0.9, 1);
         light.intensity = 0;
         return light;
@@ -71,11 +71,10 @@ var SpikeMesh = (function () {
         var left = this.shoulders.left;
         var right = this.shoulders.right;
         if (isActive) {
-            this.activeLeftMaterial;
             left.mesh.material = this.activeMaterial;
             right.mesh.material = this.activeMaterial;
-            left.light.intensity = .25;
-            right.light.intensity = .25;
+            left.light.intensity = .35;
+            right.light.intensity = .35;
         }
         else {
             left.mesh.material = this.material;
@@ -118,7 +117,7 @@ var SpikeMesh = (function () {
                 mapAdd(checkedPointsMap, point, point);
                 if (leftShoulder.intersectsPoint(point) || rightShoulder.intersectsPoint(point)) {
                     var synapceToActivate = getByKey(synapcesToPositionsMap, point);
-                    synapceToActivate.activate();
+                    synapceToActivate.activateUntil(700);
                 }
             }
         });
@@ -135,7 +134,7 @@ var SpikeMesh = (function () {
         this.material = new BABYLON.StandardMaterial('i', this.scene);
         this.material.alpha = 0;
         this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
-        this.activeMaterial.emissiveColor = new BABYLON.Color3(1, 0.8, 0.3);
+        this.activeMaterial.emissiveColor = new BABYLON.Color3(1, 0.5, 0.2);
     };
     SpikeMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.shoulders.left.mesh);

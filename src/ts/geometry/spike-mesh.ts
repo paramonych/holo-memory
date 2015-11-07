@@ -4,7 +4,6 @@ class SpikeMesh implements ActivatableMesh {
   public shoulders: SpikeShoulders;
   public material: BABYLON.StandardMaterial;
   public activeMaterial: BABYLON.StandardMaterial;
-  public activeLeftMaterial: BABYLON.StandardMaterial;
   private numberPosition: number;
   private position: BABYLON.Vector3;
   private curve: Array<BABYLON.Vector3>;
@@ -62,7 +61,7 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private constructShoulderMesh(isLeft: boolean): SpikeShoulder {
-    let shoulder = BABYLON.Mesh.CreateSphere('s', 8, this.scale/40, this.scene, false);
+    let shoulder = BABYLON.Mesh.CreateSphere('s', 8, this.scale/45, this.scene, false);
     let light = this.getLight(isLeft);
     light.parent = shoulder;
     return shoulderFrom(shoulder, light);
@@ -75,7 +74,7 @@ class SpikeMesh implements ActivatableMesh {
 
   private getLight(isLeft: boolean): BABYLON.PointLight {
     let light = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 1, 0), this.scene);
-  	light.diffuse = new BABYLON.Color3(1, 0.8, 0);
+  	light.diffuse = new BABYLON.Color3(1, 0.5, 0);
   	light.specular = new BABYLON.Color3(0.9, 0.9, 1);
   	light.intensity = 0;
     return light;
@@ -95,11 +94,10 @@ class SpikeMesh implements ActivatableMesh {
     let right = this.shoulders.right;
 
     if(isActive) {
-      this.activeLeftMaterial
       left.mesh.material = this.activeMaterial;
       right.mesh.material = this.activeMaterial;
-      left.light.intensity = .25;
-      right.light.intensity = .25;
+      left.light.intensity = .35;
+      right.light.intensity = .35;
     } else {
       left.mesh.material = this.material;
       right.mesh.material = this.material;
@@ -148,7 +146,7 @@ class SpikeMesh implements ActivatableMesh {
         mapAdd(checkedPointsMap, point, point);
         if(leftShoulder.intersectsPoint(point) || rightShoulder.intersectsPoint(point)) {
           let synapceToActivate = getByKey(synapcesToPositionsMap, point);
-          synapceToActivate.activate();
+          synapceToActivate.activateUntil(700);
         }
       }
     });
@@ -168,7 +166,7 @@ class SpikeMesh implements ActivatableMesh {
     this.material.alpha = 0;
 
     this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
-    this.activeMaterial.emissiveColor = new BABYLON.Color3(1, 0.8, 0.3);
+    this.activeMaterial.emissiveColor = new BABYLON.Color3(1, 0.5, 0.2);
   }
 
   public dispose(): void {

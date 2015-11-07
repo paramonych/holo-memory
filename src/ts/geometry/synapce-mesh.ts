@@ -39,12 +39,13 @@ class SynapceMesh implements ActivatableMesh {
 
   setMaterials(): void {
     this.material = new BABYLON.StandardMaterial('i', this.scene);
-    this.material.alpha = 1;
+    this.material.emissiveColor = new BABYLON.Color3(0.17, 0.57, 1);
+    this.material.alpha = 0.5;
 
-    this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
+    this.activeMaterial = this.material;/*new BABYLON.StandardMaterial('a', this.scene);
     this.activeMaterial.emissiveColor = new BABYLON.Color3(1, .2, 0);
     this.activeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
-    this.activeMaterial.alpha = 1;
+    this.activeMaterial.alpha = 1;*/
   }
 
   public dispose(): void {

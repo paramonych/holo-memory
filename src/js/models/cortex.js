@@ -3,7 +3,7 @@ var Cortex = (function () {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = 1;
+        this.neuronsAmount = 3;
         this.createNeurons();
     }
     Cortex.prototype.createNeurons = function () {

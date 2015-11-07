@@ -14,11 +14,11 @@ function attachCamera(canvas: HTMLCanvasElement, scene: BABYLON.Scene, scale: nu
 
 function setLight(scene: BABYLON.Scene): BABYLON.PointLight {
   var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-  light.intensity = .8;
-  //light.groundColor = new BABYLON.Color3(.3,.3,.3);
+  light.intensity = .30;
+  light.groundColor = new BABYLON.Color3(0.17,0.57,1);
 
   var lamp = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 50, 50), scene);
-  lamp.intensity = .4;
+  lamp.intensity = 0;
   lamp.diffuse = new BABYLON.Color3(0,.1,.1);
   lamp.specular = new BABYLON.Color3(0,0,.1);
   return lamp;

@@ -19,7 +19,8 @@ class NeuronMesh implements ActivatableMesh {
 
   setMaterials(): void {
     this.material = new BABYLON.StandardMaterial('i', this.scene);
-    this.material.alpha = 1;
+    this.material.emissiveColor = new BABYLON.Color3(0.17, 0.57, 1);
+    this.material.alpha = 0.3;
 
     this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
     this.activeMaterial.emissiveColor = new BABYLON.Color3(1, .9, 0);
