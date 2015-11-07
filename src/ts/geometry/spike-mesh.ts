@@ -119,13 +119,39 @@ class SpikeMesh implements ActivatableMesh {
      let positionRight = {x:this.position.x, y:this.position.y, z:this.position.z};
 
      tense.eventCallback( 'onStart',() => this.activate());
-     tense.eventCallback( 'onUpdate',() => this.shiftShoulders(positionLeft, positionRight));
-     tense.eventCallback('onComplete', () => this.deactivate());
+     tense.eventCallback( 'onUpdate',() => {
+       this.checkIntersection();
+       this.shiftShoulders(positionLeft, positionRight);
+     });
+     tense.eventCallback( 'onComplete', () => this.deactivate());
 
      let leftShoulderTween = TweenMax.to(positionLeft, duration, {bezier:pathLeft, ease:Linear.easeNone});
      let rightShoulderTween = TweenMax.to(positionRight, duration, {bezier:pathRight, ease:Linear.easeNone});
 
      tense.add(leftShoulderTween, 0).add(rightShoulderTween, 0);
+  }
+
+  private checkIntersection(): void {
+    let leftShoulder = this.shoulders.left.mesh;
+    let rightShoulder = this.shoulders.right.mesh;
+    let synapces = this.spike.neuron.synapces;
+    let synapcesToPositionsMap = newMap<Synapce>();
+    let synapcesPositions = _.map(this.spike.neuron.synapces, (synapce) => {
+      let nextSynapcePosition = synapce.position;
+      mapAdd(synapcesToPositionsMap, nextSynapcePosition, synapce);
+      return nextSynapcePosition;
+    });
+    let checkedPointsMap = newMap<BABYLON.Vector3>();
+
+    _.each(synapcesPositions, (point) => {
+      if(!mapHasKey(checkedPointsMap, point)) {
+        mapAdd(checkedPointsMap, point, point);
+        if(leftShoulder.intersectsPoint(point) || rightShoulder.intersectsPoint(point)) {
+          let synapceToActivate = getByKey(synapcesToPositionsMap, point);
+          synapceToActivate.activate();
+        }
+      }
+    });
   }
 
   private shiftShoulders(leftPos: SpikePosition, rightPos: SpikePosition): void {

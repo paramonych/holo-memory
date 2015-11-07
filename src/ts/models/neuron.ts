@@ -3,7 +3,7 @@
 class Neuron implements Disposable, Dualistic  { // This is the single dendrite of the single neuron in fact
   public spike: Spike;
   public state: KnockoutObservable<StateType>;
-  private synapces = new Array<Synapce>();
+  public synapces = new Array<Synapce>();
   public neuron: NeuronMesh;
   public tense: TimelineMax;
 

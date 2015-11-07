@@ -93,11 +93,35 @@ var SpikeMesh = (function () {
         var positionLeft = { x: this.position.x, y: this.position.y, z: this.position.z };
         var positionRight = { x: this.position.x, y: this.position.y, z: this.position.z };
         tense.eventCallback('onStart', function () { return _this.activate(); });
-        tense.eventCallback('onUpdate', function () { return _this.shiftShoulders(positionLeft, positionRight); });
+        tense.eventCallback('onUpdate', function () {
+            _this.checkIntersection();
+            _this.shiftShoulders(positionLeft, positionRight);
+        });
         tense.eventCallback('onComplete', function () { return _this.deactivate(); });
         var leftShoulderTween = TweenMax.to(positionLeft, duration, { bezier: pathLeft, ease: Linear.easeNone });
         var rightShoulderTween = TweenMax.to(positionRight, duration, { bezier: pathRight, ease: Linear.easeNone });
         tense.add(leftShoulderTween, 0).add(rightShoulderTween, 0);
+    };
+    SpikeMesh.prototype.checkIntersection = function () {
+        var leftShoulder = this.shoulders.left.mesh;
+        var rightShoulder = this.shoulders.right.mesh;
+        var synapces = this.spike.neuron.synapces;
+        var synapcesToPositionsMap = newMap();
+        var synapcesPositions = _.map(this.spike.neuron.synapces, function (synapce) {
+            var nextSynapcePosition = synapce.position;
+            mapAdd(synapcesToPositionsMap, nextSynapcePosition, synapce);
+            return nextSynapcePosition;
+        });
+        var checkedPointsMap = newMap();
+        _.each(synapcesPositions, function (point) {
+            if (!mapHasKey(checkedPointsMap, point)) {
+                mapAdd(checkedPointsMap, point, point);
+                if (leftShoulder.intersectsPoint(point) || rightShoulder.intersectsPoint(point)) {
+                    var synapceToActivate = getByKey(synapcesToPositionsMap, point);
+                    synapceToActivate.activate();
+                }
+            }
+        });
     };
     SpikeMesh.prototype.shiftShoulders = function (leftPos, rightPos) {
         this.shoulders.left.mesh.position.x = leftPos.x;
