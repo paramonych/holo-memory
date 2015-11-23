@@ -4,7 +4,7 @@ class NeuronMesh implements ActivatableMesh {
   public material: BABYLON.StandardMaterial;
   public activeMaterial: BABYLON.StandardMaterial;
 
-  constructor(private scene: BABYLON.Scene, public scale: number) {
+  constructor(private type: NeuronType, private scene: BABYLON.Scene, public scale: number) {
     this.setMaterials();
     this.curve = randomPath(this.scale, this.scale/20, this.scale/60);
     this.draw();
@@ -18,14 +18,13 @@ class NeuronMesh implements ActivatableMesh {
   }
 
   setMaterials(): void {
-    this.material = new BABYLON.StandardMaterial('i', this.scene);
-    this.material.emissiveColor = new BABYLON.Color3(0.17, 0.57, 1);
-    this.material.alpha = 0.3;
-
-    this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
-    this.activeMaterial.emissiveColor = new BABYLON.Color3(1, .9, 0);
-    this.activeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
-    this.activeMaterial.alpha = 0.3;
+    if(isMedium(this.type)) {
+      this.material = forMediumNeuron(this.scene);
+      this.activeMaterial = forMediumActiveNeuron(this.scene);
+    } else {
+      this.material = forProgenyNeuron(this.scene);
+      this.activeMaterial = forProgenyActiveNeuron(this.scene);
+    }
   }
 
   public activate(): void {

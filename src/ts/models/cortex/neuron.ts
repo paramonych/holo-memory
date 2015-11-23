@@ -1,6 +1,7 @@
 
 
 class Neuron implements Disposable, Dualistic  { // This is the single dendrite of the single neuron in fact
+  public id = getUniqueId();
   public spike: Spike;
   public state: KnockoutObservable<StateType>;
   public synapces = new Array<Synapce>();
@@ -8,10 +9,11 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public tense: TimelineMax;
 
   constructor(
-    public cortex: Cortex
+    public cortex: Cortex,
+    private type: NeuronType
   ) {
     this.chargeTense();
-    this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
+    this.neuron = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
     this.createSpike();
     this.createSynapces();

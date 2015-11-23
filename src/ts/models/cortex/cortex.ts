@@ -1,7 +1,7 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   public blasts: NeuroBlast[];
-  private neuronsAmount = 3;
+  private neuronsAmount = 4;
 
   constructor(
     public scene: BABYLON.Scene,
@@ -13,8 +13,12 @@ class Cortex implements Disposable {
   private createNeurons(): void {
       _.each(this.neurons, (n) => n.dispose());
       this.neurons = new Array<Neuron>();
+      let type = NeuronType.Medium;
       for(let i=0; i< this.neuronsAmount; i++) {
-        this.neurons.push( new Neuron(this));
+        if(i >= this.neuronsAmount/2) {
+          type = NeuronType.Progeny;
+        }
+        this.neurons.push(new Neuron(this, type));
       }
   }
 

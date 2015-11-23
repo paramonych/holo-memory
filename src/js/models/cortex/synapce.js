@@ -5,7 +5,7 @@ var Synapce = (function () {
         this.toDefaultState();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
-        this.mesh = new SynapceMesh(scene, scale, position);
+        this.mesh = new SynapceMesh(scene, scale, position, neuron.type);
         this.setMediator();
         this.deactivate();
     }

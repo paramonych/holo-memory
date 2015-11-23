@@ -7,7 +7,7 @@ class Synapce implements Disposable, Dualistic {
     this.toDefaultState();
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
-    this.mesh = new SynapceMesh(scene, scale, position);
+    this.mesh = new SynapceMesh(scene, scale, position, neuron.type);
     this.setMediator();
     this.deactivate();
   }

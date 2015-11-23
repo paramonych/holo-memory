@@ -3,14 +3,18 @@ var Cortex = (function () {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = 3;
+        this.neuronsAmount = 4;
         this.createNeurons();
     }
     Cortex.prototype.createNeurons = function () {
         _.each(this.neurons, function (n) { return n.dispose(); });
         this.neurons = new Array();
+        var type = NeuronType.Medium;
         for (var i = 0; i < this.neuronsAmount; i++) {
-            this.neurons.push(new Neuron(this));
+            if (i >= this.neuronsAmount / 2) {
+                type = NeuronType.Progeny;
+            }
+            this.neurons.push(new Neuron(this, type));
         }
     };
     Cortex.prototype.draw = function () {

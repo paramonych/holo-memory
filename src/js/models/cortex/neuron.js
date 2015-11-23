@@ -1,9 +1,11 @@
 var Neuron = (function () {
-    function Neuron(cortex) {
+    function Neuron(cortex, type) {
         this.cortex = cortex;
+        this.type = type;
+        this.id = getUniqueId();
         this.synapces = new Array();
         this.chargeTense();
-        this.neuron = new NeuronMesh(this.cortex.scene, this.cortex.scale);
+        this.neuron = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
         this.createSpike();
         this.createSynapces();

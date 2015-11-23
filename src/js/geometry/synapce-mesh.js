@@ -1,8 +1,9 @@
 var SynapceMesh = (function () {
-    function SynapceMesh(scene, scale, position) {
+    function SynapceMesh(scene, scale, position, type) {
         this.scene = scene;
         this.scale = scale;
         this.position = position;
+        this.type = type;
         this.setMaterials();
         this.draw();
     }
@@ -29,10 +30,14 @@ var SynapceMesh = (function () {
         this.mesh.material = this.material;
     };
     SynapceMesh.prototype.setMaterials = function () {
-        this.material = new BABYLON.StandardMaterial('i', this.scene);
-        this.material.emissiveColor = new BABYLON.Color3(0.17, 0.57, 1);
-        this.material.alpha = 0.5;
-        this.activeMaterial = this.material;
+        if (isMedium(this.type)) {
+            this.material = forMediumNeuron(this.scene);
+            this.activeMaterial = forMediumActiveNeuron(this.scene);
+        }
+        else {
+            this.material = forProgenyNeuron(this.scene);
+            this.activeMaterial = forProgenyActiveNeuron(this.scene);
+        }
     };
     SynapceMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);

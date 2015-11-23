@@ -26,18 +26,22 @@
         "./ts/info/common.ts",
         "./ts/info/dom.ts",
         "./ts/info/geometry.ts",
+        "./ts/info/neuron.ts",
         "./ts/info/space.ts",
         "./ts/info/spike.ts",
         "./ts/info/state.ts",
-        "./ts/models/blast.ts",
-        "./ts/models/cortex.ts",
-        "./ts/models/mediator.ts",
-        "./ts/models/neuron.ts",
-        "./ts/models/occasion.ts",
+        "./ts/materials/neuron.ts",
+        "./ts/materials/spike.ts",
+        "./ts/models/cortex/cortex.ts",
+        "./ts/models/cortex/mediator.ts",
+        "./ts/models/cortex/neuron.ts",
+        "./ts/models/cortex/spike.ts",
+        "./ts/models/cortex/synapce.ts",
         "./ts/models/space.ts",
-        "./ts/models/spike.ts",
-        "./ts/models/synapce.ts",
         "./ts/models/time.ts",
+        "./ts/models/wave/blast.ts",
+        "./ts/models/wave/wave.ts",
+        "./ts/static/paths.ts",
         "./ts/static/selectors.ts",
         "./ts/utils/arrays.ts",
         "./ts/utils/maps.ts",
@@ -59,5 +63,8 @@
         "placeOpenBraceOnNewLineForFunctions": false,
         "placeOpenBraceOnNewLineForControlBlocks": false
     },
-    "exclude": []
+    "exclude": [],
+    "atom": {
+        "rewriteTsconfig": true
+    }
 }

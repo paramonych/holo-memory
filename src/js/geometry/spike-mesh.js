@@ -1,4 +1,3 @@
-var sunUrl = 'http://site1.2013321.brim.ru/nru/textures/sun.png';
 var SpikeMesh = (function () {
     function SpikeMesh(scene, scale, spike) {
         var _this = this;
@@ -131,10 +130,12 @@ var SpikeMesh = (function () {
         this.shoulders.right.mesh.position.z = rightPos.z;
     };
     SpikeMesh.prototype.setMaterials = function () {
-        this.material = new BABYLON.StandardMaterial('i', this.scene);
-        this.material.alpha = 0;
-        this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
-        this.activeMaterial.emissiveColor = new BABYLON.Color3(1, 0.5, 0.2);
+        if (isMedium(this.spike.neuron.type)) {
+            this.material = forSpike(this.scene);
+        }
+        else {
+            this.activeMaterial = forSpikeActive(this.scene);
+        }
     };
     SpikeMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.shoulders.left.mesh);

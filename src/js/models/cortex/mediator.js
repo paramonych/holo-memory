@@ -1,4 +1,3 @@
-var particleUrl = 'http://i166.photobucket.com/albums/u83/j1m68/star.jpg';
 var Mediator = (function () {
     function Mediator(synapce) {
         this.synapce = synapce;

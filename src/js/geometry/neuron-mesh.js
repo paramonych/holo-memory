@@ -1,5 +1,6 @@
 var NeuronMesh = (function () {
-    function NeuronMesh(scene, scale) {
+    function NeuronMesh(type, scene, scale) {
+        this.type = type;
         this.scene = scene;
         this.scale = scale;
         this.setMaterials();
@@ -12,13 +13,14 @@ var NeuronMesh = (function () {
         this.mesh.material = this.material;
     };
     NeuronMesh.prototype.setMaterials = function () {
-        this.material = new BABYLON.StandardMaterial('i', this.scene);
-        this.material.emissiveColor = new BABYLON.Color3(0.17, 0.57, 1);
-        this.material.alpha = 0.3;
-        this.activeMaterial = new BABYLON.StandardMaterial('a', this.scene);
-        this.activeMaterial.emissiveColor = new BABYLON.Color3(1, .9, 0);
-        this.activeMaterial.ambientColor = new BABYLON.Color3(0, 0, 1);
-        this.activeMaterial.alpha = 0.3;
+        if (isMedium(this.type)) {
+            this.material = forMediumNeuron(this.scene);
+            this.activeMaterial = forMediumActiveNeuron(this.scene);
+        }
+        else {
+            this.material = forProgenyNeuron(this.scene);
+            this.activeMaterial = forProgenyActiveNeuron(this.scene);
+        }
     };
     NeuronMesh.prototype.activate = function () {
         this.mesh.material = this.activeMaterial;

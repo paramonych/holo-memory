@@ -1,6 +1,3 @@
-const particleUrl = 'http://i166.photobucket.com/albums/u83/j1m68/star.jpg';
-//const particleUrl = 'pix/star.jpg';
-
 class Mediator {
   private scene: BABYLON.Scene;
   private texture: BABYLON.Texture;
