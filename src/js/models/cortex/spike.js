@@ -5,6 +5,7 @@ var Spike = (function () {
         var neuronMesh = this.neuron.getMesh();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
+        this.chargeTense();
         this.mesh = new SpikeMesh(scene, scale, this, SpikeDirection.Forward);
         this.toDefaultState();
         this.deactivate();
@@ -30,7 +31,11 @@ var Spike = (function () {
             this.mesh.deactivate();
         }
     };
+    Spike.prototype.chargeTense = function () {
+        this.tense = new TimelineMax({ repeat: 0, paused: true });
+    };
     Spike.prototype.reset = function () {
+        this.tense.restart();
         this.mesh.reset();
     };
     Spike.prototype.toDefaultState = function () {

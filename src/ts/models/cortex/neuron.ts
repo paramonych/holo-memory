@@ -1,24 +1,50 @@
 
 
-class Neuron implements Disposable, Dualistic  { // This is the single dendrite of the single neuron in fact
+class Neuron implements Disposable, Dualistic  { // This is the single dendrite of a single neuron in fact
   public id = getUniqueId();
   public spike: Spike;
   public state: KnockoutObservable<StateType>;
   public synapces = new Array<Synapce>();
   public mesh: NeuronMesh;
-  public tense: TimelineMax;
 
   constructor(
     public cortex: Cortex,
     public type: NeuronType
   ) {
-    this.chargeTense();
     this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
-    this.createSpike();
     this.createSynapces();
-    this.startWatchForSpike();
+    if(isMedium(this.type)) {
+      this.createSpike();
+      this.startWatchForSpike();
+    }
   }
+
+////////////////////////////////// temporary workaround
+// beacuse we need to serve multiple spikes
+// so the spikes should be created and wired on fly
+// and removed when it reaches the end of dendrit
+ public play(): void {
+   if(isMedium(this.type)) {
+     this.spike.tense.play();
+   }
+ }
+ public pause(time: number): void {
+   if(isMedium(this.type)) {
+     this.spike.tense.pause(time);
+   }
+ }
+ public resume(): void {
+   if(isMedium(this.type)) {
+     this.spike.tense.resume();
+   }
+ }
+ public progress(value: number): void {
+   if(isMedium(this.type)) {
+     this.spike.tense.progress(value);
+   }
+ }
+//////////////////////////////////
 
   private createSpike(): void {
     this.spike = new Spike(this);
@@ -30,8 +56,9 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   public restartTense(): void {
-    this.tense.restart();
-    this.spike.reset();
+    if(isMedium(this.type)) {
+      this.spike.reset();
+    }
   }
 
   private createSynapces(): void {
@@ -50,12 +77,6 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
           }
       });
     }
-  }
-
-  private chargeTense(): void {
-    this.tense = new TimelineMax({repeat: 0, paused : true});
-    // TODO: add label for all synapces
-    //  this.tense.addCallback(() => this.affectNearestSynapce(), nextSynapceLabel);
   }
 
   private startWatchForSpike(): void {

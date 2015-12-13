@@ -54,7 +54,7 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private constructMesh(): void {
-    this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale/45, this.scene, false);
+    this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale/25, this.scene, false);
     this.light = this.getLight();
     this.light.parent = this.mesh;
   }
@@ -91,14 +91,14 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private chargeTense(): void {
-     let tense = this.spike.neuron.tense;
+     let tense = this.spike.tense;
      let duration = this.spike.neuron.cortex.lifetime;
 
      let path = isDirect(this.direction)
       ? arrayClone(this.curve.slice(this.numberPosition, this.curve.length))
       : reversedArrayClone(this.curve.slice(0, this.numberPosition));
 
-     let position = {x:this.position.x, y:this.position.y, z:this.position.z};
+     let position = {x: this.position.x, y: this.position.y, z: this.position.z};
 
      tense.eventCallback( 'onStart',() => this.activate());
      tense.eventCallback( 'onUpdate',() => {
@@ -149,11 +149,8 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   setMaterials(): void {
-    if(isMedium(this.spike.neuron.type)) {
-      this.material = forSpike(this.scene);
-    } else {
-      this.activeMaterial = forSpikeActive(this.scene);
-    }
+    this.material = forSpike(this.scene);
+    this.activeMaterial = forSpikeActive(this.scene);
   }
 
   public dispose(): void {

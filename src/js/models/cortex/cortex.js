@@ -22,17 +22,17 @@ var Cortex = (function () {
     };
     Cortex.prototype.chargeTense = function (time) {
         _.each(this.neurons, function (n) {
-            time.tense.add(function () { return n.tense.play(); }, 0);
+            time.tense.add(function () { return n.play(); }, 0);
         });
     };
     Cortex.prototype.freezeTense = function (time) {
         _.each(this.neurons, function (n) {
-            n.tense.pause(time.tense.progress() * time.duration);
+            n.pause(time.tense.progress() * time.duration);
         });
     };
     Cortex.prototype.resumeTense = function (time) {
         _.each(this.neurons, function (n) {
-            n.tense.resume();
+            n.resume();
         });
     };
     Cortex.prototype.restartTense = function (time) {
@@ -42,7 +42,7 @@ var Cortex = (function () {
     };
     Cortex.prototype.shiftTense = function (time, progress) {
         _.each(this.neurons, function (n) {
-            n.tense.progress(progress);
+            n.progress(progress);
         });
     };
     Cortex.prototype.dispose = function () {

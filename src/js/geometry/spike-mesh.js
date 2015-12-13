@@ -40,7 +40,7 @@ var SpikeMesh = (function () {
         this.positionShoulders();
     };
     SpikeMesh.prototype.constructMesh = function () {
-        this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 45, this.scene, false);
+        this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 25, this.scene, false);
         this.light = this.getLight();
         this.light.parent = this.mesh;
     };
@@ -73,7 +73,7 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.chargeTense = function () {
         var _this = this;
-        var tense = this.spike.neuron.tense;
+        var tense = this.spike.tense;
         var duration = this.spike.neuron.cortex.lifetime;
         var path = isDirect(this.direction)
             ? arrayClone(this.curve.slice(this.numberPosition, this.curve.length))
@@ -116,12 +116,8 @@ var SpikeMesh = (function () {
         this.mesh.position.z = position.z;
     };
     SpikeMesh.prototype.setMaterials = function () {
-        if (isMedium(this.spike.neuron.type)) {
-            this.material = forSpike(this.scene);
-        }
-        else {
-            this.activeMaterial = forSpikeActive(this.scene);
-        }
+        this.material = forSpike(this.scene);
+        this.activeMaterial = forSpikeActive(this.scene);
     };
     SpikeMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);

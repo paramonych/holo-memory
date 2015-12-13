@@ -1,6 +1,7 @@
 class Spike implements Disposable, Dualistic {
   private speed: number = 1; // micrometers/milliseconds
   public state: KnockoutObservable<StateType>;
+  public tense: TimelineMax;
   public mesh: SpikeMesh;
   public moved: KnockoutObservable<DoubleVector>;
 
@@ -10,6 +11,8 @@ class Spike implements Disposable, Dualistic {
     let neuronMesh = this.neuron.getMesh();
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
+
+    this.chargeTense();
     this.mesh = new SpikeMesh(scene, scale, this, SpikeDirection.Forward);
     this.toDefaultState();
     this.deactivate();
@@ -39,7 +42,14 @@ class Spike implements Disposable, Dualistic {
     }
   }
 
+  private chargeTense(): void {
+    this.tense = new TimelineMax({repeat: 0, paused : true});
+    // TODO: add label for all synapces
+    //  this.tense.addCallback(() => this.affectNearestSynapce(), nextSynapceLabel);
+  }
+
   public reset(): void {
+    this.tense.restart();
     this.mesh.reset();
   }
 

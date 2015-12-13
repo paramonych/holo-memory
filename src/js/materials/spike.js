@@ -5,6 +5,6 @@ function forSpike(scene) {
 }
 function forSpikeActive(scene) {
     var material = new BABYLON.StandardMaterial('a', scene);
-    material.emissiveColor = new BABYLON.Color3(1, 0.5, 0.2);
+    material.emissiveColor = new BABYLON.Color3(1, 0.5, 0.5);
     return material;
 }

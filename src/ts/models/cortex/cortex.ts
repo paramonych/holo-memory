@@ -28,19 +28,19 @@ class Cortex implements Disposable {
 
   public chargeTense(time: Time): void {
     _.each(this.neurons, (n) => {
-      time.tense.add(() => n.tense.play(), 0);
+      time.tense.add(() => n.play(), 0);
     });
   }
 
   public freezeTense(time: Time): void {
     _.each(this.neurons, (n) => {
-      n.tense.pause(time.tense.progress()*time.duration);
+      n.pause(time.tense.progress()*time.duration);
     });
   }
 
   public resumeTense(time: Time): void {
     _.each(this.neurons, (n) => {
-      n.tense.resume();
+      n.resume();
     });
   }
 
@@ -52,7 +52,7 @@ class Cortex implements Disposable {
 
   public shiftTense(time: Time, progress: number): void {
     _.each(this.neurons, (n) => {
-      n.tense.progress(progress);
+      n.progress(progress);
     });
   }
 
