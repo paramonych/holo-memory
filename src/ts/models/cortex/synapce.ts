@@ -13,7 +13,7 @@ class Synapce implements Disposable, Dualistic {
   }
 
   private setMediator(): void {
-      this.mediator = new Mediator(this);
+    this.mediator = new Mediator(this);
   }
 
   public activate(): void {

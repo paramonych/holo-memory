@@ -5,7 +5,7 @@ var Spike = (function () {
         var neuronMesh = this.neuron.getMesh();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
-        this.mesh = new SpikeMesh(scene, scale, this);
+        this.mesh = new SpikeMesh(scene, scale, this, SpikeDirection.Forward);
         this.toDefaultState();
         this.deactivate();
         this.moved = ko.observable(doubleVectorFrom(new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 0, 0)));

@@ -1,6 +1,6 @@
 enum NeuronType {
-  'Medium',
-  'Progeny'
+  Medium,
+  Progeny
 }
 
 function isMedium(type: NeuronType): boolean {
