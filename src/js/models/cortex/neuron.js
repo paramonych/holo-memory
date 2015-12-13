@@ -56,10 +56,6 @@ var Neuron = (function () {
             var position = path[i * step + halfStep];
             var synapce = new Synapce(this, position.clone());
             this.synapces.push(synapce);
-            synapce.state.subscribe(function (state) {
-                if (!isActiveState(state)) {
-                }
-            });
         }
     };
     Neuron.prototype.startWatchForSpike = function () {

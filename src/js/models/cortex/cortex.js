@@ -3,9 +3,29 @@ var Cortex = (function () {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = 4;
+        this.neuronsAmount = 10;
         this.createNeurons();
+        this.preprocessBlasts();
     }
+    Cortex.prototype.preprocessBlasts = function () {
+        var _this = this;
+        var synapces = this.collectSynapces();
+        this.blasts = newMap();
+        synapces.forEach(function (synapce) {
+            var newBlast = new NeuroBlast(synapce, _this.scale / 2, synapces, _this.scene);
+            if (mapSize(newBlast.synapcesMap) > 1) {
+                mapAdd(_this.blasts, synapce.getId, newBlast);
+            }
+        });
+        console.debug('Blasts: ', mapSize(this.blasts));
+    };
+    Cortex.prototype.collectSynapces = function () {
+        var allSynapces = new Array();
+        this.neurons.forEach(function (neuron) {
+            appendAll(allSynapces, neuron.synapces);
+        });
+        return allSynapces;
+    };
     Cortex.prototype.createNeurons = function () {
         _.each(this.neurons, function (n) { return n.dispose(); });
         this.neurons = new Array();

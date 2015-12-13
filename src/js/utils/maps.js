@@ -16,3 +16,10 @@ function mapRemoveByKey(map, key) {
 function keyToString(key) {
     return key.toString();
 }
+function mapSize(map) {
+    var size = 0;
+    for (var key in map) {
+        size++;
+    }
+    return size;
+}

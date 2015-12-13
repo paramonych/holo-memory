@@ -25,3 +25,11 @@ function mapRemoveByKey<r>(map: Map<r>, key: any): void {
 function keyToString(key: any): string {
   return key.toString();
 }
+
+function mapSize<r>(map: Map<r>): number {
+  let size = 0;
+  for(let key in map) {
+    size++;
+  }
+  return size;
+}

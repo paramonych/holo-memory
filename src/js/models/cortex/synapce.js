@@ -2,6 +2,7 @@ var Synapce = (function () {
     function Synapce(neuron, position) {
         this.neuron = neuron;
         this.position = position;
+        this.id = getUniqueId();
         this.toDefaultState();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
@@ -9,6 +10,9 @@ var Synapce = (function () {
         this.setMediator();
         this.deactivate();
     }
+    Synapce.prototype.getId = function () {
+        return this.id.toString();
+    };
     Synapce.prototype.setMediator = function () {
         this.mediator = new Mediator(this);
     };

@@ -30,6 +30,7 @@
         "./ts/info/space.ts",
         "./ts/info/spike.ts",
         "./ts/info/state.ts",
+        "./ts/materials/blast.ts",
         "./ts/materials/neuron.ts",
         "./ts/materials/spike.ts",
         "./ts/models/cortex/cortex.ts",

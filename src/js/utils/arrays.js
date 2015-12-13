@@ -12,3 +12,8 @@ function arrayClone(array) {
     }
     return result;
 }
+function appendAll(one, two) {
+    for (var s = 0; s < two.length; s++) {
+        one.push(two[s]);
+    }
+}

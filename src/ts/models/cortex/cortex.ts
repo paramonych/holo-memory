@@ -1,13 +1,38 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
-  public blasts: NeuroBlast[];
-  private neuronsAmount = 4;
+  public blasts: Map<NeuroBlast>;
+  private neuronsAmount = 10;
 
   constructor(
     public scene: BABYLON.Scene,
     public scale: number,
     public lifetime: number) {
     this.createNeurons();
+    this.preprocessBlasts();
+  }
+
+  private preprocessBlasts(): void {
+    let synapces = this.collectSynapces();
+    this.blasts = newMap<NeuroBlast>();
+
+    synapces.forEach((synapce) => {
+      let newBlast = new NeuroBlast(synapce, this.scale/2, synapces, this.scene);
+      if(mapSize(newBlast.synapcesMap) > 1) {
+        mapAdd(this.blasts, synapce.getId, newBlast);
+      }
+    });
+
+    console.debug('Blasts: ', mapSize(this.blasts));
+  }
+
+  private collectSynapces(): Synapce[] {
+    var allSynapces = new Array<Synapce>();
+
+    this.neurons.forEach((neuron) => {
+      appendAll(allSynapces, neuron.synapces);
+    });
+
+    return allSynapces;
   }
 
   private createNeurons(): void {

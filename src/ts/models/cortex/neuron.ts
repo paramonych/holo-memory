@@ -71,11 +71,6 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       let position = path[i*step+halfStep];
       let synapce = new Synapce(this, position.clone());
       this.synapces.push(synapce);
-      synapce.state.subscribe((state) => {
-          if(!isActiveState(state)) {
-            // TODO: update the blasts map
-          }
-      });
     }
   }
 
