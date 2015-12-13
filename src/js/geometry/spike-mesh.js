@@ -6,7 +6,7 @@ var SpikeMesh = (function () {
         this.spike = spike;
         this.direction = direction;
         this.curve = new Array();
-        _.each(this.spike.neuron.neuron.curve.path, function (next) {
+        _.each(this.spike.neuron.mesh.curve.path, function (next) {
             _this.curve.push(next.clone());
         });
         this.setMaterials();
@@ -16,7 +16,7 @@ var SpikeMesh = (function () {
     }
     SpikeMesh.prototype.setPositionInCurve = function () {
         var _this = this;
-        this.numberPosition = Math.floor(this.curve.length / 2);
+        this.numberPosition = isDirect(this.direction) ? 0 : (this.curve.length - 1);
         if (this.position !== void 0) {
             _.each(this.curve, function (next, index) {
                 if (compareVectors(next, _this.position)) {
@@ -76,8 +76,8 @@ var SpikeMesh = (function () {
         var tense = this.spike.neuron.tense;
         var duration = this.spike.neuron.cortex.lifetime;
         var path = isDirect(this.direction)
-            ? reversedArrayClone(this.curve.slice(0, this.numberPosition))
-            : arrayClone(this.curve.slice(this.numberPosition, this.curve.length));
+            ? arrayClone(this.curve.slice(this.numberPosition, this.curve.length))
+            : reversedArrayClone(this.curve.slice(0, this.numberPosition));
         var position = { x: this.position.x, y: this.position.y, z: this.position.z };
         tense.eventCallback('onStart', function () { return _this.activate(); });
         tense.eventCallback('onUpdate', function () {

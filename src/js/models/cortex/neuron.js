@@ -5,7 +5,7 @@ var Neuron = (function () {
         this.id = getUniqueId();
         this.synapces = new Array();
         this.chargeTense();
-        this.neuron = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
+        this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
         this.createSpike();
         this.createSynapces();
@@ -27,7 +27,7 @@ var Neuron = (function () {
     Neuron.prototype.createSynapces = function () {
         var scale = this.cortex.scale;
         var devideFactor = scale / 2;
-        var path = this.neuron.curve.path;
+        var path = this.mesh.curve.path;
         var step = Math.floor(path.length / devideFactor);
         var halfStep = Math.floor(step / 2);
         for (var i = 0; i < devideFactor; i++) {
@@ -58,10 +58,10 @@ var Neuron = (function () {
     Neuron.prototype.dispose = function () {
         this.spike.dispose();
         _.each(this.synapces, function (synapce) { synapce.dispose(); });
-        this.neuron.dispose();
+        this.mesh.dispose();
     };
     Neuron.prototype.build = function () {
-        this.neuron.draw();
+        this.mesh.draw();
     };
     Neuron.prototype.activate = function () {
         this.state(StateType.Active);
@@ -83,7 +83,7 @@ var Neuron = (function () {
         this.state.subscribe(function (state) { return _this.serveState(state); });
     };
     Neuron.prototype.getMesh = function () {
-        return this.neuron.mesh;
+        return this.mesh.mesh;
     };
     Neuron.prototype.watchState = function (action) {
         this.state.subscribe(action);

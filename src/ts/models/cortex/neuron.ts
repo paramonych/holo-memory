@@ -5,7 +5,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public spike: Spike;
   public state: KnockoutObservable<StateType>;
   public synapces = new Array<Synapce>();
-  public neuron: NeuronMesh;
+  public mesh: NeuronMesh;
   public tense: TimelineMax;
 
   constructor(
@@ -13,7 +13,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     public type: NeuronType
   ) {
     this.chargeTense();
-    this.neuron = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
+    this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
     this.createSpike();
     this.createSynapces();
@@ -37,7 +37,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   private createSynapces(): void {
     let scale = this.cortex.scale;
     let devideFactor = scale/2;
-    let path = this.neuron.curve.path;
+    let path = this.mesh.curve.path;
     let step = Math.floor(path.length/devideFactor);
     let halfStep = Math.floor(step/2);
     for(let i=0; i< devideFactor; i++) {
@@ -73,11 +73,11 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public dispose(): void {
     this.spike.dispose();
     _.each(this.synapces, (synapce) => {synapce.dispose();});
-    this.neuron.dispose();
+    this.mesh.dispose();
   }
 
   public build(): void {
-    this.neuron.draw();
+    this.mesh.draw();
   }
 
   public activate(): void {
@@ -101,7 +101,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   public getMesh(): BABYLON.Mesh {
-    return this.neuron.mesh;
+    return this.mesh.mesh;
   }
 
   public watchState(action: (state: StateType) => void): void {

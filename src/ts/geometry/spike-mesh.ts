@@ -14,7 +14,7 @@ class SpikeMesh implements ActivatableMesh {
     public direction: SpikeDirection
   ) {
     this.curve = new Array<BABYLON.Vector3>();
-    _.each(this.spike.neuron.neuron.curve.path, (next) => {
+    _.each(this.spike.neuron.mesh.curve.path, (next) => {
       this.curve.push(next.clone());
     });
 
@@ -26,7 +26,7 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private setPositionInCurve(): void {
-    this.numberPosition = Math.floor(this.curve.length/2);
+    this.numberPosition = isDirect(this.direction) ? 0 : (this.curve.length-1);//Math.floor(this.curve.length/2);
     if(this.position !== void 0 ) {
       _.each(this.curve, (next, index) => {
         if(compareVectors(next, this.position)) {
@@ -95,8 +95,8 @@ class SpikeMesh implements ActivatableMesh {
      let duration = this.spike.neuron.cortex.lifetime;
 
      let path = isDirect(this.direction)
-      ? reversedArrayClone(this.curve.slice(0, this.numberPosition))
-      : arrayClone(this.curve.slice(this.numberPosition, this.curve.length));
+      ? arrayClone(this.curve.slice(this.numberPosition, this.curve.length))
+      : reversedArrayClone(this.curve.slice(0, this.numberPosition));
 
      let position = {x:this.position.x, y:this.position.y, z:this.position.z};
 
