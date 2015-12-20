@@ -24,6 +24,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
 // beacuse we need to serve multiple spikes
 // so the spikes should be created and wired on fly
 // and removed when it reaches the end of dendrit
+// each spike should own it's own timeline
  public play(): void {
    if(isMedium(this.type)) {
      this.spike.tense.play();

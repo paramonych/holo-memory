@@ -3,13 +3,10 @@ class NeuroBlast {
   public synapcesMap: Map<Synapce>;
 
   constructor(
-    private synapce: Synapce, radius: number,
+    private synapce: Synapce,
+    private radius: number,
     private synapces: Array<Synapce>,
     private scene: BABYLON.Scene) {
-
-    this.sphere = BABYLON.Mesh.CreateSphere('blast', 8, radius, scene, false);
-    this.sphere.material = forBlastSphere(scene);
-    this.sphere.position = synapce.position.clone();
 
     this.synapcesMap = newMap<Synapce>();
     this.synapces.forEach((nextSynapce) => {
@@ -20,9 +17,25 @@ class NeuroBlast {
   }
 
   private checkIntersection(nextSynapce: Synapce): void {
-    if(this.sphere.intersectsMesh(nextSynapce.mesh.mesh, true)) {
+
+    if(this.checkIntersections(nextSynapce.position)) {
+      nextSynapce.mesh.mesh.material = forBlastSphere(this.scene);
       mapAdd(this.synapcesMap, nextSynapce.getId(), nextSynapce);
     }
+  }
+
+  private checkIntersections(np: BABYLON.Vector3): boolean {
+    let pos = this.synapce.position;
+    let x = Math.pow((pos.x - np.x), 2);
+    let y = Math.pow((pos.y - np.y), 2);
+    let z = Math.pow((pos.z - np.z), 2);
+    let distance = Math.sqrt(x + y + z);
+    console.log(distance,this.radius);
+    if(distance > 0 && distance < this.radius) {
+      return true;
+    }
+
+    return false;
   }
 
   private dispose(): void {

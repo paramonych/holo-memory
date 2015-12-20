@@ -1,7 +1,7 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   public blasts: Map<NeuroBlast>;
-  private neuronsAmount = 10;
+  private neuronsAmount = 4;
 
   constructor(
     public scene: BABYLON.Scene,
@@ -12,11 +12,12 @@ class Cortex implements Disposable {
   }
 
   private preprocessBlasts(): void {
-    let synapces = this.collectSynapces();
+    let mediumSynapces = this.collectMediumSynapces();
+    let progenySynapces = this.collectProgenySynapces();
     this.blasts = newMap<NeuroBlast>();
 
-    synapces.forEach((synapce) => {
-      let newBlast = new NeuroBlast(synapce, this.scale/2, synapces, this.scene);
+    mediumSynapces.forEach((synapce) => {
+      let newBlast = new NeuroBlast(synapce, this.scale/2.3, progenySynapces, this.scene);
       if(mapSize(newBlast.synapcesMap) > 1) {
         mapAdd(this.blasts, synapce.getId, newBlast);
       }
@@ -25,11 +26,25 @@ class Cortex implements Disposable {
     console.debug('Blasts: ', mapSize(this.blasts));
   }
 
-  private collectSynapces(): Synapce[] {
+  private collectMediumSynapces(): Synapce[] {
     var allSynapces = new Array<Synapce>();
 
     this.neurons.forEach((neuron) => {
-      appendAll(allSynapces, neuron.synapces);
+      if(isMedium(neuron.type)) {
+        appendAll(allSynapces, neuron.synapces);
+      }
+    });
+
+    return allSynapces;
+  }
+
+  private collectProgenySynapces(): Synapce[] {
+    var allSynapces = new Array<Synapce>();
+
+    this.neurons.forEach((neuron) => {
+      if(!isMedium(neuron.type)) {
+        appendAll(allSynapces, neuron.synapces);
+      }
     });
 
     return allSynapces;

@@ -2,11 +2,9 @@ var NeuroBlast = (function () {
     function NeuroBlast(synapce, radius, synapces, scene) {
         var _this = this;
         this.synapce = synapce;
+        this.radius = radius;
         this.synapces = synapces;
         this.scene = scene;
-        this.sphere = BABYLON.Mesh.CreateSphere('blast', 8, radius, scene, false);
-        this.sphere.material = forBlastSphere(scene);
-        this.sphere.position = synapce.position.clone();
         this.synapcesMap = newMap();
         this.synapces.forEach(function (nextSynapce) {
             _this.checkIntersection(nextSynapce);
@@ -14,9 +12,22 @@ var NeuroBlast = (function () {
         this.dispose();
     }
     NeuroBlast.prototype.checkIntersection = function (nextSynapce) {
-        if (this.sphere.intersectsMesh(nextSynapce.mesh.mesh, true)) {
+        if (this.checkIntersections(nextSynapce.position)) {
+            nextSynapce.mesh.mesh.material = forBlastSphere(this.scene);
             mapAdd(this.synapcesMap, nextSynapce.getId(), nextSynapce);
         }
+    };
+    NeuroBlast.prototype.checkIntersections = function (np) {
+        var pos = this.synapce.position;
+        var x = Math.pow((pos.x - np.x), 2);
+        var y = Math.pow((pos.y - np.y), 2);
+        var z = Math.pow((pos.z - np.z), 2);
+        var distance = Math.sqrt(x + y + z);
+        console.log(distance, this.radius);
+        if (distance > 0 && distance < this.radius) {
+            return true;
+        }
+        return false;
     };
     NeuroBlast.prototype.dispose = function () {
         this.scene.removeMesh(this.sphere);

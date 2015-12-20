@@ -3,26 +3,38 @@ var Cortex = (function () {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = 10;
+        this.neuronsAmount = 4;
         this.createNeurons();
         this.preprocessBlasts();
     }
     Cortex.prototype.preprocessBlasts = function () {
         var _this = this;
-        var synapces = this.collectSynapces();
+        var mediumSynapces = this.collectMediumSynapces();
+        var progenySynapces = this.collectProgenySynapces();
         this.blasts = newMap();
-        synapces.forEach(function (synapce) {
-            var newBlast = new NeuroBlast(synapce, _this.scale / 2, synapces, _this.scene);
+        mediumSynapces.forEach(function (synapce) {
+            var newBlast = new NeuroBlast(synapce, _this.scale / 2.3, progenySynapces, _this.scene);
             if (mapSize(newBlast.synapcesMap) > 1) {
                 mapAdd(_this.blasts, synapce.getId, newBlast);
             }
         });
         console.debug('Blasts: ', mapSize(this.blasts));
     };
-    Cortex.prototype.collectSynapces = function () {
+    Cortex.prototype.collectMediumSynapces = function () {
         var allSynapces = new Array();
         this.neurons.forEach(function (neuron) {
-            appendAll(allSynapces, neuron.synapces);
+            if (isMedium(neuron.type)) {
+                appendAll(allSynapces, neuron.synapces);
+            }
+        });
+        return allSynapces;
+    };
+    Cortex.prototype.collectProgenySynapces = function () {
+        var allSynapces = new Array();
+        this.neurons.forEach(function (neuron) {
+            if (!isMedium(neuron.type)) {
+                appendAll(allSynapces, neuron.synapces);
+            }
         });
         return allSynapces;
     };
