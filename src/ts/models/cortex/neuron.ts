@@ -3,6 +3,7 @@
 class Neuron implements Disposable, Dualistic  { // This is the single dendrite of a single neuron in fact
   public id = getUniqueId();
   public code = getRandomSixMap();
+  public codeMesh: Code;
   public spike: Spike;
   public state: KnockoutObservable<StateType>;
   public synapces = new Array<Synapce>();
@@ -19,6 +20,19 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       this.createSpike();
       this.startWatchForSpike();
     }
+  }
+
+  public setProgenyCodeMesh(): void {
+    let scene = this.cortex.scene;
+    let scale = this.cortex.scale;
+    let path = this.mesh.curve.path;
+    let code =  toValues(this.code).join('');
+    console.log(code);
+    this.codeMesh = new Code(scene, scale, path[Math.floor(path.length/2)], code, true);
+  }
+
+  public hasCodeMesh(): boolean {
+    return (this.codeMesh !== void 0);
   }
 
   public getId(): String {

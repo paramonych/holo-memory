@@ -64,7 +64,7 @@ var SpikeMesh = (function () {
     SpikeMesh.prototype.styleAsActive = function (isActive) {
         if (isActive) {
             this.mesh.material = this.activeMaterial;
-            this.light.intensity = .35;
+            this.light.intensity = .1;
         }
         else {
             this.mesh.material = this.material;

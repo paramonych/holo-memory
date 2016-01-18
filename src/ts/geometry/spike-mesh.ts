@@ -83,7 +83,7 @@ class SpikeMesh implements ActivatableMesh {
   private styleAsActive(isActive: boolean): void {
     if(isActive) {
       this.mesh.material = this.activeMaterial;
-      this.light.intensity = .35;
+      this.light.intensity = .1;
     } else {
       this.mesh.material = this.material;
       this.light.intensity = 0;

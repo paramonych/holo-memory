@@ -18,6 +18,22 @@ class Mediator {
     this.cloud.stop();
   }
 
+  public willBeUsed(): void {
+    let cd = this.cloud;
+    cd.color1 = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 1);
+    cd.color2 = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 1);
+    cd.colorDead = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 0);
+
+    let size = 1.2;
+    cd.minSize = size;
+    cd.maxSize = size;
+  }
+
+  private ra(): number {
+    let r = random();
+    return (r < 0.5) ? (1-r) : r;
+  }
+
   private setParticles(): void {
     let cloud = this.cloud;
     let zero = new BABYLON.Vector3(0, 0, 0);
@@ -26,17 +42,20 @@ class Mediator {
     cloud.minEmitBox = zero;
     cloud.maxEmitBox = zero.clone();
 
-    cloud.color1 = new BABYLON.Color4(random(), random(), random(), 1);
-  //  cloud.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
-  //  cloud.colorDead = new BABYLON.Color4(0, 0, 0.2, 0.0);
+    cloud.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.6);
+    cloud.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.6);
+    cloud.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
 
-    cloud.minSize = 0.7;
-    cloud.maxSize = 0.7;
+    let size = 0.9;
+    cloud.minSize = size;
+    cloud.maxSize = size;
 
-    cloud.minLifeTime = 1.5;
-    cloud.maxLifeTime = 1.5;
+    let lt = lifetime/2.5;
 
-    cloud.emitRate = 17;
+    cloud.minLifeTime = lt;
+    cloud.maxLifeTime = lt;
+
+    cloud.emitRate = 21;
     cloud.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
     //cloud.gravity = new BABYLON.Vector3(0, 0, 0);
 

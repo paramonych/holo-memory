@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', plantConcept, false);
+var lifetime = 8;
 function plantConcept() {
     if (!BABYLON.Engine.isSupported()) {
         return;
@@ -8,7 +9,6 @@ function plantConcept() {
     var scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color3(0.07, 0.07, 0.07);
     var scale = 10;
-    var lifetime = 8;
     attachCamera(canvas, scene, scale);
     setLight(scene);
     createPatternSpaceBox(scene, scale);

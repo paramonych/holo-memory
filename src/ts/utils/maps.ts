@@ -26,6 +26,21 @@ function keyToString(key: any): string {
   return key.toString();
 }
 
+function toKeys<r>(map: Map<r>): Array<string> {
+  let keys = new Array<string>();
+  for(let key in map) {
+    keys.push(key);
+  }
+  return keys;
+}
+function toValues<r>(map: Map<r>): Array<r> {
+  let keys = new Array<r>();
+  for(let key in map) {
+    keys.push(getByKey(map, key));
+  }
+  return keys;
+}
+
 function mapSize<r>(map: Map<r>): number {
   let size = 0;
   for(let key in map) {

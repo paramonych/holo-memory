@@ -1,6 +1,6 @@
 class NeuroBlast {
   public sphere: BABYLON.Mesh;
-  public synapcesMap: Map<Neuron>;
+  public neuronsMap: Map<Neuron>;
   public isExists: boolean = false;
 
   constructor(
@@ -9,24 +9,33 @@ class NeuroBlast {
     private synapces: Array<Synapce>,
     private scene: BABYLON.Scene) {
 
-    this.synapcesMap = newMap<Neuron>();
+    this.neuronsMap = newMap<Neuron>();
     this.synapces.forEach((nextSynapce) => {
-      this.checkIntersection(nextSynapce);
+      let hasIntersections = this.checkIntersection(nextSynapce);
+      let nextNeuron = nextSynapce.neuron;
+      if(hasIntersections && !mapHasKey(this.neuronsMap, nextNeuron.getId())) {
+        mapAdd(this.neuronsMap, nextNeuron.getId(), nextNeuron);
+        if(!nextNeuron.hasCodeMesh()) {
+          nextNeuron.setProgenyCodeMesh();
+        }
+      }
     });
 
     this.dispose();
   }
 
-  private checkIntersection(nextSynapce: Synapce): void {
+  private checkIntersection(nextSynapce: Synapce): boolean {
     let hasIntersections = this.checkIntersections(nextSynapce.position);
 
     if(hasIntersections) {
       nextSynapce.mesh.mesh.material = forBlastSphere(this.scene);
-      mapAdd(this.synapcesMap, nextSynapce.neuron.getId(), nextSynapce.neuron);
+
       if(!this.isExists) {
         this.isExists = true;
       }
     }
+
+    return hasIntersections;
   }
 
   private checkIntersections(np: BABYLON.Vector3): boolean {
@@ -35,11 +44,10 @@ class NeuroBlast {
     let y = Math.pow((pos.y - np.y), 2);
     let z = Math.pow((pos.z - np.z), 2);
     let distance = Math.sqrt(x + y + z);
-    console.log(distance,this.radius);
+
     if(distance > 0 && distance < this.radius) {
       return true;
     }
-
     return false;
   }
 

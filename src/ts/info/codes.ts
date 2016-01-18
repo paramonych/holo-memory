@@ -1,4 +1,4 @@
-var codes = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','R','S','T'];
+var codes = ['A','B','C','D','E','F','G'];//,'H','I','J','K','L','M','N','O','P','R','S','T'];
 
 function getRandomFourArray(): Array<String> {
   var codeFour = new Array<String>();
@@ -13,12 +13,12 @@ function addRandomOneToArray(result: Array<String>): void {
 }
 function addRandomOneToMap(result: Map<String>): void {
   var letter = codes[Math.floor(Math.random()*codes.length)];
-  mapAdd(result, letter, letter);
+  mapAdd(result, Math.random()*Math.random(), letter);
 }
 
 function getRandomSixMap(): Map<String> {
   var codeSix = newMap<String>();
-  for(var i=0; i<4; i++) {
+  for(var i=0; i<6; i++) {
     addRandomOneToMap(codeSix);
   }
   return codeSix;
