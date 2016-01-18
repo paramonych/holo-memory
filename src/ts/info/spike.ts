@@ -1,29 +1,8 @@
-interface SpikeShoulders {
-  left: SpikeShoulder,
-  right: SpikeShoulder
+enum SpikeDirection {
+  Forward,
+  Backeard
 }
 
-interface SpikeShoulder {
-  mesh: BABYLON.Mesh,
-  light: BABYLON.PointLight
-}
-
-function shouldersFrom(
-  left: SpikeShoulder,
-  right: SpikeShoulder
-): SpikeShoulders {
-  return {
-    left: left,
-    right: right
-  };
-}
-
-function shoulderFrom(
-  mesh: BABYLON.Mesh,
-  light: BABYLON.PointLight
-): SpikeShoulder {
-  return {
-    mesh: mesh,
-    light: light
-  };
+function isDirect(direction: SpikeDirection): boolean {
+  return direction === SpikeDirection.Forward;
 }

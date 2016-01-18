@@ -2580,7 +2580,6 @@ declare module BABYLON {
         unbind(): void;
         clone(name: string): Material;
         dispose(forceDisposeEffect?: boolean): void;
-        diffuseTexture: BaseTexture;
     }
 }
 
@@ -5850,6 +5849,8 @@ declare module BABYLON {
         coordinatesMode: number;
         wrapU: number;
         wrapV: number;
+        uScale: number;
+        vScale: number;
         anisotropicFilteringLevel: number;
         _cachedAnisotropicFilteringLevel: number;
         private _scene;

@@ -3,14 +3,50 @@ var Neuron = (function () {
         this.cortex = cortex;
         this.type = type;
         this.id = getUniqueId();
+        this.code = getRandomSixMap();
         this.synapces = new Array();
-        this.chargeTense();
-        this.neuron = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
+        this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
-        this.createSpike();
         this.createSynapces();
-        this.startWatchForSpike();
+        if (isMedium(this.type)) {
+            this.createSpike();
+            this.startWatchForSpike();
+        }
     }
+    Neuron.prototype.setProgenyCodeMesh = function () {
+        var scene = this.cortex.scene;
+        var scale = this.cortex.scale;
+        var path = this.mesh.curve.path;
+        var code = toValues(this.code).join('');
+        console.log(code);
+        this.codeMesh = new Code(scene, scale, path[Math.floor(path.length / 2)], code, true);
+    };
+    Neuron.prototype.hasCodeMesh = function () {
+        return (this.codeMesh !== void 0);
+    };
+    Neuron.prototype.getId = function () {
+        return this.id.toString();
+    };
+    Neuron.prototype.play = function () {
+        if (isMedium(this.type)) {
+            this.spike.tense.play();
+        }
+    };
+    Neuron.prototype.pause = function (time) {
+        if (isMedium(this.type)) {
+            this.spike.tense.pause(time);
+        }
+    };
+    Neuron.prototype.resume = function () {
+        if (isMedium(this.type)) {
+            this.spike.tense.resume();
+        }
+    };
+    Neuron.prototype.progress = function (value) {
+        if (isMedium(this.type)) {
+            this.spike.tense.progress(value);
+        }
+    };
     Neuron.prototype.createSpike = function () {
         var _this = this;
         this.spike = new Spike(this);
@@ -21,27 +57,21 @@ var Neuron = (function () {
         });
     };
     Neuron.prototype.restartTense = function () {
-        this.tense.restart();
-        this.spike.reset();
+        if (isMedium(this.type)) {
+            this.spike.reset();
+        }
     };
     Neuron.prototype.createSynapces = function () {
         var scale = this.cortex.scale;
         var devideFactor = scale / 2;
-        var path = this.neuron.curve.path;
+        var path = this.mesh.curve.path;
         var step = Math.floor(path.length / devideFactor);
         var halfStep = Math.floor(step / 2);
         for (var i = 0; i < devideFactor; i++) {
             var position = path[i * step + halfStep];
             var synapce = new Synapce(this, position.clone());
             this.synapces.push(synapce);
-            synapce.state.subscribe(function (state) {
-                if (!isActiveState(state)) {
-                }
-            });
         }
-    };
-    Neuron.prototype.chargeTense = function () {
-        this.tense = new TimelineMax({ repeat: 0, paused: true });
     };
     Neuron.prototype.startWatchForSpike = function () {
         var _this = this;
@@ -58,10 +88,10 @@ var Neuron = (function () {
     Neuron.prototype.dispose = function () {
         this.spike.dispose();
         _.each(this.synapces, function (synapce) { synapce.dispose(); });
-        this.neuron.dispose();
+        this.mesh.dispose();
     };
     Neuron.prototype.build = function () {
-        this.neuron.draw();
+        this.mesh.draw();
     };
     Neuron.prototype.activate = function () {
         this.state(StateType.Active);
@@ -83,7 +113,7 @@ var Neuron = (function () {
         this.state.subscribe(function (state) { return _this.serveState(state); });
     };
     Neuron.prototype.getMesh = function () {
-        return this.neuron.mesh;
+        return this.mesh.mesh;
     };
     Neuron.prototype.watchState = function (action) {
         this.state.subscribe(action);

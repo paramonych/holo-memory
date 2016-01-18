@@ -1,6 +1,6 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
-  public blasts: NeuroBlast[];
+  public blasts: Map<NeuroBlast>;
   private neuronsAmount = 4;
 
   constructor(
@@ -8,6 +8,50 @@ class Cortex implements Disposable {
     public scale: number,
     public lifetime: number) {
     this.createNeurons();
+    this.preprocessBlasts();
+  }
+
+  private preprocessBlasts(): void {
+    let mediumSynapces = this.collectMediumSynapces();
+    let progenySynapces = this.collectProgenySynapces();
+    this.blasts = newMap<NeuroBlast>();
+
+    mediumSynapces.forEach((synapce) => {
+      let newBlast = new NeuroBlast(synapce, this.scale/2.3, progenySynapces, this.scene);
+      if(newBlast.isExists) {
+        synapce.setMediumCodeMesh();
+        synapce.allowMediators();
+      }
+      if(mapSize(newBlast.synapcesMap) > 1) {
+        mapAdd(this.blasts, synapce.getId, newBlast);
+      }
+    });
+
+    console.debug('Blasts: ', mapSize(this.blasts));
+  }
+
+  private collectMediumSynapces(): Synapce[] {
+    var allSynapces = new Array<Synapce>();
+
+    this.neurons.forEach((neuron) => {
+      if(isMedium(neuron.type)) {
+        appendAll(allSynapces, neuron.synapces);
+      }
+    });
+
+    return allSynapces;
+  }
+
+  private collectProgenySynapces(): Synapce[] {
+    var allSynapces = new Array<Synapce>();
+
+    this.neurons.forEach((neuron) => {
+      if(!isMedium(neuron.type)) {
+        appendAll(allSynapces, neuron.synapces);
+      }
+    });
+
+    return allSynapces;
   }
 
   private createNeurons(): void {
@@ -28,19 +72,19 @@ class Cortex implements Disposable {
 
   public chargeTense(time: Time): void {
     _.each(this.neurons, (n) => {
-      time.tense.add(() => n.tense.play(), 0);
+      time.tense.add(() => n.play(), 0);
     });
   }
 
   public freezeTense(time: Time): void {
     _.each(this.neurons, (n) => {
-      n.tense.pause(time.tense.progress()*time.duration);
+      n.pause(time.tense.progress()*time.duration);
     });
   }
 
   public resumeTense(time: Time): void {
     _.each(this.neurons, (n) => {
-      n.tense.resume();
+      n.resume();
     });
   }
 
@@ -52,7 +96,7 @@ class Cortex implements Disposable {
 
   public shiftTense(time: Time, progress: number): void {
     _.each(this.neurons, (n) => {
-      n.tense.progress(progress);
+      n.progress(progress);
     });
   }
 

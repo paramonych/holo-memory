@@ -46,6 +46,9 @@ class SynapceMesh implements ActivatableMesh {
       this.material = forProgenyNeuron(this.scene);
       this.activeMaterial = forProgenyActiveNeuron(this.scene);
     }
+    let alpha = 0.7;
+    this.material.alpha = alpha;
+    this.activeMaterial.alpha = alpha;
   }
 
   public dispose(): void {
