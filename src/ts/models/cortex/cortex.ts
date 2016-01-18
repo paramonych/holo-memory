@@ -18,6 +18,9 @@ class Cortex implements Disposable {
 
     mediumSynapces.forEach((synapce) => {
       let newBlast = new NeuroBlast(synapce, this.scale/2.3, progenySynapces, this.scene);
+      if(newBlast.isExists) {
+        synapce.setCodeMesh();
+      }
       if(mapSize(newBlast.synapcesMap) > 1) {
         mapAdd(this.blasts, synapce.getId, newBlast);
       }

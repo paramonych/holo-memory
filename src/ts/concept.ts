@@ -15,7 +15,7 @@ function plantConcept(): void {
   scene.clearColor = new BABYLON.Color3(0.07, 0.07, 0.07);
 
   let scale = 10;
-  let lifetime = 2;
+  let lifetime = 8;
   attachCamera(canvas, scene, scale);
   setLight(scene);
   createPatternSpaceBox(scene, scale);

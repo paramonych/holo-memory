@@ -1,6 +1,7 @@
 class NeuroBlast {
   public sphere: BABYLON.Mesh;
-  public synapcesMap: Map<Synapce>;
+  public synapcesMap: Map<Neuron>;
+  public isExists: boolean = false;
 
   constructor(
     private synapce: Synapce,
@@ -8,7 +9,7 @@ class NeuroBlast {
     private synapces: Array<Synapce>,
     private scene: BABYLON.Scene) {
 
-    this.synapcesMap = newMap<Synapce>();
+    this.synapcesMap = newMap<Neuron>();
     this.synapces.forEach((nextSynapce) => {
       this.checkIntersection(nextSynapce);
     });
@@ -17,10 +18,14 @@ class NeuroBlast {
   }
 
   private checkIntersection(nextSynapce: Synapce): void {
+    let hasIntersections = this.checkIntersections(nextSynapce.position);
 
-    if(this.checkIntersections(nextSynapce.position)) {
+    if(hasIntersections) {
       nextSynapce.mesh.mesh.material = forBlastSphere(this.scene);
-      mapAdd(this.synapcesMap, nextSynapce.getId(), nextSynapce);
+      mapAdd(this.synapcesMap, nextSynapce.neuron.getId(), nextSynapce.neuron);
+      if(!this.isExists) {
+        this.isExists = true;
+      }
     }
   }
 

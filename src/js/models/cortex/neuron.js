@@ -3,6 +3,7 @@ var Neuron = (function () {
         this.cortex = cortex;
         this.type = type;
         this.id = getUniqueId();
+        this.code = getRandomSixMap();
         this.synapces = new Array();
         this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
@@ -12,6 +13,9 @@ var Neuron = (function () {
             this.startWatchForSpike();
         }
     }
+    Neuron.prototype.getId = function () {
+        return this.id.toString();
+    };
     Neuron.prototype.play = function () {
         if (isMedium(this.type)) {
             this.spike.tense.play();

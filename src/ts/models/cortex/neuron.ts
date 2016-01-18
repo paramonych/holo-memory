@@ -2,6 +2,7 @@
 
 class Neuron implements Disposable, Dualistic  { // This is the single dendrite of a single neuron in fact
   public id = getUniqueId();
+  public code = getRandomSixMap();
   public spike: Spike;
   public state: KnockoutObservable<StateType>;
   public synapces = new Array<Synapce>();
@@ -18,6 +19,10 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       this.createSpike();
       this.startWatchForSpike();
     }
+  }
+
+  public getId(): String {
+    return this.id.toString();
   }
 
 ////////////////////////////////// temporary workaround

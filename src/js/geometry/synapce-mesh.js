@@ -38,6 +38,9 @@ var SynapceMesh = (function () {
             this.material = forProgenyNeuron(this.scene);
             this.activeMaterial = forProgenyActiveNeuron(this.scene);
         }
+        var alpha = 0.7;
+        this.material.alpha = alpha;
+        this.activeMaterial.alpha = alpha;
     };
     SynapceMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);

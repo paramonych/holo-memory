@@ -5,6 +5,7 @@ var NeuroBlast = (function () {
         this.radius = radius;
         this.synapces = synapces;
         this.scene = scene;
+        this.isExists = false;
         this.synapcesMap = newMap();
         this.synapces.forEach(function (nextSynapce) {
             _this.checkIntersection(nextSynapce);
@@ -12,9 +13,13 @@ var NeuroBlast = (function () {
         this.dispose();
     }
     NeuroBlast.prototype.checkIntersection = function (nextSynapce) {
-        if (this.checkIntersections(nextSynapce.position)) {
+        var hasIntersections = this.checkIntersections(nextSynapce.position);
+        if (hasIntersections) {
             nextSynapce.mesh.mesh.material = forBlastSphere(this.scene);
-            mapAdd(this.synapcesMap, nextSynapce.getId(), nextSynapce);
+            mapAdd(this.synapcesMap, nextSynapce.neuron.getId(), nextSynapce.neuron);
+            if (!this.isExists) {
+                this.isExists = true;
+            }
         }
     };
     NeuroBlast.prototype.checkIntersections = function (np) {

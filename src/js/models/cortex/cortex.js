@@ -14,6 +14,9 @@ var Cortex = (function () {
         this.blasts = newMap();
         mediumSynapces.forEach(function (synapce) {
             var newBlast = new NeuroBlast(synapce, _this.scale / 2.3, progenySynapces, _this.scene);
+            if (newBlast.isExists) {
+                synapce.setCodeMesh();
+            }
             if (mapSize(newBlast.synapcesMap) > 1) {
                 mapAdd(_this.blasts, synapce.getId, newBlast);
             }

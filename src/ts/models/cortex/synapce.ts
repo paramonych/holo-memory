@@ -1,5 +1,7 @@
 class Synapce implements Disposable, Dualistic {
   public id = getUniqueId();
+  public code = getRandomFourArray();
+  public codeMesh: Code;
   private mediator: Mediator;
   public state: KnockoutObservable<StateType>;
   public mesh: SynapceMesh;
@@ -11,6 +13,12 @@ class Synapce implements Disposable, Dualistic {
     this.mesh = new SynapceMesh(scene, scale, position, neuron.type);
     this.setMediator();
     this.deactivate();
+  }
+
+  public setCodeMesh(): void {
+    let scene = this.neuron.cortex.scene;
+    let scale = this.neuron.cortex.scale;
+    this.codeMesh = new Code(scene, scale, this.mesh.mesh.position, this.code.join(''));
   }
 
   public getId(): String {
@@ -53,5 +61,6 @@ class Synapce implements Disposable, Dualistic {
 
   public dispose(): void {
     this.mesh.dispose();
+    this.codeMesh.dispose();
   }
 }

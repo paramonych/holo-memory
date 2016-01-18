@@ -3,6 +3,7 @@ var Synapce = (function () {
         this.neuron = neuron;
         this.position = position;
         this.id = getUniqueId();
+        this.code = getRandomFourArray();
         this.toDefaultState();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
@@ -10,6 +11,11 @@ var Synapce = (function () {
         this.setMediator();
         this.deactivate();
     }
+    Synapce.prototype.setCodeMesh = function () {
+        var scene = this.neuron.cortex.scene;
+        var scale = this.neuron.cortex.scale;
+        this.codeMesh = new Code(scene, scale, this.mesh.mesh.position, this.code.join(''));
+    };
     Synapce.prototype.getId = function () {
         return this.id.toString();
     };
@@ -47,6 +53,7 @@ var Synapce = (function () {
     };
     Synapce.prototype.dispose = function () {
         this.mesh.dispose();
+        this.codeMesh.dispose();
     };
     return Synapce;
 })();
