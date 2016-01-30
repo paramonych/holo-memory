@@ -3,7 +3,7 @@ var Cortex = (function () {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = 4;
+        this.neuronsAmount = 10;
         this.createNeurons();
         this.preprocessBlasts();
     }
@@ -17,9 +17,6 @@ var Cortex = (function () {
             if (newBlast.isExists) {
                 synapce.setMediumCodeMesh();
                 synapce.allowMediators();
-            }
-            if (mapSize(newBlast.synapcesMap) > 1) {
-                mapAdd(_this.blasts, synapce.getId, newBlast);
             }
         });
         console.debug('Blasts: ', mapSize(this.blasts));

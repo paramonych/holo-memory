@@ -1,7 +1,7 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   public blasts: Map<NeuroBlast>;
-  private neuronsAmount = 4;
+  private neuronsAmount = 10;
 
   constructor(
     public scene: BABYLON.Scene,
@@ -22,9 +22,9 @@ class Cortex implements Disposable {
         synapce.setMediumCodeMesh();
         synapce.allowMediators();
       }
-      if(mapSize(newBlast.synapcesMap) > 1) {
+      /*if(mapSize(newBlast.synapcesMap) > 1) {
         mapAdd(this.blasts, synapce.getId, newBlast);
-      }
+      }*/
     });
 
     console.debug('Blasts: ', mapSize(this.blasts));

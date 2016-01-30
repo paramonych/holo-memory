@@ -6,7 +6,33 @@ class Mediator {
   constructor(private synapce: Synapce) {
     this.scene = this.synapce.neuron.cortex.scene;
     this.texture = new BABYLON.Texture(particleUrl, this.scene);
+
     this.cloud = new BABYLON.ParticleSystem("cloud", 2000, this.scene);
+    this.cloud.disposeOnStop  = false;
+    var step = this.synapce.neuron.step/2.5;
+    this.cloud.updateFunction = function (newParticles) {
+    	var stop = false;
+      for (var index = 0; index < this.particles.length; index++) {
+        var particle = this.particles[index];
+        var emitterPosition = new BABYLON.Vector3(this.emitter.position.x, this.emitter.position.y, this.emitter.position.z);
+        var distance = emitterPosition.subtract(particle.position).length();
+
+				if (distance > step) {
+					particle.lifeTime = 0;
+					stop = true;
+				}
+
+        if (!stop) {
+          particle.angle += particle.angularSpeed * this._scaledUpdateSpeed;
+
+					particle.direction.scaleToRef(this._scaledUpdateSpeed, this._scaledDirection);
+					particle.position.addInPlace(this._scaledDirection);
+
+					this.gravity.scaleToRef(this._scaledUpdateSpeed, this._scaledGravity);
+					particle.direction.addInPlace(this._scaledGravity);
+        }
+      }
+    };
     this.setParticles();
   }
 
@@ -20,18 +46,18 @@ class Mediator {
 
   public willBeUsed(): void {
     let cd = this.cloud;
-    cd.color1 = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 1);
-    cd.color2 = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 1);
-    cd.colorDead = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 0);
+    cd.color1 = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 0.4);
+    cd.color2 = cd.color1;
+    //cd.colorDead = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 0);
 
-    let size = 1.2;
+    let size = 0.5;
     cd.minSize = size;
     cd.maxSize = size;
   }
 
   private ra(): number {
     let r = random();
-    return (r < 0.5) ? (1-r) : r;
+    return (r < 0.1) ? (1-r) : r;
   }
 
   private setParticles(): void {
@@ -42,20 +68,20 @@ class Mediator {
     cloud.minEmitBox = zero;
     cloud.maxEmitBox = zero.clone();
 
-    cloud.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.6);
-    cloud.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.6);
-    cloud.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+    cloud.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
+    cloud.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
+  //  cloud.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
 
-    let size = 0.9;
+    let size = 0.5;
     cloud.minSize = size;
     cloud.maxSize = size;
 
     let lt = lifetime/2.5;
 
-    cloud.minLifeTime = lt;
-    cloud.maxLifeTime = lt;
+    cloud.minLifeTime = 10000000000000;//lt;
+    cloud.maxLifeTime = 10000000000000;//lt;
 
-    cloud.emitRate = 21;
+    cloud.emitRate = 120;
     cloud.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
     //cloud.gravity = new BABYLON.Vector3(0, 0, 0);
 
@@ -64,7 +90,7 @@ class Mediator {
     cloud.direction2 = new BABYLON.Vector3(-1, -1, -1);
 
     // Angular speed, in radians
-    cloud.minAngularSpeed = Math.PI;
+    cloud.minAngularSpeed = Math.PI/100;
     cloud.maxAngularSpeed = Math.PI;
 
     // Speed

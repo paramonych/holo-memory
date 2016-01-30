@@ -54,7 +54,7 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private constructMesh(): void {
-    this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale/25, this.scene, false);
+    this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale/67, this.scene, false);
     this.light = this.getLight();
     this.light.parent = this.mesh;
   }

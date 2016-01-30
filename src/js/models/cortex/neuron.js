@@ -5,6 +5,7 @@ var Neuron = (function () {
         this.id = getUniqueId();
         this.code = getRandomSixMap();
         this.synapces = new Array();
+        this.step = 0;
         this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
         this.createSynapces();
@@ -19,7 +20,6 @@ var Neuron = (function () {
         var path = this.mesh.curve.path;
         var code = toValues(this.code).join('');
         console.log(code);
-        this.codeMesh = new Code(scene, scale, path[Math.floor(path.length / 2)], code, true);
     };
     Neuron.prototype.hasCodeMesh = function () {
         return (this.codeMesh !== void 0);
@@ -65,10 +65,10 @@ var Neuron = (function () {
         var scale = this.cortex.scale;
         var devideFactor = scale / 2;
         var path = this.mesh.curve.path;
-        var step = Math.floor(path.length / devideFactor);
-        var halfStep = Math.floor(step / 2);
+        this.step = Math.floor(path.length / devideFactor);
+        var halfStep = Math.floor(this.step / 2);
         for (var i = 0; i < devideFactor; i++) {
-            var position = path[i * step + halfStep];
+            var position = path[i * this.step + halfStep];
             var synapce = new Synapce(this, position.clone());
             this.synapces.push(synapce);
         }

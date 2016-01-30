@@ -12,7 +12,7 @@ class SynapceMesh implements ActivatableMesh {
   }
 
   private draw(): void {
-    this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale/30, this.scene, false);
+    this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale/100, this.scene, false);
     this.mesh.position = this.position;
     this.deactivate();
   }

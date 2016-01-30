@@ -9,6 +9,8 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public synapces = new Array<Synapce>();
   public mesh: NeuronMesh;
 
+  public step: number = 0;
+
   constructor(
     public cortex: Cortex,
     public type: NeuronType
@@ -28,7 +30,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     let path = this.mesh.curve.path;
     let code =  toValues(this.code).join('');
     console.log(code);
-    this.codeMesh = new Code(scene, scale, path[Math.floor(path.length/2)], code, true);
+    //this.codeMesh = new Code(scene, scale, path[Math.floor(path.length/2)], code, true);
   }
 
   public hasCodeMesh(): boolean {
@@ -85,10 +87,10 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     let scale = this.cortex.scale;
     let devideFactor = scale/2;
     let path = this.mesh.curve.path;
-    let step = Math.floor(path.length/devideFactor);
-    let halfStep = Math.floor(step/2);
+    this.step = Math.floor(path.length/devideFactor);
+    let halfStep = Math.floor(this.step/2);
     for(let i=0; i< devideFactor; i++) {
-      let position = path[i*step+halfStep];
+      let position = path[i*this.step+halfStep];
       let synapce = new Synapce(this, position.clone());
       this.synapces.push(synapce);
     }

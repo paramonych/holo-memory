@@ -13,7 +13,7 @@ class NeuronMesh implements ActivatableMesh {
   draw(): void {
     let scale = this.scale;
     this.mesh = BABYLON.Mesh.CreateTube(
-      't', this.curve.path, this.scale/200, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
+      't', this.curve.path, this.scale/470, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
     this.mesh.material = this.material;
   }
 
