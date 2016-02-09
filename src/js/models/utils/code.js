@@ -16,7 +16,7 @@ var Code = (function () {
         this.mesh.material.specularColor = new BABYLON.Color3(0, 0, 0);
         this.mesh.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
         this.mesh.material.backFaceCulling = false;
-        outputplaneTexture.drawText(this.text, null, isBig ? 200 : 140, isBig ? 'bold 90px arial' : '130px arial', isBig ? 'white' : 'silver', null);
+        outputplaneTexture.drawText(this.text, null, isBig ? 200 : 140, isBig ? 'bold 100px arial' : '130px arial', isBig ? 'white' : 'silver', null);
     }
     Code.prototype.setVisibility = function (isVisible) {
         this.mesh.material.alpha = isVisible ? 1 : 0;
@@ -25,4 +25,4 @@ var Code = (function () {
         this.mesh.dispose();
     };
     return Code;
-})();
+}());

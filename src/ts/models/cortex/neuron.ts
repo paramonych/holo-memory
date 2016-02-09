@@ -29,8 +29,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     let scale = this.cortex.scale;
     let path = this.mesh.curve.path;
     let code =  toValues(this.code).join('');
-    console.log(code);
-    //this.codeMesh = new Code(scene, scale, path[Math.floor(path.length/2)], code, true);
+    this.codeMesh = new Code(scene, scale, path[Math.floor(path.length/2)], code, true);
   }
 
   public hasCodeMesh(): boolean {

@@ -19,7 +19,7 @@ var Neuron = (function () {
         var scale = this.cortex.scale;
         var path = this.mesh.curve.path;
         var code = toValues(this.code).join('');
-        console.log(code);
+        this.codeMesh = new Code(scene, scale, path[Math.floor(path.length / 2)], code, true);
     };
     Neuron.prototype.hasCodeMesh = function () {
         return (this.codeMesh !== void 0);
@@ -119,4 +119,4 @@ var Neuron = (function () {
         this.state.subscribe(action);
     };
     return Neuron;
-})();
+}());

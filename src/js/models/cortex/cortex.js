@@ -3,7 +3,8 @@ var Cortex = (function () {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = 10;
+        this.neuronsAmount = 6;
+        this.blastPowerLimit = this.neuronsAmount / 3;
         this.createNeurons();
         this.preprocessBlasts();
     }
@@ -13,10 +14,11 @@ var Cortex = (function () {
         var progenySynapces = this.collectProgenySynapces();
         this.blasts = newMap();
         mediumSynapces.forEach(function (synapce) {
-            var newBlast = new NeuroBlast(synapce, _this.scale / 2.3, progenySynapces, _this.scene);
-            if (newBlast.isExists) {
-                synapce.setMediumCodeMesh();
-                synapce.allowMediators();
+            var newBlast = new NeuroBlast(synapce, _this.scale / 2.3, mediumSynapces, _this.scene);
+            var blastPower = newBlast.getIntersectionsCount();
+            synapce.setMediumCodeMesh(blastPower);
+            if (newBlast.isExists && (blastPower >= _this.blastPowerLimit)) {
+                synapce.allowMediator();
             }
         });
         console.debug('Blasts: ', mapSize(this.blasts));
@@ -82,4 +84,4 @@ var Cortex = (function () {
         _.each(this.neurons, function (neuron) { neuron.dispose(); });
     };
     return Cortex;
-})();
+}());

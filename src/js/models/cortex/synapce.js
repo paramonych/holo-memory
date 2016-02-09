@@ -11,11 +11,12 @@ var Synapce = (function () {
         this.setMediator();
         this.deactivate();
     }
-    Synapce.prototype.setMediumCodeMesh = function () {
+    Synapce.prototype.setMediumCodeMesh = function (count) {
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
+        this.codeMesh = new Code(scene, scale, this.mesh.mesh.position, '' + count, false);
     };
-    Synapce.prototype.allowMediators = function () {
+    Synapce.prototype.allowMediator = function () {
         this.mediator.willBeUsed();
     };
     Synapce.prototype.getId = function () {
@@ -58,4 +59,4 @@ var Synapce = (function () {
         this.codeMesh.dispose();
     };
     return Synapce;
-})();
+}());

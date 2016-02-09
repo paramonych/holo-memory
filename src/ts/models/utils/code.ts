@@ -23,7 +23,7 @@ class Code {
   	(<BABYLON.StandardMaterial>this.mesh.material).emissiveColor = new BABYLON.Color3(1, 1, 1);
   	this.mesh.material.backFaceCulling = false;
 
-    outputplaneTexture.drawText(this.text, null, isBig?200:140, isBig?'bold 90px arial':'130px arial', isBig?'white':'silver', null);
+    outputplaneTexture.drawText(this.text, null, isBig?200:140, isBig?'bold 100px arial':'130px arial', isBig?'white':'silver', null);
 
     /*
     var context2D = outputplaneTexture.getContext();

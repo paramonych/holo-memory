@@ -1,7 +1,9 @@
 class NeuroBlast {
   public sphere: BABYLON.Mesh;
   public neuronsMap: Map<Neuron>;
+  public synapcesMap: Map<Synapce>;
   public isExists: boolean = false;
+  private synapcesCount: number = 0;
 
   constructor(
     private synapce: Synapce,
@@ -10,16 +12,25 @@ class NeuroBlast {
     private scene: BABYLON.Scene) {
 
     this.neuronsMap = newMap<Neuron>();
+    this.synapcesMap = newMap<Synapce>();
+
     this.synapces.forEach((nextSynapce) => {
       let hasIntersections = this.checkIntersection(nextSynapce);
       let nextNeuron = nextSynapce.neuron;
-      if(hasIntersections && !mapHasKey(this.neuronsMap, nextNeuron.getId())) {
-        mapAdd(this.neuronsMap, nextNeuron.getId(), nextNeuron);
+      if(hasIntersections) {
+        if(!mapHasKey(this.neuronsMap, nextNeuron.getId())) {
+          mapAdd(this.neuronsMap, nextNeuron.getId(), nextNeuron);
+        }
+        if(!mapHasKey(this.synapcesMap, nextSynapce.getId())) {
+          mapAdd(this.synapcesMap, nextSynapce.getId(), nextSynapce);
+        }
         if(!nextNeuron.hasCodeMesh()) {
-          nextNeuron.setProgenyCodeMesh();
+          //nextNeuron.setProgenyCodeMesh();
         }
       }
     });
+
+    this.synapcesCount = mapSize(this.synapcesMap);
 
     this.dispose();
   }
@@ -49,6 +60,10 @@ class NeuroBlast {
       return true;
     }
     return false;
+  }
+
+  public getIntersectionsCount(): number {
+    return this.synapcesCount;
   }
 
   private dispose(): void {
