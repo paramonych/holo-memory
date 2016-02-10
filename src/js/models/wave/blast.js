@@ -1,10 +1,11 @@
 var NeuroBlast = (function () {
-    function NeuroBlast(synapce, radius, synapces, scene) {
+    function NeuroBlast(synapce, radius, synapces, scene, blastPowerLimit) {
         var _this = this;
         this.synapce = synapce;
         this.radius = radius;
         this.synapces = synapces;
         this.scene = scene;
+        this.blastPowerLimit = blastPowerLimit;
         this.isExists = false;
         this.synapcesCount = 0;
         this.neuronsMap = newMap();
@@ -24,6 +25,12 @@ var NeuroBlast = (function () {
             }
         });
         this.synapcesCount = mapSize(this.synapcesMap);
+        this.synapce.setMediumCodeMesh(this.synapcesCount);
+        if (this.isExists && (this.synapcesCount > this.blastPowerLimit)) {
+            useMap(this.synapcesMap, function (synapce) {
+                synapce.allowMediator();
+            });
+        }
         this.dispose();
     }
     NeuroBlast.prototype.checkIntersection = function (nextSynapce) {

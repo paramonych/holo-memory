@@ -18,13 +18,8 @@ class Cortex implements Disposable {
     this.blasts = newMap<NeuroBlast>();
 
     mediumSynapces.forEach((synapce) => {
-      let newBlast = new NeuroBlast(synapce, this.scale/2.3, mediumSynapces, this.scene);
-      var blastPower = newBlast.getIntersectionsCount();
-      synapce.setMediumCodeMesh(blastPower);
+      let newBlast = new NeuroBlast(synapce, synapce.neuron.step/2.8, mediumSynapces, this.scene, this.blastPowerLimit);
 
-      if(newBlast.isExists && (blastPower >= this.blastPowerLimit)) {
-          synapce.allowMediator();
-      }
       /*if(mapSize(newBlast.synapcesMap) > 1) {
         mapAdd(this.blasts, synapce.getId, newBlast);
       }*/

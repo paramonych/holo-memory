@@ -51,6 +51,7 @@ class Mediator {
     //cd.colorDead = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 0);
 
     let size = 0.5;
+    cd.emitRate = 1000;
     cd.minSize = size;
     cd.maxSize = size;
   }
@@ -72,7 +73,7 @@ class Mediator {
     cloud.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
   //  cloud.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
 
-    let size = 0.5;
+    let size = 0.4;
     cloud.minSize = size;
     cloud.maxSize = size;
 

@@ -9,7 +9,8 @@ class NeuroBlast {
     private synapce: Synapce,
     private radius: number,
     private synapces: Array<Synapce>,
-    private scene: BABYLON.Scene) {
+    private scene: BABYLON.Scene,
+    private blastPowerLimit: number) {
 
     this.neuronsMap = newMap<Neuron>();
     this.synapcesMap = newMap<Synapce>();
@@ -32,6 +33,13 @@ class NeuroBlast {
 
     this.synapcesCount = mapSize(this.synapcesMap);
 
+    this.synapce.setMediumCodeMesh(this.synapcesCount);
+
+    if(this.isExists && (this.synapcesCount > this.blastPowerLimit)) {
+      useMap(this.synapcesMap, (synapce) => {
+        synapce.allowMediator();
+      });
+    }
     this.dispose();
   }
 

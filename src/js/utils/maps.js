@@ -30,6 +30,9 @@ function toValues(map) {
     }
     return keys;
 }
+function useMap(map, callback) {
+    toValues(map).forEach(callback);
+}
 function mapSize(map) {
     var size = 0;
     for (var key in map) {

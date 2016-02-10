@@ -40,7 +40,9 @@ function toValues<r>(map: Map<r>): Array<r> {
   }
   return keys;
 }
-
+function useMap<r>(map: Map<r>, callback: (some: r) => void): void {
+  toValues(map).forEach(callback);
+}
 function mapSize<r>(map: Map<r>): number {
   let size = 0;
   for(let key in map) {

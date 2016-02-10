@@ -14,12 +14,7 @@ var Cortex = (function () {
         var progenySynapces = this.collectProgenySynapces();
         this.blasts = newMap();
         mediumSynapces.forEach(function (synapce) {
-            var newBlast = new NeuroBlast(synapce, _this.scale / 2.3, mediumSynapces, _this.scene);
-            var blastPower = newBlast.getIntersectionsCount();
-            synapce.setMediumCodeMesh(blastPower);
-            if (newBlast.isExists && (blastPower >= _this.blastPowerLimit)) {
-                synapce.allowMediator();
-            }
+            var newBlast = new NeuroBlast(synapce, synapce.neuron.step / 2.8, mediumSynapces, _this.scene, _this.blastPowerLimit);
         });
         console.debug('Blasts: ', mapSize(this.blasts));
     };

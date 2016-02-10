@@ -38,6 +38,7 @@ var Mediator = (function () {
         cd.color1 = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 0.4);
         cd.color2 = cd.color1;
         var size = 0.5;
+        cd.emitRate = 1000;
         cd.minSize = size;
         cd.maxSize = size;
     };
@@ -54,7 +55,7 @@ var Mediator = (function () {
         cloud.maxEmitBox = zero.clone();
         cloud.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
         cloud.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
-        var size = 0.5;
+        var size = 0.4;
         cloud.minSize = size;
         cloud.maxSize = size;
         var lt = lifetime / 2.5;
@@ -71,4 +72,4 @@ var Mediator = (function () {
         cloud.updateSpeed = 0.01;
     };
     return Mediator;
-})();
+}());
