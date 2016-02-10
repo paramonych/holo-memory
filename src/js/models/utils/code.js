@@ -5,7 +5,7 @@ var Code = (function () {
         this.position = position;
         this.text = text;
         this.isBig = isBig;
-        this.mesh = BABYLON.Mesh.CreatePlane("outputplane", this.scale / (isBig ? 2 : 8), this.scene, false);
+        this.mesh = BABYLON.Mesh.CreatePlane("outputplane", this.scale / (isBig ? 6 : 6), this.scene, false);
         this.mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
         this.mesh.material = new BABYLON.StandardMaterial("outputplane", scene);
         this.mesh.position = this.position;
@@ -16,7 +16,7 @@ var Code = (function () {
         this.mesh.material.specularColor = new BABYLON.Color3(0, 0, 0);
         this.mesh.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
         this.mesh.material.backFaceCulling = false;
-        outputplaneTexture.drawText(this.text, null, isBig ? 200 : 140, isBig ? 'bold 100px arial' : '130px arial', isBig ? 'white' : 'silver', null);
+        outputplaneTexture.drawText(this.text, null, isBig ? 200 : 160, isBig ? 'bold 230px arial' : '120px arial', isBig ? 'gold' : 'silver', null);
     }
     Code.prototype.setVisibility = function (isVisible) {
         this.mesh.material.alpha = isVisible ? 1 : 0;

@@ -4,6 +4,7 @@ class NeuroBlast {
   public synapcesMap: Map<Synapce>;
   public isExists: boolean = false;
   private synapcesCount: number = 0;
+  private color = new BABYLON.Color3(ra(),ra(),ra());
 
   constructor(
     private synapce: Synapce,
@@ -33,22 +34,29 @@ class NeuroBlast {
 
     this.synapcesCount = mapSize(this.synapcesMap);
 
-    this.synapce.setMediumCodeMesh(this.synapcesCount);
+    let isEnoughIntersections = (this.synapcesCount > this.blastPowerLimit);
+    this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
 
-    if(this.isExists && (this.synapcesCount > this.blastPowerLimit)) {
+    if(this.isExists && isEnoughIntersections ) {
+      this.sphere = BABYLON.Mesh.CreateSphere('s', 32, this.radius*2, this.scene, false);
+      this.sphere.material = glass(this.scene);
+      this.sphere.position = this.synapce.position.clone();
+
+      this.synapce.allowMediator();
+      this.synapce.mesh.mesh.material = forBlastSphere(this.scene, this.color);
       useMap(this.synapcesMap, (synapce) => {
         synapce.allowMediator();
+        synapce.mesh.mesh.material = forBlastSphere(this.scene, this.color);
       });
+    } else {
+      this.dispose();
     }
-    this.dispose();
   }
 
   private checkIntersection(nextSynapce: Synapce): boolean {
     let hasIntersections = this.checkIntersections(nextSynapce.position);
 
     if(hasIntersections) {
-      nextSynapce.mesh.mesh.material = forBlastSphere(this.scene);
-
       if(!this.isExists) {
         this.isExists = true;
       }

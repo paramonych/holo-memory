@@ -8,6 +8,7 @@ var NeuroBlast = (function () {
         this.blastPowerLimit = blastPowerLimit;
         this.isExists = false;
         this.synapcesCount = 0;
+        this.color = new BABYLON.Color3(ra(), ra(), ra());
         this.neuronsMap = newMap();
         this.synapcesMap = newMap();
         this.synapces.forEach(function (nextSynapce) {
@@ -25,18 +26,26 @@ var NeuroBlast = (function () {
             }
         });
         this.synapcesCount = mapSize(this.synapcesMap);
-        this.synapce.setMediumCodeMesh(this.synapcesCount);
-        if (this.isExists && (this.synapcesCount > this.blastPowerLimit)) {
+        var isEnoughIntersections = (this.synapcesCount > this.blastPowerLimit);
+        this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
+        if (this.isExists && isEnoughIntersections) {
+            this.sphere = BABYLON.Mesh.CreateSphere('s', 32, this.radius * 2, this.scene, false);
+            this.sphere.material = glass(this.scene);
+            this.sphere.position = this.synapce.position.clone();
+            this.synapce.allowMediator();
+            this.synapce.mesh.mesh.material = forBlastSphere(this.scene, this.color);
             useMap(this.synapcesMap, function (synapce) {
                 synapce.allowMediator();
+                synapce.mesh.mesh.material = forBlastSphere(_this.scene, _this.color);
             });
         }
-        this.dispose();
+        else {
+            this.dispose();
+        }
     }
     NeuroBlast.prototype.checkIntersection = function (nextSynapce) {
         var hasIntersections = this.checkIntersections(nextSynapce.position);
         if (hasIntersections) {
-            nextSynapce.mesh.mesh.material = forBlastSphere(this.scene);
             if (!this.isExists) {
                 this.isExists = true;
             }

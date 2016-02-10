@@ -3,8 +3,8 @@ var Cortex = (function () {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = 6;
-        this.blastPowerLimit = this.neuronsAmount / 3;
+        this.neuronsAmount = 10;
+        this.blastPowerLimit = Math.floor(this.neuronsAmount / 3);
         this.createNeurons();
         this.preprocessBlasts();
     }

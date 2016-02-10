@@ -15,10 +15,12 @@ class Synapce implements Disposable, Dualistic {
     this.deactivate();
   }
 
-  public setMediumCodeMesh(count: number): void {
+  public setMediumCodeMesh(count: number, isBiggestCount: boolean): void {
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
-    this.codeMesh = new Code(scene, scale, this.mesh.mesh.position, ''+count, false);
+    if(count > 0) {
+      this.codeMesh = new Code(scene, scale, this.mesh.mesh.position, ''+count, isBiggestCount);
+    }
   }
 
   public allowMediator(): void {

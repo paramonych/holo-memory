@@ -1,8 +1,8 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   public blasts: Map<NeuroBlast>;
-  private neuronsAmount = 6;
-  private blastPowerLimit = this.neuronsAmount/3;
+  private neuronsAmount = 10;
+  private blastPowerLimit = Math.floor(this.neuronsAmount/3);
 
   constructor(
     public scene: BABYLON.Scene,

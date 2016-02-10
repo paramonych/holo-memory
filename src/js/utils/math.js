@@ -11,3 +11,7 @@ function getUniqueId() {
     var b = random();
     return a * b * 10000000;
 }
+function ra() {
+    var r = random();
+    return (r < 0.1) ? (1 - r) : r;
+}

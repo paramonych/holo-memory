@@ -13,3 +13,8 @@ function getUniqueId(): number {
   var b = random();
   return a*b*10000000;
 }
+
+function ra(): number {
+  let r = random();
+  return (r < 0.1) ? (1-r) : r;
+}

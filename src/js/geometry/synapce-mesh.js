@@ -8,7 +8,7 @@ var SynapceMesh = (function () {
         this.draw();
     }
     SynapceMesh.prototype.draw = function () {
-        this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale / 100, this.scene, false);
+        this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale / (isMedium(this.type) ? 50 : 100), this.scene, false);
         this.mesh.position = this.position;
         this.deactivate();
     };
@@ -46,4 +46,4 @@ var SynapceMesh = (function () {
         this.scene.removeMesh(this.mesh);
     };
     return SynapceMesh;
-})();
+}());
