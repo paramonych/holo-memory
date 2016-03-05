@@ -6,7 +6,7 @@ class Synapce implements Disposable, Dualistic {
   public state: KnockoutObservable<StateType>;
   public mesh: SynapceMesh;
 
-  constructor(public neuron: Neuron, public position: BABYLON.Vector3) {
+  constructor(public neuron: Neuron, position: BABYLON.Vector3) {
     this.toDefaultState();
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;

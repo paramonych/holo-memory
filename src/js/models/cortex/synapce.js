@@ -1,7 +1,6 @@
 var Synapce = (function () {
     function Synapce(neuron, position) {
         this.neuron = neuron;
-        this.position = position;
         this.id = getUniqueId();
         this.code = getRandomFourArray();
         this.toDefaultState();

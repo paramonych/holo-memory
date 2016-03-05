@@ -37,10 +37,10 @@ class NeuroBlast {
     let isEnoughIntersections = (this.synapcesCount > this.blastPowerLimit);
     this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
 
-    if(this.isExists && isEnoughIntersections ) {
+    if(this.isExists && isEnoughIntersections) {
       this.sphere = BABYLON.Mesh.CreateSphere('s', 32, this.radius*2, this.scene, false);
       this.sphere.material = glass(this.scene);
-      this.sphere.position = this.synapce.position.clone();
+      this.sphere.position = this.synapce.mesh.position.clone();
 
       this.synapce.allowMediator();
       this.synapce.mesh.mesh.material = forBlastSphere(this.scene, this.color);
@@ -54,7 +54,7 @@ class NeuroBlast {
   }
 
   private checkIntersection(nextSynapce: Synapce): boolean {
-    let hasIntersections = this.checkIntersections(nextSynapce.position);
+    let hasIntersections = this.checkIntersections(nextSynapce.mesh.position);
 
     if(hasIntersections) {
       if(!this.isExists) {
@@ -66,7 +66,7 @@ class NeuroBlast {
   }
 
   private checkIntersections(np: BABYLON.Vector3): boolean {
-    let pos = this.synapce.position;
+    let pos = this.synapce.mesh.position;
     let x = Math.pow((pos.x - np.x), 2);
     let y = Math.pow((pos.y - np.y), 2);
     let z = Math.pow((pos.z - np.z), 2);

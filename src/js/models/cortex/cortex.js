@@ -3,8 +3,8 @@ var Cortex = (function () {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = 10;
-        this.blastPowerLimit = Math.floor(this.neuronsAmount / 3);
+        this.neuronsAmount = 40;
+        this.blastPowerLimit = 4;
         this.createNeurons();
         this.preprocessBlasts();
     }
@@ -14,9 +14,8 @@ var Cortex = (function () {
         var progenySynapces = this.collectProgenySynapces();
         this.blasts = newMap();
         mediumSynapces.forEach(function (synapce) {
-            var newBlast = new NeuroBlast(synapce, synapce.neuron.step / 2.8, mediumSynapces, _this.scene, _this.blastPowerLimit);
+            var newBlast = new NeuroBlast(synapce, synapce.neuron.step / 5, mediumSynapces, _this.scene, _this.blastPowerLimit);
         });
-        console.debug('Blasts: ', mapSize(this.blasts));
     };
     Cortex.prototype.collectMediumSynapces = function () {
         var allSynapces = new Array();

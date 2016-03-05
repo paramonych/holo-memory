@@ -1,8 +1,8 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   public blasts: Map<NeuroBlast>;
-  private neuronsAmount = 10;
-  private blastPowerLimit = Math.floor(this.neuronsAmount/3);
+  private neuronsAmount = 40;
+  private blastPowerLimit = 4;//Math.floor(this.neuronsAmount/6);
 
   constructor(
     public scene: BABYLON.Scene,
@@ -18,14 +18,14 @@ class Cortex implements Disposable {
     this.blasts = newMap<NeuroBlast>();
 
     mediumSynapces.forEach((synapce) => {
-      let newBlast = new NeuroBlast(synapce, synapce.neuron.step/2.8, mediumSynapces, this.scene, this.blastPowerLimit);
+      let newBlast = new NeuroBlast(synapce, synapce.neuron.step/5, mediumSynapces, this.scene, this.blastPowerLimit);
 
       /*if(mapSize(newBlast.synapcesMap) > 1) {
         mapAdd(this.blasts, synapce.getId, newBlast);
       }*/
     });
 
-    console.debug('Blasts: ', mapSize(this.blasts));
+    //console.debug('Blasts: ', mapSize(this.blasts));
   }
 
   private collectMediumSynapces(): Synapce[] {

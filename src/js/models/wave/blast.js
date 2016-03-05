@@ -31,7 +31,7 @@ var NeuroBlast = (function () {
         if (this.isExists && isEnoughIntersections) {
             this.sphere = BABYLON.Mesh.CreateSphere('s', 32, this.radius * 2, this.scene, false);
             this.sphere.material = glass(this.scene);
-            this.sphere.position = this.synapce.position.clone();
+            this.sphere.position = this.synapce.mesh.position.clone();
             this.synapce.allowMediator();
             this.synapce.mesh.mesh.material = forBlastSphere(this.scene, this.color);
             useMap(this.synapcesMap, function (synapce) {
@@ -44,7 +44,7 @@ var NeuroBlast = (function () {
         }
     }
     NeuroBlast.prototype.checkIntersection = function (nextSynapce) {
-        var hasIntersections = this.checkIntersections(nextSynapce.position);
+        var hasIntersections = this.checkIntersections(nextSynapce.mesh.position);
         if (hasIntersections) {
             if (!this.isExists) {
                 this.isExists = true;
@@ -53,7 +53,7 @@ var NeuroBlast = (function () {
         return hasIntersections;
     };
     NeuroBlast.prototype.checkIntersections = function (np) {
-        var pos = this.synapce.position;
+        var pos = this.synapce.mesh.position;
         var x = Math.pow((pos.x - np.x), 2);
         var y = Math.pow((pos.y - np.y), 2);
         var z = Math.pow((pos.z - np.z), 2);

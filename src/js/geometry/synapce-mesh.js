@@ -1,15 +1,30 @@
 var SynapceMesh = (function () {
-    function SynapceMesh(scene, scale, position, type) {
+    function SynapceMesh(scene, scale, basePosition, type) {
         this.scene = scene;
         this.scale = scale;
-        this.position = position;
         this.type = type;
+        this.position = isMedium(type) ? this.shiftPosition(basePosition) : basePosition;
         this.setMaterials();
-        this.draw();
+        this.draw(basePosition);
     }
-    SynapceMesh.prototype.draw = function () {
+    SynapceMesh.prototype.shiftPosition = function (basePosition) {
+        var shift = this.scale / 10;
+        var baseVector = new BABYLON.Vector3(shift, shift, shift);
+        var rotation = new BABYLON.Quaternion(randomWithRandomSign(), randomWithRandomSign(), randomWithRandomSign());
+        var normalVector = new BABYLON.Vector3(1, 1, 1);
+        var zeroVector = new BABYLON.Vector3(0, 0, 0);
+        var matrix = BABYLON.Matrix.Compose(normalVector, rotation, zeroVector);
+        var rotatedVector = BABYLON.Vector3.TransformCoordinates(baseVector, matrix);
+        var result = basePosition.add(rotatedVector);
+        return result;
+    };
+    SynapceMesh.prototype.draw = function (basePosition) {
         this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale / (isMedium(this.type) ? 50 : 100), this.scene, false);
         this.mesh.position = this.position;
+        if (isMedium(this.type)) {
+            this.synapceLegMesh = BABYLON.Mesh.CreateTube('t', [basePosition, this.position], this.scale / 470, 10, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
+            this.synapceLegMesh.material = this.material;
+        }
         this.deactivate();
     };
     SynapceMesh.prototype.affect = function (frontPosition) {
@@ -25,6 +40,7 @@ var SynapceMesh = (function () {
     };
     SynapceMesh.prototype.activate = function () {
         this.mesh.material = this.activeMaterial;
+        this.synapceLegMesh.material = this.activeMaterial;
     };
     SynapceMesh.prototype.deactivate = function () {
         this.mesh.material = this.material;
@@ -38,9 +54,6 @@ var SynapceMesh = (function () {
             this.material = forProgenyNeuron(this.scene);
             this.activeMaterial = forProgenyActiveNeuron(this.scene);
         }
-        var alpha = 0.7;
-        this.material.alpha = alpha;
-        this.activeMaterial.alpha = alpha;
     };
     SynapceMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);

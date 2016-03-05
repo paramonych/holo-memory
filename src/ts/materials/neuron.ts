@@ -1,13 +1,13 @@
 function forMediumNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
  let material = new BABYLON.StandardMaterial('i', scene);
  material.emissiveColor = new BABYLON.Color3(1,1,1);//(0.17, 0.57, 1);
- material.alpha = 0.4;
+ material.alpha = 0.35;
  return material;
 }
 function forProgenyNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
  let material = new BABYLON.StandardMaterial('i', scene);
  material.emissiveColor = new BABYLON.Color3(0,0,1);//(0.57, 0.17, 1);
- material.alpha = 0.4;
+ material.alpha = 0.20;
  return material;
 }
 
