@@ -25,7 +25,7 @@ function createPatternSpaceBox(scene, scale) {
     var borderBoxMaterial = new BABYLON.StandardMaterial("wire", scene);
     borderBoxMaterial.ambientColor = new BABYLON.Color3(1, 1, 1);
     borderBoxMaterial.wireframe = true;
-    borderBoxMaterial.alpha = 0.5;
+    borderBoxMaterial.alpha = 0.8;
     borderBox.material = borderBoxMaterial;
     return borderBox;
 }

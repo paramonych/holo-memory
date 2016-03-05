@@ -14,7 +14,7 @@ function plantConcept(): void {
   //scene.fogEnd = 60.0;
   //scene.fogColor = new BABYLON.Color3(0.1, 0.9, 0.15);
 
-  scene.clearColor = new BABYLON.Color3(0.07, 0.07, 0.07);
+  scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
 
   let scale = 10;
   attachCamera(canvas, scene, scale);

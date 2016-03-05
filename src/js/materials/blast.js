@@ -16,11 +16,11 @@ function forIndicator(scene) {
 function glass(scene) {
     var material = new BABYLON.StandardMaterial("kosh", scene);
     material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-    material.emissiveColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+    material.emissiveColor = new BABYLON.Color3(0.45, 0.45, 0.45);
     material.alpha = 0.03;
-    material.specularPower = 9;
+    material.specularPower = 12;
     material.reflectionFresnelParameters = new BABYLON.FresnelParameters();
-    material.reflectionFresnelParameters.bias = 0.6;
+    material.reflectionFresnelParameters.bias = 0.5;
     material.emissiveFresnelParameters = new BABYLON.FresnelParameters();
     material.emissiveFresnelParameters.bias = 0.7;
     material.emissiveFresnelParameters.power = 2;

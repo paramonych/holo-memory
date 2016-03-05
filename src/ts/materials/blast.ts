@@ -19,13 +19,13 @@ function glass(scene: BABYLON.Scene): BABYLON.StandardMaterial {
 
   //material.reflectionTexture = new BABYLON.CubeTexture("textures/TropicalSunnyDay", scene);
   material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-  material.emissiveColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+  material.emissiveColor = new BABYLON.Color3(0.45, 0.45, 0.45);
   material.alpha = 0.03;
-  material.specularPower = 9;
+  material.specularPower = 12;
 
   // Fresnel
   material.reflectionFresnelParameters = new BABYLON.FresnelParameters();
-  material.reflectionFresnelParameters.bias = 0.6;
+  material.reflectionFresnelParameters.bias = 0.5;
 
   material.emissiveFresnelParameters = new BABYLON.FresnelParameters();
   material.emissiveFresnelParameters.bias = 0.7;

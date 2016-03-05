@@ -32,7 +32,6 @@ class SynapceMesh implements ActivatableMesh {
     if(isMedium(this.type)) {
       this.synapceLegMesh = BABYLON.Mesh.CreateTube('t', [basePosition, this.position], this.scale / 470, 10, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
       this.synapceLegMesh.material = this.material;
-      //this.synapceLegMesh.material.alpha = 0.15;
     }
     this.deactivate();
   }

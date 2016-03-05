@@ -1,26 +1,29 @@
 function forMediumNeuron(scene) {
     var material = new BABYLON.StandardMaterial('i', scene);
-    material.emissiveColor = new BABYLON.Color3(1, 1, 1);
-    material.alpha = 0.35;
+    material.emissiveColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+    material.specularColor = new BABYLON.Color3(1, 1, 1);
+    material.ambientColor = new BABYLON.Color3(0, 0, 1);
+    material.specularPower = 70;
+    material.alpha = 1;
     return material;
 }
 function forProgenyNeuron(scene) {
     var material = new BABYLON.StandardMaterial('i', scene);
-    material.emissiveColor = new BABYLON.Color3(0, 0, 1);
-    material.alpha = 0.20;
+    material.emissiveColor = new BABYLON.Color3(0, 0, 0.35);
+    material.specularColor = new BABYLON.Color3(0, 0, 0);
+    material.specularPower = 70;
+    material.alpha = 0.7;
     return material;
 }
 function forMediumActiveNeuron(scene) {
     var material = forMediumNeuron(scene);
-    material.ambientColor = new BABYLON.Color3(1, 1, 1);
     return material;
 }
 function forProgenyActiveNeuron(scene) {
     var material = forProgenyNeuron(scene);
-    material.ambientColor = new BABYLON.Color3(1, 1, 1);
     return material;
 }
-function forMediumNeuronGG(scene) {
+function forMediumNeuronGGZ(scene) {
     var material = new BABYLON.StandardMaterial("kosh", scene);
     material.diffuseColor = new BABYLON.Color3(0.5, 0, 0);
     material.emissiveColor = new BABYLON.Color3(0.5, 0.5, 0.5);
