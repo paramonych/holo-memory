@@ -30,6 +30,8 @@ var NeuronMesh = (function () {
     };
     NeuronMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);
+        this.mesh.dispose();
+        this.mesh = null;
     };
     return NeuronMesh;
-})();
+}());

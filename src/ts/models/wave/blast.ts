@@ -82,7 +82,12 @@ class NeuroBlast {
     return this.synapcesCount;
   }
 
-  private dispose(): void {
+  public dispose(): void {
     this.scene.removeMesh(this.sphere);
+    if(this.sphere && this.sphere.dispose) {
+      this.sphere.dispose();
+    }
+    this.neuronsMap = null;
+    this.synapcesMap = null;
   }
 }

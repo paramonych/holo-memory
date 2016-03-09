@@ -22,6 +22,7 @@ var Code = (function () {
         this.mesh.material.alpha = isVisible ? 1 : 0;
     };
     Code.prototype.dispose = function () {
+        this.scene.removeMesh(this.mesh);
         this.mesh.dispose();
     };
     return Code;

@@ -86,9 +86,13 @@ var Neuron = (function () {
         });
     };
     Neuron.prototype.dispose = function () {
-        this.spike.dispose();
+        if (isMedium(this.type)) {
+            this.spike.dispose();
+        }
         _.each(this.synapces, function (synapce) { synapce.dispose(); });
         this.mesh.dispose();
+        this.mesh = null;
+        this.synapces = null;
     };
     Neuron.prototype.build = function () {
         this.mesh.draw();

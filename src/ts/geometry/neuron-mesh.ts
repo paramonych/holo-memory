@@ -35,6 +35,9 @@ class NeuronMesh implements ActivatableMesh {
   }
 
   public dispose(): void {
+
     this.scene.removeMesh(this.mesh);
+    this.mesh.dispose();
+    this.mesh = null;
   }
 }

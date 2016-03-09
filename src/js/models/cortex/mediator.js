@@ -67,5 +67,8 @@ var Mediator = (function () {
         cloud.maxEmitPower = 2;
         cloud.updateSpeed = 0.01;
     };
+    Mediator.prototype.dispose = function () {
+        this.cloud.dispose();
+    };
     return Mediator;
 }());

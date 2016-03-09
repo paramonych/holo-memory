@@ -68,6 +68,11 @@ var NeuroBlast = (function () {
     };
     NeuroBlast.prototype.dispose = function () {
         this.scene.removeMesh(this.sphere);
+        if (this.sphere && this.sphere.dispose) {
+            this.sphere.dispose();
+        }
+        this.neuronsMap = null;
+        this.synapcesMap = null;
     };
     return NeuroBlast;
 }());

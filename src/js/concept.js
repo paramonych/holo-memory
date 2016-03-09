@@ -9,13 +9,19 @@ function plantConcept() {
     var scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
     var scale = 10;
+    var neuronsAmount = 2;
+    var blastRadius = 3;
+    var blastPower = 4;
+    jQuery(ids.neuronsAmount).find('input').val('' + neuronsAmount);
+    jQuery(ids.blastRadius).find('input').val('' + blastRadius);
+    jQuery(ids.blastPower).find('input').val('' + blastPower);
     attachCamera(canvas, scene, scale);
     setLight(scene);
     createPatternSpaceBox(scene, scale);
     engine.runRenderLoop(function () {
         scene.render();
     });
-    wireUI(new Space(scene, scale, lifetime), new Time(lifetime));
+    wireUI(new Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower), new Time(lifetime));
 }
 function wireUI(space, time) {
     var knobs = getUIControls();
@@ -36,25 +42,16 @@ function wireUI(space, time) {
             time.pause(space);
         }
     });
-    knobs.restart.on('click', function () {
-        knobs.launch.html('PAUSE');
-        knobs.launch.data('type', 'PLAY');
-        time.restart(space);
+    knobs.applyButton.on('click', function () {
+        var neuronsAmount = +knobs.neuronsAmount.val();
+        var blastRadius = +knobs.blastRadius.val();
+        var blastPower = +knobs.blastPower.val();
+        space.applyConfig(neuronsAmount, blastRadius, blastPower);
     });
     time.tense.eventCallback("onUpdate", function () {
         var pg = time.tense.progress();
         var progress = pg * 100;
         if (progress) {
-            knobs.slider.slider("value", progress);
-        }
-    });
-    knobs.slider.slider({
-        range: false,
-        min: 0,
-        max: 100,
-        step: .1,
-        slide: function (event, ui) {
-            time.shiftTo(space, ui.value / 100);
         }
     });
     space.expose(time);
@@ -63,5 +60,9 @@ function getUIControls() {
     var launch = jQuery(ids.launch);
     var restart = jQuery(ids.restart);
     var slider = jQuery(ids.slider);
-    return knobsFrom(launch, void 0, void 0, restart, slider);
+    var neuronsAmount = jQuery(ids.neuronsAmount);
+    var blastRadius = jQuery(ids.blastRadius);
+    var blastPower = jQuery(ids.blastPower);
+    var applyButton = jQuery(ids.applyButton);
+    return knobsFrom(launch, void 0, void 0, restart, slider, neuronsAmount, blastRadius, blastPower, applyButton);
 }

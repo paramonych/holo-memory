@@ -94,4 +94,8 @@ class Mediator {
     cloud.maxEmitPower = 2;
     cloud.updateSpeed = 0.01;
   }
+
+  public dispose(): void {
+    this.cloud.dispose();
+  }
 }

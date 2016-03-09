@@ -6,7 +6,7 @@ var Synapce = (function () {
         this.toDefaultState();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
-        this.mesh = new SynapceMesh(scene, scale, position, neuron.type);
+        this.mesh = new SynapceMesh(scene, scale, position, neuron);
         this.setMediator();
         this.deactivate();
     }
@@ -57,7 +57,13 @@ var Synapce = (function () {
     };
     Synapce.prototype.dispose = function () {
         this.mesh.dispose();
-        this.codeMesh.dispose();
+        this.mesh = null;
+        if (this.codeMesh && this.codeMesh.dispose) {
+            this.codeMesh.dispose();
+            this.codeMesh = null;
+        }
+        this.mediator.dispose();
+        this.mediator = null;
     };
     return Synapce;
 }());

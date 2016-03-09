@@ -124,7 +124,7 @@ class SpikeMesh implements ActivatableMesh {
     let synapces = this.spike.neuron.synapces;
     let synapcesToPositionsMap = newMap<Synapce>();
     let synapcesPositions = _.map(this.spike.neuron.synapces, (synapce) => {
-      let nextSynapcePosition = synapce.position;
+      let nextSynapcePosition = synapce.mesh.position;
       mapAdd(synapcesToPositionsMap, nextSynapcePosition, synapce);
       return nextSynapcePosition;
     });
@@ -156,5 +156,10 @@ class SpikeMesh implements ActivatableMesh {
   public dispose(): void {
     this.scene.removeMesh(this.mesh);
     this.scene.removeLight(this.light);
+    this.mesh.dispose();
+    this.mesh = null;
+    this.light.dispose();
+    this.light = null;
+    this.curve = null;
   }
 }

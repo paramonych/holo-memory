@@ -18,11 +18,24 @@
    </head>
 
    <body>
-      <canvas id="renderCanvas"></canvas>
-      <button id="launch">PLAY</button>
-      <button id="restart">RESET</button>
-      <div id="sliderWrapper">
-        <div id="slider"></div>
-      </div>
+     <canvas id="renderCanvas"></canvas>
+     <button id="launch" disabled="disabled">PLAY</button>
+     <!--button id="restart">RESET</button>
+     <div id="sliderWrapper">
+       <div id="slider"></div>
+     </div-->
+     <div id="neuronsAmount" class="config-detail">
+       <label>Neurons:</label>
+       <input type="number" size="3"/>
+     </div>
+     <div id="blastRadius" class="config-detail">
+       <label>Radius:</label>
+       <input type="number" size="3"/>
+     </div>
+     <div id="blastPower" class="config-detail">
+       <label>Synapces:</label>
+       <input type="number" size="3"/>
+     </div>
+     <button id="applyConfig">APPLY</button>
    </body>
 </html>

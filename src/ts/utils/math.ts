@@ -21,6 +21,7 @@ function limitedRandom(delta: number): number {
 }
 
 function limitedRandomWithRandomSign(delta: number): number {
+  // delta supposed to be more than 0 and less than 0.5
   return limitedRandom(delta) * randomSign();
 }
 

@@ -1,10 +1,11 @@
 var Cortex = (function () {
-    function Cortex(scene, scale, lifetime) {
+    function Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPowerLimit) {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = 40;
-        this.blastPowerLimit = 4;
+        this.neuronsAmount = neuronsAmount;
+        this.blastRadius = blastRadius;
+        this.blastPowerLimit = blastPowerLimit;
         this.createNeurons();
         this.preprocessBlasts();
     }
@@ -13,8 +14,10 @@ var Cortex = (function () {
         var mediumSynapces = this.collectMediumSynapces();
         var progenySynapces = this.collectProgenySynapces();
         this.blasts = newMap();
+        this.blastsArray = new Array();
         mediumSynapces.forEach(function (synapce) {
-            var newBlast = new NeuroBlast(synapce, synapce.neuron.step / 5, mediumSynapces, _this.scene, _this.blastPowerLimit);
+            var newBlast = new NeuroBlast(synapce, _this.blastRadius, mediumSynapces, _this.scene, _this.blastPowerLimit);
+            _this.blastsArray.push(newBlast);
         });
     };
     Cortex.prototype.collectMediumSynapces = function () {
@@ -36,7 +39,6 @@ var Cortex = (function () {
         return allSynapces;
     };
     Cortex.prototype.createNeurons = function () {
-        _.each(this.neurons, function (n) { return n.dispose(); });
         this.neurons = new Array();
         var type = NeuronType.Medium;
         for (var i = 0; i < this.neuronsAmount; i++) {
@@ -76,6 +78,12 @@ var Cortex = (function () {
     };
     Cortex.prototype.dispose = function () {
         _.each(this.neurons, function (neuron) { neuron.dispose(); });
+        for (var i = 0; i < this.blastsArray.length; i++) {
+            this.blastsArray[i].dispose();
+        }
+        this.neurons = null;
+        this.blasts = null;
+        this.blastsArray = null;
     };
     return Cortex;
 }());

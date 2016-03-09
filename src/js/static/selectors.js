@@ -4,5 +4,9 @@ var ids = {
     play: '#play',
     pause: '#pause',
     restart: '#restart',
-    slider: '#slider'
+    slider: '#slider',
+    neuronsAmount: '#neuronsAmount',
+    blastRadius: '#blastRadius',
+    blastPower: '#blastPower',
+    applyButton: '#applyConfig'
 };
