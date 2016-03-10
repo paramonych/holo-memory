@@ -88,11 +88,17 @@ var Neuron = (function () {
     Neuron.prototype.dispose = function () {
         if (isMedium(this.type)) {
             this.spike.dispose();
+            this.spike = null;
         }
         _.each(this.synapces, function (synapce) { synapce.dispose(); });
         this.mesh.dispose();
         this.mesh = null;
         this.synapces = null;
+        if (this.codeMesh && this.codeMesh.dispose) {
+            this.codeMesh.dispose();
+            this.codeMesh = null;
+        }
+        this.state = null;
     };
     Neuron.prototype.build = function () {
         this.mesh.draw();

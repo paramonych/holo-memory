@@ -37,4 +37,10 @@ class Space {
     this.cortex.dispose();
     this.cortex = new Cortex(this.scene, this.scale, this.lifetime, neuronsAmount, blastRadius, blastPower);
   }
+
+  public dispose(): void {
+    this.cortex.dispose();
+    this.cortex = null;
+    this.time = null;
+  }
 }

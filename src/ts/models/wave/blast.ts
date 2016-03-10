@@ -34,7 +34,7 @@ class NeuroBlast {
 
     this.synapcesCount = mapSize(this.synapcesMap);
 
-    let isEnoughIntersections = (this.synapcesCount > this.blastPowerLimit);
+    let isEnoughIntersections = (this.synapcesCount >= this.blastPowerLimit);
     this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
 
     if(this.isExists && isEnoughIntersections) {

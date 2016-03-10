@@ -110,11 +110,17 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public dispose(): void {
     if(isMedium(this.type)) {
       this.spike.dispose();
+      this.spike = null;
     }
     _.each(this.synapces, (synapce) => {synapce.dispose();});
     this.mesh.dispose();
     this.mesh = null;
     this.synapces = null;
+    if(this.codeMesh && this.codeMesh.dispose) {
+      this.codeMesh.dispose();
+      this.codeMesh = null;
+    }
+    this.state = null;
   }
 
   public build(): void {

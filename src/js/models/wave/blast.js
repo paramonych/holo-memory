@@ -26,7 +26,7 @@ var NeuroBlast = (function () {
             }
         });
         this.synapcesCount = mapSize(this.synapcesMap);
-        var isEnoughIntersections = (this.synapcesCount > this.blastPowerLimit);
+        var isEnoughIntersections = (this.synapcesCount >= this.blastPowerLimit);
         this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
         if (this.isExists && isEnoughIntersections) {
             this.sphere = BABYLON.Mesh.CreateSphere('s', 32, this.radius * 2, this.scene, false);

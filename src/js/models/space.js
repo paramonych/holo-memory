@@ -26,5 +26,10 @@ var Space = (function () {
         this.cortex.dispose();
         this.cortex = new Cortex(this.scene, this.scale, this.lifetime, neuronsAmount, blastRadius, blastPower);
     };
+    Space.prototype.dispose = function () {
+        this.cortex.dispose();
+        this.cortex = null;
+        this.time = null;
+    };
     return Space;
 }());

@@ -74,5 +74,6 @@ class Synapce implements Disposable, Dualistic {
     }
     this.mediator.dispose();
     this.mediator = null;
+    this.state = null;
   }
 }

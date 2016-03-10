@@ -64,6 +64,7 @@ var Synapce = (function () {
         }
         this.mediator.dispose();
         this.mediator = null;
+        this.state = null;
     };
     return Synapce;
 }());
