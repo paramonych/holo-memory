@@ -35,11 +35,16 @@ var NeuroBlast = (function () {
             this.synapce.allowMediator();
             this.synapce.mesh.mesh.material = forBlastSphere(this.scene, this.color);
             useMap(this.synapcesMap, function (synapce) {
+                var coloredMaterial = forBlastSphere(_this.scene, _this.color);
+                synapce.neuron.allowSpikes();
+                synapce.neuron.mesh.material = coloredMaterial;
                 synapce.allowMediator();
-                synapce.mesh.mesh.material = forBlastSphere(_this.scene, _this.color);
+                synapce.mesh.mesh.material = coloredMaterial;
+                synapce.mesh.synapceLegMesh.material = coloredMaterial;
             });
         }
         else {
+            this.isExists = false;
             this.dispose();
         }
     }

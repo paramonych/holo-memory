@@ -1,9 +1,9 @@
 var Space = (function () {
-    function Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower) {
+    function Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback) {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.cortex = new Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower);
+        this.cortex = new Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback);
     }
     Space.prototype.expose = function (time) {
         this.time = time;

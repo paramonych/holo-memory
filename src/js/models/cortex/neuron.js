@@ -9,11 +9,13 @@ var Neuron = (function () {
         this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
         this.createSynapces();
+    }
+    Neuron.prototype.allowSpikes = function () {
         if (isMedium(this.type)) {
             this.createSpike();
             this.startWatchForSpike();
         }
-    }
+    };
     Neuron.prototype.setProgenyCodeMesh = function () {
         var scene = this.cortex.scene;
         var scale = this.cortex.scale;
@@ -28,22 +30,22 @@ var Neuron = (function () {
         return this.id.toString();
     };
     Neuron.prototype.play = function () {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.tense.play();
         }
     };
     Neuron.prototype.pause = function (time) {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.tense.pause(time);
         }
     };
     Neuron.prototype.resume = function () {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.tense.resume();
         }
     };
     Neuron.prototype.progress = function (value) {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.tense.progress(value);
         }
     };
@@ -57,7 +59,7 @@ var Neuron = (function () {
         });
     };
     Neuron.prototype.restartTense = function () {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.reset();
         }
     };
@@ -86,7 +88,7 @@ var Neuron = (function () {
         });
     };
     Neuron.prototype.dispose = function () {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.dispose();
             this.spike = null;
         }

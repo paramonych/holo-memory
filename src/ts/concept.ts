@@ -1,7 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', plantConcept, false);
 
-var lifetime = 3;
+var lifetime = 7;
 
 function plantConcept(): void {
   if (!BABYLON.Engine.isSupported()) {return;}
@@ -41,8 +41,15 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
   let neuronsAmount = +knobs.neuronsAmount.val();
   let blastRadius = +knobs.blastRadius.val();
   let blastPower = +knobs.blastPower.val();
+  let uiCallback = (blastsAmount: number): void => {
+    if(blastsAmount === 0) {
+      knobs.launch.attr('disabled', 'disabled');
+    } else {
+      knobs.launch.removeAttr('disabled');
+    }
+  };
 
-  let space = new Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower);
+  let space = new Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback);
   let time = new Time(lifetime);
 
   knobs.launch.off('click').on('click', function() {
@@ -75,11 +82,6 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
     scene.render();
     wireUI(scene, scale, canvas);
   });
-  /*knobs.restart.on('click',function() {
-    knobs.launch.html('PAUSE');
-    knobs.launch.data('type', 'PLAY');
-    time.restart(space);
-  });*/
 
   time.tense.eventCallback("onUpdate", function() {
     let pg = time.tense.progress();
@@ -112,11 +114,10 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
 
 function getUIControls(): Knobs {
   let launch = jQuery(ids.launch);
-  let restart = jQuery(ids.restart);
   let slider = jQuery(ids.slider);
   let neuronsAmount = jQuery(ids.neuronsAmount);
   let blastRadius = jQuery(ids.blastRadius);
   let blastPower = jQuery(ids.blastPower);
   let applyButton = jQuery(ids.applyButton);
-  return knobsFrom(launch, void 0, void 0, restart, slider, neuronsAmount, blastRadius, blastPower, applyButton);
+  return knobsFrom(launch, slider, neuronsAmount, blastRadius, blastPower, applyButton);
 }

@@ -7,8 +7,9 @@ class Space {
     public lifetime: number,
     neuronsAmount: number,
     blastRadius: number,
-    blastPower: number) {
-    this.cortex = new Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower);
+    blastPower: number,
+    uiCallback: (blastsAmount: number) => void) {
+    this.cortex = new Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback);
   }
 
   public expose(time: Time): void {

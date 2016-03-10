@@ -64,8 +64,10 @@ class Mediator {
     cloud.minEmitBox = zero;
     cloud.maxEmitBox = zero.clone();
 
-    cloud.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
-    cloud.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
+    let transparentGray = new BABYLON.Color4(0.1, 0.1, 0.1, 0.15);
+
+    cloud.color1 = transparentGray;
+    cloud.color2 = transparentGray;
   //  cloud.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
 
     let size = 0.4;

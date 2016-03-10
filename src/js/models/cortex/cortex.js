@@ -1,11 +1,12 @@
 var Cortex = (function () {
-    function Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPowerLimit) {
+    function Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPowerLimit, spaceCallback) {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
         this.neuronsAmount = neuronsAmount;
         this.blastRadius = blastRadius;
         this.blastPowerLimit = blastPowerLimit;
+        this.spaceCallback = spaceCallback;
         this.createNeurons();
         this.preprocessBlasts();
     }
@@ -17,8 +18,14 @@ var Cortex = (function () {
         this.blastsArray = new Array();
         mediumSynapces.forEach(function (synapce) {
             var newBlast = new NeuroBlast(synapce, _this.blastRadius, mediumSynapces, _this.scene, _this.blastPowerLimit);
-            _this.blastsArray.push(newBlast);
+            if (newBlast.isExists) {
+                _this.blastsArray.push(newBlast);
+            }
+            else {
+                newBlast = null;
+            }
         });
+        this.spaceCallback(this.blastsArray.length);
     };
     Cortex.prototype.collectMediumSynapces = function () {
         var allSynapces = new Array();

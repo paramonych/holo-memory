@@ -7,9 +7,9 @@ class SynapceMesh implements ActivatableMesh {
 
   constructor(
     public scene: BABYLON.Scene, public scale: number,
-    basePosition: BABYLON.Vector3, private neuron: Neuron
+    public basePosition: BABYLON.Vector3, private neuron: Neuron
   ) {
-    this.position = isMedium(neuron.type) ? this.shiftPosition(basePosition) : basePosition;
+    this.position = isMedium(neuron.type) ? this.shiftPosition(this.basePosition.clone()) : basePosition.clone();
     this.setMaterials();
     this.draw(basePosition);
   }

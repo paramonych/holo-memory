@@ -40,7 +40,7 @@ var SpikeMesh = (function () {
         this.positionShoulders();
     };
     SpikeMesh.prototype.constructMesh = function () {
-        this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 67, this.scene, false);
+        this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 45, this.scene, false);
         this.light = this.getLight();
         this.light.parent = this.mesh;
     };
@@ -95,7 +95,7 @@ var SpikeMesh = (function () {
         var synapces = this.spike.neuron.synapces;
         var synapcesToPositionsMap = newMap();
         var synapcesPositions = _.map(this.spike.neuron.synapces, function (synapce) {
-            var nextSynapcePosition = synapce.mesh.position;
+            var nextSynapcePosition = synapce.mesh.basePosition;
             mapAdd(synapcesToPositionsMap, nextSynapcePosition, synapce);
             return nextSynapcePosition;
         });

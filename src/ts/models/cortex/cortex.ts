@@ -9,7 +9,8 @@ class Cortex implements Disposable {
     public lifetime: number,
     private neuronsAmount: number,
     private blastRadius: number,
-    private blastPowerLimit: number) {
+    private blastPowerLimit: number,
+    private spaceCallback: (blastsAmount: number) => void) {
     this.createNeurons();
     this.preprocessBlasts();
   }
@@ -22,10 +23,14 @@ class Cortex implements Disposable {
 
     mediumSynapces.forEach((synapce) => {
       let newBlast = new NeuroBlast(synapce, this.blastRadius, mediumSynapces, this.scene, this.blastPowerLimit);
-
-      this.blastsArray.push(newBlast);
+      if(newBlast.isExists) {
+        this.blastsArray.push(newBlast);
+      } else {
+        newBlast = null;
+      }
     });
 
+    this.spaceCallback(this.blastsArray.length);
     //console.debug('Blasts: ', mapSize(this.blasts));
   }
 

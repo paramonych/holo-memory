@@ -2,8 +2,9 @@ var SynapceMesh = (function () {
     function SynapceMesh(scene, scale, basePosition, neuron) {
         this.scene = scene;
         this.scale = scale;
+        this.basePosition = basePosition;
         this.neuron = neuron;
-        this.position = isMedium(neuron.type) ? this.shiftPosition(basePosition) : basePosition;
+        this.position = isMedium(neuron.type) ? this.shiftPosition(this.basePosition.clone()) : basePosition.clone();
         this.setMaterials();
         this.draw(basePosition);
     }
