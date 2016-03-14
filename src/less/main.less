@@ -40,6 +40,8 @@ button {
 }
 
 #neuronsAmount,
+#synapcesAmount,
+#pinMaxLength,
 #blastRadius,
 #blastPower,
 #applyConfig {
@@ -57,7 +59,7 @@ button {
 }
 
 .config-detail {
-  width: 130px;
+  width: 200px;
   input {
     position: absolute;
     right: 0px;
@@ -68,12 +70,18 @@ button {
 #neuronsAmount {
   top: @top;
 }
-#blastRadius {
+#synapcesAmount {
   top: @top*2;
 }
-#blastPower {
+#pinMaxLength {
   top: @top*3;
 }
-#applyConfig {
+#blastRadius {
   top: @top*4;
+}
+#blastPower {
+  top: @top*5;
+}
+#applyConfig {
+  top: @top*6;
 }

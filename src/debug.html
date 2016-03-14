@@ -22,15 +22,23 @@
      <button id="launch">PLAY</button>
 
      <div id="neuronsAmount" class="config-detail">
-       <label>Neurons:</label>
-       <input type="number" size="3"/>
+       <label>Neurons amount:</label>
+       <input type="number" size="3" max="300"/>
+     </div>
+     <div id="synapcesAmount" class="config-detail">
+       <label>Synapces amount:</label>
+       <input type="number" size="3" max="300"/>
+     </div>
+     <div id="pinMaxLength" class="config-detail">
+       <label>Pin max length:</label>
+       <input type="number" size="3" step="0,1"/>
      </div>
      <div id="blastRadius" class="config-detail">
-       <label>Radius:</label>
-       <input type="number" size="3"/>
+       <label>Spread radius:</label>
+       <input type="number" size="3" step="0,1"/>
      </div>
      <div id="blastPower" class="config-detail">
-       <label>Synapces:</label>
+       <label>Caught synapces:</label>
        <input type="number" size="3"/>
      </div>
      <button id="applyConfig">APPLY</button>

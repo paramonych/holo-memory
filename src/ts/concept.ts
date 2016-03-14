@@ -16,29 +16,30 @@ function plantConcept(): void {
 
   scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
 
-  let scale = 10;
-  let neuronsAmount = 20;
-  let blastRadius = 3;
-  let blastPower = 3;
+  let cortexSate = cortexConfigurationFrom(5, 100, 5, 0.5, 0.2, 3);
 
-  jQuery(ids.neuronsAmount).find('input').val(''+neuronsAmount);
-  jQuery(ids.blastRadius).find('input').val(''+blastRadius);
-  jQuery(ids.blastPower).find('input').val(''+blastPower);
+  jQuery(ids.neuronsAmount).find('input').val(''+cortexSate.neuronsAmount);
+  jQuery(ids.synapcesAmount).find('input').val(''+cortexSate.synapcesAmount);
+  jQuery(ids.pinMaxLength).find('input').val(''+cortexSate.pinMaxLength);
+  jQuery(ids.blastRadius).find('input').val(''+cortexSate.blastRadius);
+  jQuery(ids.blastPower).find('input').val(''+cortexSate.blastPower);
 
-  attachCamera(canvas, scene, scale);
+  attachCamera(canvas, scene, cortexSate.scale);
   setLight(scene);
-  createPatternSpaceBox(scene, scale);
+  createPatternSpaceBox(scene, cortexSate.scale);
 
   engine.runRenderLoop(() => {
     scene.render();
   });
-  wireUI(scene, scale, canvas);
+  wireUI(scene, cortexSate.scale, canvas);
 }
 
 function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement): void {
   let knobs = getUIControls();
 
   let neuronsAmount = +knobs.neuronsAmount.val();
+  let synapcesAmount = +knobs.synapcesAmount.val();
+  let pinMaxLength = +knobs.pinMaxLength.val();
   let blastRadius = +knobs.blastRadius.val();
   let blastPower = +knobs.blastPower.val();
   let uiCallback = (blastsAmount: number): void => {
@@ -116,8 +117,37 @@ function getUIControls(): Knobs {
   let launch = jQuery(ids.launch);
   let slider = jQuery(ids.slider);
   let neuronsAmount = jQuery(ids.neuronsAmount);
+  let synapcesAmount = jQuery(ids.synapcesAmount);
+  let pinMaxLength = jQuery(ids.pinMaxLength);
   let blastRadius = jQuery(ids.blastRadius);
   let blastPower = jQuery(ids.blastPower);
   let applyButton = jQuery(ids.applyButton);
-  return knobsFrom(launch, slider, neuronsAmount, blastRadius, blastPower, applyButton);
+  return knobsFrom(launch, slider, neuronsAmount, blastRadius, blastPower, applyButton, synapcesAmount, pinMaxLength);
+}
+
+interface CortexConfiguration {
+  scale: number;
+  neuronsAmount: number;
+  synapcesAmount: number;
+  pinMaxLength: number;
+  blastRadius: number;
+  blastPower: number;
+}
+
+function cortexConfigurationFrom(
+  scale: number,
+  neuronsAmount: number,
+  synapcesAmount: number,
+  pinMaxLength: number,
+  blastRadius: number,
+  blastPower: number): CortexConfiguration {
+
+  return {
+    scale: scale,
+    neuronsAmount: neuronsAmount,
+    synapcesAmount: synapcesAmount,
+    pinMaxLength: pinMaxLength,
+    blastRadius: blastRadius,
+    blastPower: blastPower
+  }
 }

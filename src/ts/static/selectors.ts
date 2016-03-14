@@ -6,6 +6,8 @@ var ids = {
   restart: '#restart',
   slider: '#slider',
   neuronsAmount: '#neuronsAmount',
+  synapcesAmount: '#synapcesAmount',
+  pinMaxLength: '#pinMaxLength',
   blastRadius: '#blastRadius',
   blastPower: '#blastPower',
   applyButton: '#applyConfig'
