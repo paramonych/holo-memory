@@ -9,17 +9,19 @@ var Neuron = (function () {
         this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
         this.toDefaultState();
         this.createSynapces();
+    }
+    Neuron.prototype.allowSpikes = function () {
         if (isMedium(this.type)) {
             this.createSpike();
             this.startWatchForSpike();
         }
-    }
+    };
     Neuron.prototype.setProgenyCodeMesh = function () {
         var scene = this.cortex.scene;
         var scale = this.cortex.scale;
         var path = this.mesh.curve.path;
         var code = toValues(this.code).join('');
-        console.log(code);
+        this.codeMesh = new Code(scene, scale, path[Math.floor(path.length / 2)], code, true);
     };
     Neuron.prototype.hasCodeMesh = function () {
         return (this.codeMesh !== void 0);
@@ -28,22 +30,22 @@ var Neuron = (function () {
         return this.id.toString();
     };
     Neuron.prototype.play = function () {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.tense.play();
         }
     };
     Neuron.prototype.pause = function (time) {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.tense.pause(time);
         }
     };
     Neuron.prototype.resume = function () {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.tense.resume();
         }
     };
     Neuron.prototype.progress = function (value) {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.tense.progress(value);
         }
     };
@@ -57,7 +59,7 @@ var Neuron = (function () {
         });
     };
     Neuron.prototype.restartTense = function () {
-        if (isMedium(this.type)) {
+        if (isMedium(this.type) && this.spike) {
             this.spike.reset();
         }
     };
@@ -86,9 +88,19 @@ var Neuron = (function () {
         });
     };
     Neuron.prototype.dispose = function () {
-        this.spike.dispose();
+        if (isMedium(this.type) && this.spike) {
+            this.spike.dispose();
+            this.spike = null;
+        }
         _.each(this.synapces, function (synapce) { synapce.dispose(); });
         this.mesh.dispose();
+        this.mesh = null;
+        this.synapces = null;
+        if (this.codeMesh && this.codeMesh.dispose) {
+            this.codeMesh.dispose();
+            this.codeMesh = null;
+        }
+        this.state = null;
     };
     Neuron.prototype.build = function () {
         this.mesh.draw();
@@ -119,4 +131,4 @@ var Neuron = (function () {
         this.state.subscribe(action);
     };
     return Neuron;
-})();
+}());

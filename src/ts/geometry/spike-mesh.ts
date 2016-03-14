@@ -54,7 +54,7 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   private constructMesh(): void {
-    this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale/67, this.scene, false);
+    this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale/45, this.scene, false);
     this.light = this.getLight();
     this.light.parent = this.mesh;
   }
@@ -124,7 +124,7 @@ class SpikeMesh implements ActivatableMesh {
     let synapces = this.spike.neuron.synapces;
     let synapcesToPositionsMap = newMap<Synapce>();
     let synapcesPositions = _.map(this.spike.neuron.synapces, (synapce) => {
-      let nextSynapcePosition = synapce.position;
+      let nextSynapcePosition = synapce.mesh.basePosition;
       mapAdd(synapcesToPositionsMap, nextSynapcePosition, synapce);
       return nextSynapcePosition;
     });
@@ -156,5 +156,10 @@ class SpikeMesh implements ActivatableMesh {
   public dispose(): void {
     this.scene.removeMesh(this.mesh);
     this.scene.removeLight(this.light);
+    this.mesh.dispose();
+    this.mesh = null;
+    this.light.dispose();
+    this.light = null;
+    this.curve = null;
   }
 }

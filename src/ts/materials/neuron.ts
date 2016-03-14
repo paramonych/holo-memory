@@ -1,30 +1,35 @@
 function forMediumNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
  let material = new BABYLON.StandardMaterial('i', scene);
- material.emissiveColor = new BABYLON.Color3(1,1,1);//(0.17, 0.57, 1);
- material.alpha = 0.4;
+ material.emissiveColor = new BABYLON.Color3(0.5,0.5,0.5);
+ material.specularColor = new BABYLON.Color3(1,1,1);
+ material.ambientColor = new BABYLON.Color3(0,0,1);
+ material.specularPower = 70;
+ material.alpha = 1;
  return material;
 }
 function forProgenyNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
  let material = new BABYLON.StandardMaterial('i', scene);
- material.emissiveColor = new BABYLON.Color3(0,0,1);//(0.57, 0.17, 1);
- material.alpha = 0.4;
+ material.emissiveColor = new BABYLON.Color3(0,0,0.35);
+ material.specularColor = new BABYLON.Color3(0,0,0);
+ material.specularPower = 70;
+ material.alpha = 0.7;
  return material;
 }
 
 
 function forMediumActiveNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
   let material = forMediumNeuron(scene);
-  material.ambientColor = new BABYLON.Color3(1, 1, 1);
+  //material.ambientColor = new BABYLON.Color3(1, 1, 1);
   return material;
 }
 function forProgenyActiveNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
   let material = forProgenyNeuron(scene);
-  material.ambientColor = new BABYLON.Color3(1, 1, 1);
+  //material.ambientColor = new BABYLON.Color3(1, 1, 1);
   return material;
 }
 
 // DARK GLASS
-function forMediumNeuronGG(scene: BABYLON.Scene): BABYLON.StandardMaterial {
+function forMediumNeuronGGZ(scene: BABYLON.Scene): BABYLON.StandardMaterial {
   let material = new BABYLON.StandardMaterial("kosh", scene);
   //material.reflectionTexture = new BABYLON.CubeTexture("textures/TropicalSunnyDay", scene);
   material.diffuseColor = new BABYLON.Color3(0.5, 0, 0);

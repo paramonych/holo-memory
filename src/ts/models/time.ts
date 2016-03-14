@@ -29,4 +29,9 @@ class Time {
     this.tense.restart();
     space.restart(this);
   }
+
+  public dispose(): void {
+    this.tense.clear(true);
+    this.tense = null;
+  }
 }

@@ -1,7 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', plantConcept, false);
 
-var lifetime = 8;
+var lifetime = 7;
 
 function plantConcept(): void {
   if (!BABYLON.Engine.isSupported()) {return;}
@@ -14,9 +14,17 @@ function plantConcept(): void {
   //scene.fogEnd = 60.0;
   //scene.fogColor = new BABYLON.Color3(0.1, 0.9, 0.15);
 
-  scene.clearColor = new BABYLON.Color3(0.07, 0.07, 0.07);
+  scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
 
   let scale = 10;
+  let neuronsAmount = 20;
+  let blastRadius = 3;
+  let blastPower = 3;
+
+  jQuery(ids.neuronsAmount).find('input').val(''+neuronsAmount);
+  jQuery(ids.blastRadius).find('input').val(''+blastRadius);
+  jQuery(ids.blastPower).find('input').val(''+blastPower);
+
   attachCamera(canvas, scene, scale);
   setLight(scene);
   createPatternSpaceBox(scene, scale);
@@ -24,13 +32,27 @@ function plantConcept(): void {
   engine.runRenderLoop(() => {
     scene.render();
   });
-  wireUI(new Space(scene, scale, lifetime), new Time(lifetime));
+  wireUI(scene, scale, canvas);
 }
 
-function wireUI(space: Space, time: Time): void {
+function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement): void {
   let knobs = getUIControls();
 
-  knobs.launch.on('click', function() {
+  let neuronsAmount = +knobs.neuronsAmount.val();
+  let blastRadius = +knobs.blastRadius.val();
+  let blastPower = +knobs.blastPower.val();
+  let uiCallback = (blastsAmount: number): void => {
+    if(blastsAmount === 0) {
+      knobs.launch.attr('disabled', 'disabled');
+    } else {
+      knobs.launch.removeAttr('disabled');
+    }
+  };
+
+  let space = new Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback);
+  let time = new Time(lifetime);
+
+  knobs.launch.off('click').on('click', function() {
     let next = knobs.launch.data('type');
     let html = knobs.launch.html();
     knobs.launch.data('type', html);
@@ -47,21 +69,37 @@ function wireUI(space: Space, time: Time): void {
     }
   });
 
-  knobs.restart.on('click',function() {
-    knobs.launch.html('PAUSE');
-    knobs.launch.data('type', 'PLAY');
-    time.restart(space);
+  knobs.applyButton.off('click').on('click',function() {
+    neuronsAmount = +knobs.neuronsAmount.val();
+    blastRadius = +knobs.blastRadius.val();
+    blastPower = +knobs.blastPower.val();
+    space.dispose();
+    time.dispose();
+    scene.dispose();
+    attachCamera(canvas, scene, scale);
+    setLight(scene);
+    createPatternSpaceBox(scene, scale);
+    scene.render();
+    wireUI(scene, scale, canvas);
   });
 
   time.tense.eventCallback("onUpdate", function() {
     let pg = time.tense.progress();
     let progress = pg * 100;
+
     if(progress) {
-      knobs.slider.slider("value", progress);
+      //knobs.slider.slider("value", progress);
     }
   });
 
-  knobs.slider.slider({
+  time.tense.eventCallback("onComplete", function() {
+    time.restart(space);
+    time.pause(space);
+    knobs.launch.html('PLAY');
+    knobs.launch.data('type', 'PAUSE');
+  });
+
+  /*knobs.slider.slider({
     range: false,
     min: 0,
     max: 100,
@@ -69,14 +107,17 @@ function wireUI(space: Space, time: Time): void {
     slide: function ( event, ui ) {
       time.shiftTo(space, ui.value/100);
     }
-  });
+  });*/
 
   space.expose(time);
 }
 
 function getUIControls(): Knobs {
   let launch = jQuery(ids.launch);
-  let restart = jQuery(ids.restart);
   let slider = jQuery(ids.slider);
-  return knobsFrom(launch, void 0, void 0, restart, slider);
+  let neuronsAmount = jQuery(ids.neuronsAmount);
+  let blastRadius = jQuery(ids.blastRadius);
+  let blastPower = jQuery(ids.blastPower);
+  let applyButton = jQuery(ids.applyButton);
+  return knobsFrom(launch, slider, neuronsAmount, blastRadius, blastPower, applyButton);
 }

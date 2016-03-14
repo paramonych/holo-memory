@@ -6,22 +6,24 @@ class Synapce implements Disposable, Dualistic {
   public state: KnockoutObservable<StateType>;
   public mesh: SynapceMesh;
 
-  constructor(public neuron: Neuron, public position: BABYLON.Vector3) {
+  constructor(public neuron: Neuron, position: BABYLON.Vector3) {
     this.toDefaultState();
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
-    this.mesh = new SynapceMesh(scene, scale, position, neuron.type);
+    this.mesh = new SynapceMesh(scene, scale, position, neuron);
     this.setMediator();
     this.deactivate();
   }
 
-  public setMediumCodeMesh(): void {
+  public setMediumCodeMesh(count: number, isBiggestCount: boolean): void {
     let scene = this.neuron.cortex.scene;
     let scale = this.neuron.cortex.scale;
-  //  this.codeMesh = new Code(scene, scale, this.mesh.mesh.position, this.code.join(''), false);
+    if(count > 0) {
+      this.codeMesh = new Code(scene, scale, this.mesh.mesh.position, ''+count, isBiggestCount);
+    }
   }
 
-  public allowMediators(): void {
+  public allowMediator(): void {
     this.mediator.willBeUsed();
   }
 
@@ -65,6 +67,13 @@ class Synapce implements Disposable, Dualistic {
 
   public dispose(): void {
     this.mesh.dispose();
-    this.codeMesh.dispose();
+    this.mesh = null;
+    if(this.codeMesh && this.codeMesh.dispose) {
+      this.codeMesh.dispose();
+      this.codeMesh = null;
+    }
+    this.mediator.dispose();
+    this.mediator = null;
+    this.state = null;
   }
 }

@@ -5,7 +5,7 @@
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <title>Babylon|NRU</title>
       <link href="css/style.min.css" rel="stylesheet" media="screen">
-      <script src="libs/babylon.2.2.js"></script>
+      <script src="libs/babylon.2.3.js"></script>
       <script src="libs/jquery-2.1.4.min.js"></script>
       <script src="libs/jquery-ui.min.js"></script>
       <script src="libs/underscore-min.js"></script>
@@ -18,11 +18,21 @@
    </head>
 
    <body>
-      <canvas id="renderCanvas"></canvas>
-      <button id="launch">PLAY</button>
-      <button id="restart">RESET</button>
-      <div id="sliderWrapper">
-        <div id="slider"></div>
-      </div>
+     <canvas id="renderCanvas"></canvas>
+     <button id="launch">PLAY</button>
+
+     <div id="neuronsAmount" class="config-detail">
+       <label>Neurons:</label>
+       <input type="number" size="3"/>
+     </div>
+     <div id="blastRadius" class="config-detail">
+       <label>Radius:</label>
+       <input type="number" size="3"/>
+     </div>
+     <div id="blastPower" class="config-detail">
+       <label>Synapces:</label>
+       <input type="number" size="3"/>
+     </div>
+     <button id="applyConfig">APPLY</button>
    </body>
 </html>

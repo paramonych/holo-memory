@@ -1,21 +1,23 @@
 var Synapce = (function () {
     function Synapce(neuron, position) {
         this.neuron = neuron;
-        this.position = position;
         this.id = getUniqueId();
         this.code = getRandomFourArray();
         this.toDefaultState();
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
-        this.mesh = new SynapceMesh(scene, scale, position, neuron.type);
+        this.mesh = new SynapceMesh(scene, scale, position, neuron);
         this.setMediator();
         this.deactivate();
     }
-    Synapce.prototype.setMediumCodeMesh = function () {
+    Synapce.prototype.setMediumCodeMesh = function (count, isBiggestCount) {
         var scene = this.neuron.cortex.scene;
         var scale = this.neuron.cortex.scale;
+        if (count > 0) {
+            this.codeMesh = new Code(scene, scale, this.mesh.mesh.position, '' + count, isBiggestCount);
+        }
     };
-    Synapce.prototype.allowMediators = function () {
+    Synapce.prototype.allowMediator = function () {
         this.mediator.willBeUsed();
     };
     Synapce.prototype.getId = function () {
@@ -55,7 +57,14 @@ var Synapce = (function () {
     };
     Synapce.prototype.dispose = function () {
         this.mesh.dispose();
-        this.codeMesh.dispose();
+        this.mesh = null;
+        if (this.codeMesh && this.codeMesh.dispose) {
+            this.codeMesh.dispose();
+            this.codeMesh = null;
+        }
+        this.mediator.dispose();
+        this.mediator = null;
+        this.state = null;
     };
     return Synapce;
-})();
+}());

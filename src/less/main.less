@@ -19,11 +19,11 @@ html, body {
 button {
   z-index: 2;
   position: absolute;
-  left: 20px;
 }
 
 #launch {
-  top: @top*2;
+  top: @top;
+  right: 20px;
 }
 #restart {
   top: @top*3;
@@ -37,4 +37,43 @@ button {
 
 .ui-widget-content {
   background-color:rgba(255, 255, 255, 0.2);
+}
+
+#neuronsAmount,
+#blastRadius,
+#blastPower,
+#applyConfig {
+    z-index: 2;
+    position: absolute;
+    left: 20px;
+    font-family: Arial;
+
+    label {
+      color: white;
+    }
+    input {
+      width:40px
+    }
+}
+
+.config-detail {
+  width: 130px;
+  input {
+    position: absolute;
+    right: 0px;
+    top: -2px;
+  }
+}
+
+#neuronsAmount {
+  top: @top;
+}
+#blastRadius {
+  top: @top*2;
+}
+#blastPower {
+  top: @top*3;
+}
+#applyConfig {
+  top: @top*4;
 }

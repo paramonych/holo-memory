@@ -18,6 +18,9 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
     this.toDefaultState();
     this.createSynapces();
+  }
+
+  public allowSpikes(): void {
     if(isMedium(this.type)) {
       this.createSpike();
       this.startWatchForSpike();
@@ -29,8 +32,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     let scale = this.cortex.scale;
     let path = this.mesh.curve.path;
     let code =  toValues(this.code).join('');
-    console.log(code);
-    //this.codeMesh = new Code(scene, scale, path[Math.floor(path.length/2)], code, true);
+    this.codeMesh = new Code(scene, scale, path[Math.floor(path.length/2)], code, true);
   }
 
   public hasCodeMesh(): boolean {
@@ -47,22 +49,22 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
 // and removed when it reaches the end of dendrit
 // each spike should own it's own timeline
  public play(): void {
-   if(isMedium(this.type)) {
+   if(isMedium(this.type) && this.spike) {
      this.spike.tense.play();
    }
  }
  public pause(time: number): void {
-   if(isMedium(this.type)) {
+   if(isMedium(this.type) && this.spike) {
      this.spike.tense.pause(time);
    }
  }
  public resume(): void {
-   if(isMedium(this.type)) {
+   if(isMedium(this.type) && this.spike) {
      this.spike.tense.resume();
    }
  }
  public progress(value: number): void {
-   if(isMedium(this.type)) {
+   if(isMedium(this.type) && this.spike) {
      this.spike.tense.progress(value);
    }
  }
@@ -78,7 +80,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   public restartTense(): void {
-    if(isMedium(this.type)) {
+    if(isMedium(this.type) && this.spike) {
       this.spike.reset();
     }
   }
@@ -109,9 +111,19 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   public dispose(): void {
-    this.spike.dispose();
+    if(isMedium(this.type) && this.spike) {
+      this.spike.dispose();
+      this.spike = null;
+    }
     _.each(this.synapces, (synapce) => {synapce.dispose();});
     this.mesh.dispose();
+    this.mesh = null;
+    this.synapces = null;
+    if(this.codeMesh && this.codeMesh.dispose) {
+      this.codeMesh.dispose();
+      this.codeMesh = null;
+    }
+    this.state = null;
   }
 
   public build(): void {

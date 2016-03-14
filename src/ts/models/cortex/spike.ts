@@ -32,6 +32,11 @@ class Spike implements Disposable, Dualistic {
 
   public dispose(): void {
     this.mesh.dispose();
+    this.mesh = null;
+    this.tense.clear(true);
+    this.tense = null;
+    this.state = null;
+    this.moved = null
   }
 
   serveState(newState: StateType): void {

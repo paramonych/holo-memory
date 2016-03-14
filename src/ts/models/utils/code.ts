@@ -9,7 +9,7 @@ class Code {
     public isBig: boolean
   ) {
 
-    this.mesh = BABYLON.Mesh.CreatePlane("outputplane", this.scale/(isBig?2:8), this.scene, false);
+    this.mesh = BABYLON.Mesh.CreatePlane("outputplane", this.scale/(isBig?6:6), this.scene, false);
   	this.mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
   	this.mesh.material = new BABYLON.StandardMaterial("outputplane", scene);
   	this.mesh.position = this.position;
@@ -23,7 +23,7 @@ class Code {
   	(<BABYLON.StandardMaterial>this.mesh.material).emissiveColor = new BABYLON.Color3(1, 1, 1);
   	this.mesh.material.backFaceCulling = false;
 
-    outputplaneTexture.drawText(this.text, null, isBig?200:140, isBig?'bold 90px arial':'130px arial', isBig?'white':'silver', null);
+    outputplaneTexture.drawText(this.text, null, isBig?200:160, isBig?'bold 230px arial':'120px arial', isBig?'gold':'silver', null);
 
     /*
     var context2D = outputplaneTexture.getContext();
@@ -39,6 +39,7 @@ class Code {
   }
 
   public dispose(): void {
+    this.scene.removeMesh(this.mesh);
     this.mesh.dispose();
   }
 }

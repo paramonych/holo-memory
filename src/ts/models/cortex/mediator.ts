@@ -46,18 +46,14 @@ class Mediator {
 
   public willBeUsed(): void {
     let cd = this.cloud;
-    cd.color1 = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 0.4);
+    cd.color1 = new BABYLON.Color4(ra(), ra(), ra(), 0.4);
     cd.color2 = cd.color1;
     //cd.colorDead = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 0);
 
     let size = 0.5;
+    cd.emitRate = 550;
     cd.minSize = size;
     cd.maxSize = size;
-  }
-
-  private ra(): number {
-    let r = random();
-    return (r < 0.1) ? (1-r) : r;
   }
 
   private setParticles(): void {
@@ -68,11 +64,13 @@ class Mediator {
     cloud.minEmitBox = zero;
     cloud.maxEmitBox = zero.clone();
 
-    cloud.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
-    cloud.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
+    let transparentGray = new BABYLON.Color4(0.1, 0.1, 0.1, 0.15);
+
+    cloud.color1 = transparentGray;
+    cloud.color2 = transparentGray;
   //  cloud.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
 
-    let size = 0.5;
+    let size = 0.4;
     cloud.minSize = size;
     cloud.maxSize = size;
 
@@ -97,5 +95,9 @@ class Mediator {
     cloud.minEmitPower = 2;
     cloud.maxEmitPower = 2;
     cloud.updateSpeed = 0.01;
+  }
+
+  public dispose(): void {
+    this.cloud.dispose();
   }
 }

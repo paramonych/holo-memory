@@ -23,5 +23,9 @@ var Time = (function () {
         this.tense.restart();
         space.restart(this);
     };
+    Time.prototype.dispose = function () {
+        this.tense.clear(true);
+        this.tense = null;
+    };
     return Time;
-})();
+}());

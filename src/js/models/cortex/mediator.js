@@ -35,15 +35,12 @@ var Mediator = (function () {
     };
     Mediator.prototype.willBeUsed = function () {
         var cd = this.cloud;
-        cd.color1 = new BABYLON.Color4(this.ra(), this.ra(), this.ra(), 0.4);
+        cd.color1 = new BABYLON.Color4(ra(), ra(), ra(), 0.4);
         cd.color2 = cd.color1;
         var size = 0.5;
+        cd.emitRate = 550;
         cd.minSize = size;
         cd.maxSize = size;
-    };
-    Mediator.prototype.ra = function () {
-        var r = random();
-        return (r < 0.1) ? (1 - r) : r;
     };
     Mediator.prototype.setParticles = function () {
         var cloud = this.cloud;
@@ -52,9 +49,10 @@ var Mediator = (function () {
         cloud.emitter = this.synapce.mesh.mesh;
         cloud.minEmitBox = zero;
         cloud.maxEmitBox = zero.clone();
-        cloud.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
-        cloud.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 0.05);
-        var size = 0.5;
+        var transparentGray = new BABYLON.Color4(0.1, 0.1, 0.1, 0.15);
+        cloud.color1 = transparentGray;
+        cloud.color2 = transparentGray;
+        var size = 0.4;
         cloud.minSize = size;
         cloud.maxSize = size;
         var lt = lifetime / 2.5;
@@ -70,5 +68,8 @@ var Mediator = (function () {
         cloud.maxEmitPower = 2;
         cloud.updateSpeed = 0.01;
     };
+    Mediator.prototype.dispose = function () {
+        this.cloud.dispose();
+    };
     return Mediator;
-})();
+}());

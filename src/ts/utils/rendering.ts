@@ -1,7 +1,7 @@
 function attachCamera(canvas: HTMLCanvasElement, scene: BABYLON.Scene, scale: number): BABYLON.ArcRotateCamera {
   var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI/12, 0, scale, new BABYLON.Vector3(0, 0, 0), scene);
 
-  camera.setPosition(new BABYLON.Vector3(0, scale/3, -2.5*scale));
+  camera.setPosition(new BABYLON.Vector3(0, scale/1.5, -3*scale));
   var betaLimit = (Math.PI / 2) * 0.99;
   camera.lowerBetaLimit = 1/scale;
   camera.upperBetaLimit = 2*betaLimit;
@@ -30,7 +30,7 @@ function createPatternSpaceBox(scene: BABYLON.Scene, scale: number): BABYLON.Mes
   var borderBoxMaterial = new BABYLON.StandardMaterial("wire", scene);
   borderBoxMaterial.ambientColor = new BABYLON.Color3(1, 1, 1);
   borderBoxMaterial.wireframe = true;
-  borderBoxMaterial.alpha = 0.5;
+  borderBoxMaterial.alpha = 0.8;
   borderBox.material = borderBoxMaterial;
   return borderBox;
 }

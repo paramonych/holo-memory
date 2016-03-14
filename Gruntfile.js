@@ -50,7 +50,7 @@ module.exports = function(grunt) {
             'star.jpg'
           ], dest: (buildDir+'textures/')},
           {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
-            'babylon.2.2.js',
+            'babylon.2.3.js',
             'jquery-2.1.4.min.js',
             'jquery-ui.min.js',
             'underscore-min.js',
@@ -77,7 +77,7 @@ module.exports = function(grunt) {
             'star.jpg'
           ], dest: (buildDir+'textures/')},
           {expand: true, flatten: true, cwd: 'src/libs/sources/',src: [
-            'babylon.2.2.js',
+            'babylon.2.3.js',
             'jquery-2.1.4.min.js',
             'jquery-ui.min.js',
             'underscore-min.js',

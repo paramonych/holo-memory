@@ -22,6 +22,11 @@ var Spike = (function () {
     };
     Spike.prototype.dispose = function () {
         this.mesh.dispose();
+        this.mesh = null;
+        this.tense.clear(true);
+        this.tense = null;
+        this.state = null;
+        this.moved = null;
     };
     Spike.prototype.serveState = function (newState) {
         if (newState === StateType.Active) {
@@ -44,4 +49,4 @@ var Spike = (function () {
         this.state.subscribe(function (state) { return _this.serveState(state); });
     };
     return Spike;
-})();
+}());
