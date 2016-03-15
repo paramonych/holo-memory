@@ -16,9 +16,10 @@ function plantConcept(): void {
 
   scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
 
-  let cortexSate = cortexConfigurationFrom(5, 100, 5, 0.5, 0.2, 3);
+  let cortexSate = cortexConfigurationFrom(5, 5, 10, 5, 0.5, 0.2, 3);
 
-  jQuery(ids.neuronsAmount).find('input').val(''+cortexSate.neuronsAmount);
+  jQuery(ids.dendritsAmount).find('input').val(''+cortexSate.dendritsAmount);
+  jQuery(ids.wavePower).find('input').val(''+cortexSate.wavePower);
   jQuery(ids.synapcesAmount).find('input').val(''+cortexSate.synapcesAmount);
   jQuery(ids.pinMaxLength).find('input').val(''+cortexSate.pinMaxLength);
   jQuery(ids.blastRadius).find('input').val(''+cortexSate.blastRadius);
@@ -37,7 +38,8 @@ function plantConcept(): void {
 function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement): void {
   let knobs = getUIControls();
 
-  let neuronsAmount = +knobs.neuronsAmount.val();
+  let dendritsAmount = +knobs.dendritsAmount.val();
+  let wavePower = +knobs.wavePower.val();
   let synapcesAmount = +knobs.synapcesAmount.val();
   let pinMaxLength = +knobs.pinMaxLength.val();
   let blastRadius = +knobs.blastRadius.val();
@@ -50,7 +52,7 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
     }
   };
 
-  let space = new Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback);
+  let space = new Space(scene, scale, lifetime, dendritsAmount, blastRadius, blastPower, uiCallback);
   let time = new Time(lifetime);
 
   knobs.launch.off('click').on('click', function() {
@@ -70,10 +72,8 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
     }
   });
 
-  knobs.applyButton.off('click').on('click',function() {
-    neuronsAmount = +knobs.neuronsAmount.val();
-    blastRadius = +knobs.blastRadius.val();
-    blastPower = +knobs.blastPower.val();
+  knobs.setDendritsButton.off('click').on('click',function() {
+    dendritsAmount = +knobs.dendritsAmount.val();
     space.dispose();
     time.dispose();
     scene.dispose();
@@ -82,6 +82,19 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
     createPatternSpaceBox(scene, scale);
     scene.render();
     wireUI(scene, scale, canvas);
+  });
+
+  knobs.setSignalButton.off('click').on('click',function() {
+    wavePower = +knobs.wavePower.val();
+  });
+
+  knobs.processWaveButton.off('click').on('click',function() {
+    blastRadius = +knobs.blastRadius.val();
+    blastPower = +knobs.blastPower.val();
+
+    space.disposeBlasts();
+    time.dispose();
+    space.computeBlasts();
   });
 
   time.tense.eventCallback("onUpdate", function() {
@@ -116,18 +129,29 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
 function getUIControls(): Knobs {
   let launch = jQuery(ids.launch);
   let slider = jQuery(ids.slider);
-  let neuronsAmount = jQuery(ids.neuronsAmount);
+  let dendritsAmount = jQuery(ids.dendritsAmount);
+  let wavePower = jQuery(ids.wavePower);
   let synapcesAmount = jQuery(ids.synapcesAmount);
   let pinMaxLength = jQuery(ids.pinMaxLength);
   let blastRadius = jQuery(ids.blastRadius);
   let blastPower = jQuery(ids.blastPower);
-  let applyButton = jQuery(ids.applyButton);
-  return knobsFrom(launch, slider, neuronsAmount, blastRadius, blastPower, applyButton, synapcesAmount, pinMaxLength);
+
+  let setDendritsButton = jQuery(ids.setDendritsButton);
+  let setSignalButton = jQuery(ids.setSignalButton);
+  let processWaveButton = jQuery(ids.processWaveButton);
+
+  return knobsFrom(
+    launch, slider, dendritsAmount,
+    wavePower, blastRadius, blastPower,
+    synapcesAmount, pinMaxLength ,
+    setDendritsButton, setSignalButton, processWaveButton
+  );
 }
 
 interface CortexConfiguration {
   scale: number;
-  neuronsAmount: number;
+  dendritsAmount: number;
+  wavePower: number;
   synapcesAmount: number;
   pinMaxLength: number;
   blastRadius: number;
@@ -136,7 +160,8 @@ interface CortexConfiguration {
 
 function cortexConfigurationFrom(
   scale: number,
-  neuronsAmount: number,
+  dendritsAmount: number,
+  wavePower: number,
   synapcesAmount: number,
   pinMaxLength: number,
   blastRadius: number,
@@ -144,7 +169,8 @@ function cortexConfigurationFrom(
 
   return {
     scale: scale,
-    neuronsAmount: neuronsAmount,
+    dendritsAmount: dendritsAmount,
+    wavePower: wavePower,
     synapcesAmount: synapcesAmount,
     pinMaxLength: pinMaxLength,
     blastRadius: blastRadius,

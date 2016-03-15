@@ -8,8 +8,9 @@ function plantConcept() {
     var engine = new BABYLON.Engine(canvas, true);
     var scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
-    var cortexSate = cortexConfigurationFrom(5, 100, 5, 0.5, 0.2, 3);
-    jQuery(ids.neuronsAmount).find('input').val('' + cortexSate.neuronsAmount);
+    var cortexSate = cortexConfigurationFrom(5, 5, 10, 5, 0.5, 0.2, 3);
+    jQuery(ids.dendritsAmount).find('input').val('' + cortexSate.dendritsAmount);
+    jQuery(ids.wavePower).find('input').val('' + cortexSate.wavePower);
     jQuery(ids.synapcesAmount).find('input').val('' + cortexSate.synapcesAmount);
     jQuery(ids.pinMaxLength).find('input').val('' + cortexSate.pinMaxLength);
     jQuery(ids.blastRadius).find('input').val('' + cortexSate.blastRadius);
@@ -24,7 +25,8 @@ function plantConcept() {
 }
 function wireUI(scene, scale, canvas) {
     var knobs = getUIControls();
-    var neuronsAmount = +knobs.neuronsAmount.val();
+    var dendritsAmount = +knobs.dendritsAmount.val();
+    var wavePower = +knobs.wavePower.val();
     var synapcesAmount = +knobs.synapcesAmount.val();
     var pinMaxLength = +knobs.pinMaxLength.val();
     var blastRadius = +knobs.blastRadius.val();
@@ -37,7 +39,7 @@ function wireUI(scene, scale, canvas) {
             knobs.launch.removeAttr('disabled');
         }
     };
-    var space = new Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback);
+    var space = new Space(scene, scale, lifetime, dendritsAmount, blastRadius, blastPower, uiCallback);
     var time = new Time(lifetime);
     knobs.launch.off('click').on('click', function () {
         var next = knobs.launch.data('type');
@@ -56,10 +58,8 @@ function wireUI(scene, scale, canvas) {
             time.pause(space);
         }
     });
-    knobs.applyButton.off('click').on('click', function () {
-        neuronsAmount = +knobs.neuronsAmount.val();
-        blastRadius = +knobs.blastRadius.val();
-        blastPower = +knobs.blastPower.val();
+    knobs.setDendritsButton.off('click').on('click', function () {
+        dendritsAmount = +knobs.dendritsAmount.val();
         space.dispose();
         time.dispose();
         scene.dispose();
@@ -68,6 +68,16 @@ function wireUI(scene, scale, canvas) {
         createPatternSpaceBox(scene, scale);
         scene.render();
         wireUI(scene, scale, canvas);
+    });
+    knobs.setSignalButton.off('click').on('click', function () {
+        wavePower = +knobs.wavePower.val();
+    });
+    knobs.processWaveButton.off('click').on('click', function () {
+        blastRadius = +knobs.blastRadius.val();
+        blastPower = +knobs.blastPower.val();
+        space.disposeBlasts();
+        time.dispose();
+        space.computeBlasts();
     });
     time.tense.eventCallback("onUpdate", function () {
         var pg = time.tense.progress();
@@ -86,18 +96,22 @@ function wireUI(scene, scale, canvas) {
 function getUIControls() {
     var launch = jQuery(ids.launch);
     var slider = jQuery(ids.slider);
-    var neuronsAmount = jQuery(ids.neuronsAmount);
+    var dendritsAmount = jQuery(ids.dendritsAmount);
+    var wavePower = jQuery(ids.wavePower);
     var synapcesAmount = jQuery(ids.synapcesAmount);
     var pinMaxLength = jQuery(ids.pinMaxLength);
     var blastRadius = jQuery(ids.blastRadius);
     var blastPower = jQuery(ids.blastPower);
-    var applyButton = jQuery(ids.applyButton);
-    return knobsFrom(launch, slider, neuronsAmount, blastRadius, blastPower, applyButton, synapcesAmount, pinMaxLength);
+    var setDendritsButton = jQuery(ids.setDendritsButton);
+    var setSignalButton = jQuery(ids.setSignalButton);
+    var processWaveButton = jQuery(ids.processWaveButton);
+    return knobsFrom(launch, slider, dendritsAmount, wavePower, blastRadius, blastPower, synapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton);
 }
-function cortexConfigurationFrom(scale, neuronsAmount, synapcesAmount, pinMaxLength, blastRadius, blastPower) {
+function cortexConfigurationFrom(scale, dendritsAmount, wavePower, synapcesAmount, pinMaxLength, blastRadius, blastPower) {
     return {
         scale: scale,
-        neuronsAmount: neuronsAmount,
+        dendritsAmount: dendritsAmount,
+        wavePower: wavePower,
         synapcesAmount: synapcesAmount,
         pinMaxLength: pinMaxLength,
         blastRadius: blastRadius,

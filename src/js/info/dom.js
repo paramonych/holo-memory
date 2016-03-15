@@ -1,12 +1,15 @@
-function knobsFrom(launch, slider, neuronsAmount, blastRadius, blastPower, applyButton, synapcesAmount, pinMaxLength) {
+function knobsFrom(launch, slider, dendritsAmount, wavePower, blastRadius, blastPower, synapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton) {
     return {
         launch: launch,
         slider: slider,
-        neuronsAmount: neuronsAmount.find('input'),
+        dendritsAmount: dendritsAmount.find('input'),
+        wavePower: wavePower.find('input'),
         blastRadius: blastRadius.find('input'),
         blastPower: blastPower.find('input'),
         synapcesAmount: synapcesAmount.find('input'),
         pinMaxLength: pinMaxLength.find('input'),
-        applyButton: applyButton
+        setDendritsButton: setDendritsButton,
+        setSignalButton: setSignalButton,
+        processWaveButton: processWaveButton
     };
 }

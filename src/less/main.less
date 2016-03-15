@@ -1,4 +1,6 @@
-@top: 30px;
+@vert-step: 30px;
+@top: 90px;
+
 
 html, body {
   overflow: hidden;
@@ -22,7 +24,7 @@ button {
 }
 
 #launch {
-  top: @top;
+  top: @vert-step;
   right: 20px;
 }
 #restart {
@@ -39,12 +41,17 @@ button {
   background-color:rgba(255, 255, 255, 0.2);
 }
 
-#neuronsAmount,
+#dendritsAmount,
+#setDendrits,
+
+#wavePower,
+#setSignal,
+
 #synapcesAmount,
 #pinMaxLength,
 #blastRadius,
 #blastPower,
-#applyConfig {
+#processWave {
     z-index: 2;
     position: absolute;
     left: 20px;
@@ -67,21 +74,33 @@ button {
   }
 }
 
-#neuronsAmount {
-  top: @top;
+#dendritsAmount {
+  top: @vert-step;
 }
+#setDendrits {
+  top: @vert-step*2;
+}
+
+#wavePower {
+  top: @top+@vert-step;
+}
+#setSignal {
+  top: @top+@vert-step*2;
+}
+
+
 #synapcesAmount {
-  top: @top*2;
+  top: @top*2+@vert-step;
 }
 #pinMaxLength {
-  top: @top*3;
+  top: @top*2+@vert-step*2;
 }
 #blastRadius {
-  top: @top*4;
+  top: @top*2+@vert-step*3;
 }
 #blastPower {
-  top: @top*5;
+  top: @top*2+@vert-step*4;
 }
-#applyConfig {
-  top: @top*6;
+#processWave {
+  top: @top*2+@vert-step*5;
 }

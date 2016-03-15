@@ -5,10 +5,13 @@ var ids = {
     pause: '#pause',
     restart: '#restart',
     slider: '#slider',
-    neuronsAmount: '#neuronsAmount',
+    dendritsAmount: '#dendritsAmount',
+    wavePower: '#wavePower',
     synapcesAmount: '#synapcesAmount',
     pinMaxLength: '#pinMaxLength',
     blastRadius: '#blastRadius',
     blastPower: '#blastPower',
-    applyButton: '#applyConfig'
+    setDendritsButton: '#setDendrits',
+    setSignalButton: '#setSignal',
+    processWaveButton: '#processWave'
 };
