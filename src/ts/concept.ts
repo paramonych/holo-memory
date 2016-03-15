@@ -2,8 +2,20 @@
 document.addEventListener('DOMContentLoaded', plantConcept, false);
 
 var lifetime = 7;
+var cortexSate = cortexConfigurationFrom(5, 5, 10, 5, 0.5, 0.2, 3);
+var knobs ;
+var uiCallback;
 
 function plantConcept(): void {
+  knobs = getUIControls();
+  uiCallback = (blastsAmount: number): void => {
+    if(blastsAmount === 0) {
+      knobs.launch.attr('disabled', 'disabled');
+    } else {
+      knobs.launch.removeAttr('disabled');
+    }
+  };
+
   if (!BABYLON.Engine.isSupported()) {return;}
   let canvas = <HTMLCanvasElement>jQuery(ids.canvas)[0];
   let engine = new BABYLON.Engine(canvas, true);
@@ -15,8 +27,6 @@ function plantConcept(): void {
   //scene.fogColor = new BABYLON.Color3(0.1, 0.9, 0.15);
 
   scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
-
-  let cortexSate = cortexConfigurationFrom(5, 5, 10, 5, 0.5, 0.2, 3);
 
   jQuery(ids.dendritsAmount).find('input').val(''+cortexSate.dendritsAmount);
   jQuery(ids.wavePower).find('input').val(''+cortexSate.wavePower);
@@ -36,23 +46,18 @@ function plantConcept(): void {
 }
 
 function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement): void {
-  let knobs = getUIControls();
 
-  let dendritsAmount = +knobs.dendritsAmount.val();
-  let wavePower = +knobs.wavePower.val();
-  let synapcesAmount = +knobs.synapcesAmount.val();
-  let pinMaxLength = +knobs.pinMaxLength.val();
-  let blastRadius = +knobs.blastRadius.val();
-  let blastPower = +knobs.blastPower.val();
-  let uiCallback = (blastsAmount: number): void => {
-    if(blastsAmount === 0) {
-      knobs.launch.attr('disabled', 'disabled');
-    } else {
-      knobs.launch.removeAttr('disabled');
-    }
-  };
+  cortexSate = cortexConfigurationFrom(
+    scale,
+    +knobs.dendritsAmount.val(),
+    +knobs.wavePower.val(),
+    +knobs.synapcesAmount.val(),
+    +knobs.pinMaxLength.val(),
+    +knobs.blastRadius.val(),
+    +knobs.blastPower.val()
+  );
 
-  let space = new Space(scene, scale, lifetime, dendritsAmount, blastRadius, blastPower, uiCallback);
+  let space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
   let time = new Time(lifetime);
 
   knobs.launch.off('click').on('click', function() {
@@ -73,7 +78,7 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
   });
 
   knobs.setDendritsButton.off('click').on('click',function() {
-    dendritsAmount = +knobs.dendritsAmount.val();
+    cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
     space.dispose();
     time.dispose();
     scene.dispose();
@@ -85,12 +90,12 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
   });
 
   knobs.setSignalButton.off('click').on('click',function() {
-    wavePower = +knobs.wavePower.val();
+    cortexSate.wavePower = +knobs.wavePower.val();
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
-    blastRadius = +knobs.blastRadius.val();
-    blastPower = +knobs.blastPower.val();
+    cortexSate.blastRadius = +knobs.blastRadius.val();
+    cortexSate.blastPower = +knobs.blastPower.val();
 
     space.disposeBlasts();
     time.dispose();

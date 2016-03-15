@@ -9,7 +9,7 @@ var SynapceMesh = (function () {
         this.draw(basePosition);
     }
     SynapceMesh.prototype.shiftPosition = function (basePosition) {
-        var shift = this.scale / 3;
+        var shift = (this.neuron.cortex.cortexState.pinMaxLength * random()) / 3;
         var neuronPath = this.neuron.mesh.curve.path;
         var first = neuronPath[0];
         var last = neuronPath[neuronPath.length - 1];

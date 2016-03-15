@@ -5,11 +5,9 @@ class Space {
     public scene: BABYLON.Scene,
     public scale: number,
     public lifetime: number,
-    neuronsAmount: number,
-    blastRadius: number,
-    blastPower: number,
+    public cortexState: CortexConfiguration,
     uiCallback: (blastsAmount: number) => void) {
-    this.cortex = new Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback);
+    this.cortex = new Cortex(scene, scale, lifetime, cortexState, uiCallback);
   }
 
   public expose(time: Time): void {
@@ -32,11 +30,6 @@ class Space {
 
   public shift(time: Time, progress: number): void {
     this.cortex.shiftTense(time, progress);
-  }
-
-  public applyConfig(neuronsAmount: number, blastRadius: number, blastPower: number): void {
-    this.cortex.dispose();
-    this.cortex = new Cortex(this.scene, this.scale, this.lifetime, neuronsAmount, blastRadius, blastPower);
   }
 
   public dispose(): void {

@@ -64,7 +64,7 @@ var Neuron = (function () {
         }
     };
     Neuron.prototype.createSynapces = function () {
-        var scale = this.cortex.scale;
+        var scale = this.cortex.cortexState.scale;
         var devideFactor = scale / 2;
         var path = this.mesh.curve.path;
         this.step = Math.floor(path.length / devideFactor);

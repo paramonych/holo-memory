@@ -7,9 +7,7 @@ class Cortex implements Disposable {
     public scene: BABYLON.Scene,
     public scale: number,
     public lifetime: number,
-    private neuronsAmount: number,
-    private blastRadius: number,
-    private blastPowerLimit: number,
+    public cortexState: CortexConfiguration,
     private spaceCallback: (blastsAmount: number) => void) {
     this.createNeurons();
     this.preprocessBlasts();
@@ -22,7 +20,7 @@ class Cortex implements Disposable {
     this.blastsArray = new Array<NeuroBlast>();
 
     mediumSynapces.forEach((synapce) => {
-      let newBlast = new NeuroBlast(synapce, this.blastRadius, mediumSynapces, this.scene, this.blastPowerLimit);
+      let newBlast = new NeuroBlast(synapce, this.cortexState.blastRadius, mediumSynapces, this.scene, this.cortexState.blastPower);
       if(newBlast.isExists) {
         this.blastsArray.push(newBlast);
       } else {
@@ -62,8 +60,8 @@ class Cortex implements Disposable {
       //_.each(this.neurons, (n) => n.dispose());
       this.neurons = new Array<Neuron>();
       let type = NeuronType.Medium;
-      for(let i=0; i< this.neuronsAmount; i++) {
-        if(i >= this.neuronsAmount/2) {
+      for(let i=0; i< this.cortexState.dendritsAmount; i++) {
+        if(i >= this.cortexState.dendritsAmount/2) {
           type = NeuronType.Progeny;
         }
         this.neurons.push(new Neuron(this, type));

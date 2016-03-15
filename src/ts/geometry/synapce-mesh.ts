@@ -15,7 +15,7 @@ class SynapceMesh implements ActivatableMesh {
   }
 
   private shiftPosition(basePosition: BABYLON.Vector3): BABYLON.Vector3 {
-    let shift = this.scale/3;
+    let shift = (this.neuron.cortex.cortexState.pinMaxLength * random()) / 3;
 
     let neuronPath = this.neuron.mesh.curve.path;
     let first = neuronPath[0];

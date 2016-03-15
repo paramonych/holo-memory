@@ -1,6 +1,18 @@
 document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
+var cortexSate = cortexConfigurationFrom(5, 5, 10, 5, 0.5, 0.2, 3);
+var knobs;
+var uiCallback;
 function plantConcept() {
+    knobs = getUIControls();
+    uiCallback = function (blastsAmount) {
+        if (blastsAmount === 0) {
+            knobs.launch.attr('disabled', 'disabled');
+        }
+        else {
+            knobs.launch.removeAttr('disabled');
+        }
+    };
     if (!BABYLON.Engine.isSupported()) {
         return;
     }
@@ -8,7 +20,6 @@ function plantConcept() {
     var engine = new BABYLON.Engine(canvas, true);
     var scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
-    var cortexSate = cortexConfigurationFrom(5, 5, 10, 5, 0.5, 0.2, 3);
     jQuery(ids.dendritsAmount).find('input').val('' + cortexSate.dendritsAmount);
     jQuery(ids.wavePower).find('input').val('' + cortexSate.wavePower);
     jQuery(ids.synapcesAmount).find('input').val('' + cortexSate.synapcesAmount);
@@ -24,22 +35,8 @@ function plantConcept() {
     wireUI(scene, cortexSate.scale, canvas);
 }
 function wireUI(scene, scale, canvas) {
-    var knobs = getUIControls();
-    var dendritsAmount = +knobs.dendritsAmount.val();
-    var wavePower = +knobs.wavePower.val();
-    var synapcesAmount = +knobs.synapcesAmount.val();
-    var pinMaxLength = +knobs.pinMaxLength.val();
-    var blastRadius = +knobs.blastRadius.val();
-    var blastPower = +knobs.blastPower.val();
-    var uiCallback = function (blastsAmount) {
-        if (blastsAmount === 0) {
-            knobs.launch.attr('disabled', 'disabled');
-        }
-        else {
-            knobs.launch.removeAttr('disabled');
-        }
-    };
-    var space = new Space(scene, scale, lifetime, dendritsAmount, blastRadius, blastPower, uiCallback);
+    cortexSate = cortexConfigurationFrom(scale, +knobs.dendritsAmount.val(), +knobs.wavePower.val(), +knobs.synapcesAmount.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val());
+    var space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
     var time = new Time(lifetime);
     knobs.launch.off('click').on('click', function () {
         var next = knobs.launch.data('type');
@@ -59,7 +56,7 @@ function wireUI(scene, scale, canvas) {
         }
     });
     knobs.setDendritsButton.off('click').on('click', function () {
-        dendritsAmount = +knobs.dendritsAmount.val();
+        cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
         space.dispose();
         time.dispose();
         scene.dispose();
@@ -70,11 +67,11 @@ function wireUI(scene, scale, canvas) {
         wireUI(scene, scale, canvas);
     });
     knobs.setSignalButton.off('click').on('click', function () {
-        wavePower = +knobs.wavePower.val();
+        cortexSate.wavePower = +knobs.wavePower.val();
     });
     knobs.processWaveButton.off('click').on('click', function () {
-        blastRadius = +knobs.blastRadius.val();
-        blastPower = +knobs.blastPower.val();
+        cortexSate.blastRadius = +knobs.blastRadius.val();
+        cortexSate.blastPower = +knobs.blastPower.val();
         space.disposeBlasts();
         time.dispose();
         space.computeBlasts();

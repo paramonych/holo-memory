@@ -1,11 +1,9 @@
 var Cortex = (function () {
-    function Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPowerLimit, spaceCallback) {
+    function Cortex(scene, scale, lifetime, cortexState, spaceCallback) {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = neuronsAmount;
-        this.blastRadius = blastRadius;
-        this.blastPowerLimit = blastPowerLimit;
+        this.cortexState = cortexState;
         this.spaceCallback = spaceCallback;
         this.createNeurons();
         this.preprocessBlasts();
@@ -17,7 +15,7 @@ var Cortex = (function () {
         this.blasts = newMap();
         this.blastsArray = new Array();
         mediumSynapces.forEach(function (synapce) {
-            var newBlast = new NeuroBlast(synapce, _this.blastRadius, mediumSynapces, _this.scene, _this.blastPowerLimit);
+            var newBlast = new NeuroBlast(synapce, _this.cortexState.blastRadius, mediumSynapces, _this.scene, _this.cortexState.blastPower);
             if (newBlast.isExists) {
                 _this.blastsArray.push(newBlast);
             }
@@ -48,8 +46,8 @@ var Cortex = (function () {
     Cortex.prototype.createNeurons = function () {
         this.neurons = new Array();
         var type = NeuronType.Medium;
-        for (var i = 0; i < this.neuronsAmount; i++) {
-            if (i >= this.neuronsAmount / 2) {
+        for (var i = 0; i < this.cortexState.dendritsAmount; i++) {
+            if (i >= this.cortexState.dendritsAmount / 2) {
                 type = NeuronType.Progeny;
             }
             this.neurons.push(new Neuron(this, type));
