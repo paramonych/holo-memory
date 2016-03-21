@@ -3,6 +3,7 @@ var NeuronMesh = (function () {
         this.neuron = neuron;
         this.scene = scene;
         this.cortexState = cortexState;
+        this.isHighlighted = false;
         this.setMaterials();
         this.curve = randomPath(this.cortexState.scale, (this.cortexState.synapcesAmount + 1) * 2);
         this.draw();
@@ -17,19 +18,26 @@ var NeuronMesh = (function () {
         this.mesh.actionManager = new BABYLON.ActionManager(this.scene);
         var self = this;
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
-            self.mesh.material = self.activeMaterial;
-            self.neuron.synapces.forEach(function (synapce) {
-                synapce.mesh.mesh.material = self.activeMaterial;
-                synapce.mesh.synapceLegMesh.material = self.activeMaterial;
-            });
+            if (!self.isHighlighted) {
+                self.highlightNeuron(self.activeMaterial, false);
+            }
         }));
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
-            self.mesh.material = self.material;
-            self.neuron.synapces.forEach(function (synapce) {
-                synapce.mesh.mesh.material = self.material;
-                synapce.mesh.synapceLegMesh.material = self.material;
-            });
+            if (!self.isHighlighted) {
+                self.highlightNeuron(self.material, false);
+            }
         }));
+        this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLeftPickTrigger, function () {
+            self.highlightNeuron((self.isHighlighted ? self.material : self.activeMaterial), !self.isHighlighted);
+        }));
+    };
+    NeuronMesh.prototype.highlightNeuron = function (material, isHighlighted) {
+        this.isHighlighted = isHighlighted;
+        this.mesh.material = material;
+        this.neuron.synapces.forEach(function (synapce) {
+            synapce.mesh.mesh.material = material;
+            synapce.mesh.synapceLegMesh.material = material;
+        });
     };
     NeuronMesh.prototype.setMaterials = function () {
         if (isMedium(this.neuron.type)) {
@@ -48,6 +56,7 @@ var NeuronMesh = (function () {
     };
     NeuronMesh.prototype.dispose = function () {
         this.mesh.actionManager.dispose();
+        this.mesh.actionManager = null;
         this.scene.removeMesh(this.mesh);
         this.mesh.dispose();
         this.mesh = null;

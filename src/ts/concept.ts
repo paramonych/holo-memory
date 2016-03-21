@@ -22,14 +22,7 @@ function plantConcept(): void {
   if (!BABYLON.Engine.isSupported()) {return;}
   let canvas = <HTMLCanvasElement>jQuery(ids.canvas)[0];
   let engine = new BABYLON.Engine(canvas, true);
-  let scene = new BABYLON.Scene(engine);
-  //scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
-  //scene.fogDensity = 0.5;
-  //scene.fogStart = 20.0;
-  //scene.fogEnd = 60.0;
-  //scene.fogColor = new BABYLON.Color3(0.1, 0.9, 0.15);
-
-  scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
+  let scene = getScene(engine);
 
   blockerOverlay = jQuery(ids.sceneBlocker);
 
@@ -43,18 +36,30 @@ function plantConcept(): void {
   attachCamera(canvas, scene, cortexSate.scale);
   setLight(scene);
   createPatternSpaceBox(scene, cortexSate.scale);
-
   engine.runRenderLoop(() => {
     scene.render();
   });
-  wireUI(scene, cortexSate.scale, canvas);
+  wireUI(engine, scene, cortexSate.scale, canvas);
 }
 
-function showBlocker() {
+function getScene(engine: BABYLON.Engine): BABYLON.Scene {
+  let scene = new BABYLON.Scene(engine);
+  //scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+  //scene.fogDensity = 0.5;
+  //scene.fogStart = 20.0;
+  //scene.fogEnd = 60.0;
+  //scene.fogColor = new BABYLON.Color3(0.1, 0.9, 0.15);
+  scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+  scene.fogDensity = 0.01;
+  scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
+  return scene;
+}
+
+function showBlocker(): void {
   blockerOverlay.removeClass('hidden');
 }
 
-function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement): void {
+function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement): void {
   setTimeout(() => {blockerOverlay.addClass('hidden');}, 1300);
 
   cortexSate = cortexConfigurationFrom(
@@ -94,11 +99,16 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
     space.dispose();
     time.dispose();
     scene.dispose();
-    attachCamera(canvas, scene, scale);
-    setLight(scene);
-    createPatternSpaceBox(scene, scale);
-    scene.render();
-    wireUI(scene, scale, canvas);
+
+    let newScene = getScene(engine);
+    engine.stopRenderLoop();
+    setLight(newScene);
+    createPatternSpaceBox(newScene, scale);
+    engine.runRenderLoop(() => {
+      attachCamera(canvas, newScene, scale);
+      newScene.render();
+    });
+    wireUI(engine, newScene, scale, canvas);
   });
 
   knobs.setSignalButton.off('click').on('click',function() {

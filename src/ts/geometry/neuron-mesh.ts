@@ -1,5 +1,6 @@
 class NeuronMesh implements ActivatableMesh {
   public mesh: BABYLON.Mesh;
+  private isHighlighted = false;
   public curve: BABYLON.Path3D;
   public material: BABYLON.StandardMaterial;
   public activeMaterial: BABYLON.StandardMaterial;
@@ -22,20 +23,29 @@ class NeuronMesh implements ActivatableMesh {
     let self = this;
 
     this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function() {
-      self.mesh.material = self.activeMaterial;
-      self.neuron.synapces.forEach(function(synapce) {
-        synapce.mesh.mesh.material = self.activeMaterial;
-        synapce.mesh.synapceLegMesh.material = self.activeMaterial;
-      });
+      if(!self.isHighlighted) {
+        self.highlightNeuron(self.activeMaterial, false);
+      }
     }));
 
     this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function() {
-      self.mesh.material = self.material;
-      self.neuron.synapces.forEach(function(synapce) {
-        synapce.mesh.mesh.material = self.material;
-        synapce.mesh.synapceLegMesh.material = self.material;
-      });
+      if(!self.isHighlighted) {
+        self.highlightNeuron(self.material, false);
+      }
     }));
+
+    this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLeftPickTrigger, function() {
+      self.highlightNeuron((self.isHighlighted ? self.material : self.activeMaterial), !self.isHighlighted);
+    }));
+  }
+
+  private highlightNeuron(material: BABYLON.StandardMaterial, isHighlighted: boolean): void {
+    this.isHighlighted = isHighlighted;
+    this.mesh.material = material;
+    this.neuron.synapces.forEach(function(synapce) {
+      synapce.mesh.mesh.material = material;
+      synapce.mesh.synapceLegMesh.material = material;
+    });
   }
 
   setMaterials(): void {
@@ -56,6 +66,7 @@ class NeuronMesh implements ActivatableMesh {
 
   public dispose(): void {
     this.mesh.actionManager.dispose();
+    this.mesh.actionManager = null;
     this.scene.removeMesh(this.mesh);
     this.mesh.dispose();
     this.mesh = null;

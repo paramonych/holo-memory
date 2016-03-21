@@ -21,8 +21,7 @@ function plantConcept() {
     }
     var canvas = jQuery(ids.canvas)[0];
     var engine = new BABYLON.Engine(canvas, true);
-    var scene = new BABYLON.Scene(engine);
-    scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
+    var scene = getScene(engine);
     blockerOverlay = jQuery(ids.sceneBlocker);
     jQuery(ids.dendritsAmount).find('input').val('' + cortexSate.dendritsAmount);
     jQuery(ids.wavePower).find('input').val('' + cortexSate.wavePower);
@@ -36,12 +35,19 @@ function plantConcept() {
     engine.runRenderLoop(function () {
         scene.render();
     });
-    wireUI(scene, cortexSate.scale, canvas);
+    wireUI(engine, scene, cortexSate.scale, canvas);
+}
+function getScene(engine) {
+    var scene = new BABYLON.Scene(engine);
+    scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+    scene.fogDensity = 0.01;
+    scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
+    return scene;
 }
 function showBlocker() {
     blockerOverlay.removeClass('hidden');
 }
-function wireUI(scene, scale, canvas) {
+function wireUI(engine, scene, scale, canvas) {
     setTimeout(function () { blockerOverlay.addClass('hidden'); }, 1300);
     cortexSate = cortexConfigurationFrom(scale, +knobs.dendritsAmount.val(), +knobs.wavePower.val(), +knobs.synapcesAmount.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val());
     var space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
@@ -69,11 +75,15 @@ function wireUI(scene, scale, canvas) {
         space.dispose();
         time.dispose();
         scene.dispose();
-        attachCamera(canvas, scene, scale);
-        setLight(scene);
-        createPatternSpaceBox(scene, scale);
-        scene.render();
-        wireUI(scene, scale, canvas);
+        var newScene = getScene(engine);
+        engine.stopRenderLoop();
+        setLight(newScene);
+        createPatternSpaceBox(newScene, scale);
+        engine.runRenderLoop(function () {
+            attachCamera(canvas, newScene, scale);
+            newScene.render();
+        });
+        wireUI(engine, newScene, scale, canvas);
     });
     knobs.setSignalButton.off('click').on('click', function () {
         cortexSate.wavePower = +knobs.wavePower.val();
