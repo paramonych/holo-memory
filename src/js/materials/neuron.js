@@ -8,19 +8,21 @@ function forMediumNeuron(scene) {
     return material;
 }
 function forProgenyNeuron(scene) {
-    var material = new BABYLON.StandardMaterial('i', scene);
+    var material = new BABYLON.StandardMaterial('sd', scene);
     material.emissiveColor = new BABYLON.Color3(0, 0, 0.35);
     material.specularColor = new BABYLON.Color3(0, 0, 0);
+    material.ambientColor = new BABYLON.Color3(0, 0, 0.75);
     material.specularPower = 70;
-    material.alpha = 0.7;
+    material.alpha = 1;
     return material;
 }
-function forMediumActiveNeuron(scene) {
-    var material = forMediumNeuron(scene);
-    return material;
-}
-function forProgenyActiveNeuron(scene) {
-    var material = forProgenyNeuron(scene);
+function forActiveNeuron(scene) {
+    var material = new BABYLON.StandardMaterial('idd', scene);
+    material.ambientColor = new BABYLON.Color3(1, 0, 0);
+    material.specularColor = new BABYLON.Color3(1, 1, 1);
+    material.emissiveColor = new BABYLON.Color3(1, 0, 0);
+    material.specularPower = 70;
+    material.alpha = 1;
     return material;
 }
 function forMediumNeuronGGZ(scene) {

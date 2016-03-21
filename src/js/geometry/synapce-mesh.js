@@ -54,12 +54,11 @@ var SynapceMesh = (function () {
     SynapceMesh.prototype.setMaterials = function () {
         if (isMedium(this.neuron.type)) {
             this.material = forMediumNeuron(this.scene);
-            this.activeMaterial = forMediumActiveNeuron(this.scene);
         }
         else {
             this.material = forProgenyNeuron(this.scene);
-            this.activeMaterial = forProgenyActiveNeuron(this.scene);
         }
+        this.activeMaterial = forActiveNeuron(this.scene);
     };
     SynapceMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);

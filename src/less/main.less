@@ -1,5 +1,5 @@
 @vert-step: 30px;
-@top: 90px;
+@top: 30px;
 
 
 html, body {
@@ -16,6 +16,22 @@ html, body {
   width: 100%;
   height: 100%;
   touch-action: none;
+}
+
+#sceneBlocker {
+  z-index: 3;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding-top: 30%;
+  text-align: center;
+  font-family: Arial;
+  color: white;
+  background-color: rgba(0,0,0,0.45);
+}
+
+.hidden {
+  display: none;
 }
 
 button {
@@ -77,30 +93,30 @@ button {
 #dendritsAmount {
   top: @vert-step;
 }
-#setDendrits {
+#synapcesAmount {
   top: @vert-step*2;
+}
+#setDendrits {
+  top: @vert-step*3;
 }
 
 #wavePower {
-  top: @top+@vert-step;
+  top: @top+@vert-step*4;
 }
 #setSignal {
-  top: @top+@vert-step*2;
+  top: @top+@vert-step*5;
 }
 
 
-#synapcesAmount {
-  top: @top*2+@vert-step;
-}
 #pinMaxLength {
-  top: @top*2+@vert-step*2;
+  top: @top*2+@vert-step*6;
 }
 #blastRadius {
-  top: @top*2+@vert-step*3;
+  top: @top*2+@vert-step*7;
 }
 #blastPower {
-  top: @top*2+@vert-step*4;
+  top: @top*2+@vert-step*8;
 }
 #processWave {
-  top: @top*2+@vert-step*5;
+  top: @top*2+@vert-step*9;
 }

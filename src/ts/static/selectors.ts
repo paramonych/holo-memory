@@ -1,5 +1,6 @@
 var ids = {
   canvas: '#renderCanvas',
+  sceneBlocker: '#sceneBlocker',
   launch: '#launch',
   play: '#play',
   pause: '#pause',

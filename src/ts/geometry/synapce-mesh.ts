@@ -71,11 +71,10 @@ class SynapceMesh implements ActivatableMesh {
   setMaterials(): void {
     if(isMedium(this.neuron.type)) {
       this.material = forMediumNeuron(this.scene);
-      this.activeMaterial = forMediumActiveNeuron(this.scene);
     } else {
       this.material = forProgenyNeuron(this.scene);
-      this.activeMaterial = forProgenyActiveNeuron(this.scene);
     }
+    this.activeMaterial = forActiveNeuron(this.scene);
   }
 
   public dispose(): void {

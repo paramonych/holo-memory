@@ -7,6 +7,7 @@ var realSynapcesDistance = 0.2; //mkm
 var cortexSate = cortexConfigurationFrom(scale, 5, 10, scale/realSynapcesDistance, 0.5, 0.2, 3);
 var knobs ;
 var uiCallback;
+var blockerOverlay;
 
 function plantConcept(): void {
   knobs = getUIControls();
@@ -30,6 +31,8 @@ function plantConcept(): void {
 
   scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
 
+  blockerOverlay = jQuery(ids.sceneBlocker);
+
   jQuery(ids.dendritsAmount).find('input').val(''+cortexSate.dendritsAmount);
   jQuery(ids.wavePower).find('input').val(''+cortexSate.wavePower);
   jQuery(ids.synapcesAmount).find('input').val(''+cortexSate.synapcesAmount);
@@ -47,7 +50,12 @@ function plantConcept(): void {
   wireUI(scene, cortexSate.scale, canvas);
 }
 
+function showBlocker() {
+  blockerOverlay.removeClass('hidden');
+}
+
 function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement): void {
+  setTimeout(() => {blockerOverlay.addClass('hidden');}, 1300);
 
   cortexSate = cortexConfigurationFrom(
     scale,
@@ -80,6 +88,8 @@ function wireUI(scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement):
   });
 
   knobs.setDendritsButton.off('click').on('click',function() {
+    showBlocker();
+
     cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
     space.dispose();
     time.dispose();

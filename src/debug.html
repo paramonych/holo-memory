@@ -19,11 +19,16 @@
 
    <body>
      <canvas id="renderCanvas"></canvas>
+     <div id="sceneBlocker">Configuring the scene. Please wait.</div>
      <button id="launch">PLAY</button>
 
      <div id="dendritsAmount" class="config-detail">
        <label>Dendrits amount:</label>
        <input type="number" size="3" min="1" max="300"/>
+     </div>
+     <div id="synapcesAmount" class="config-detail">
+       <label>Synapces amount:</label>
+       <input type="number" size="3" max="300"/>
      </div>
      <button id="setDendrits">RESET DENDRITS</button>
 
@@ -33,10 +38,6 @@
      </div>
      <button id="setSignal">INIT SIGNAL</button>
 
-     <div id="synapcesAmount" class="config-detail">
-       <label>Synapces amount:</label>
-       <input type="number" size="3" max="300"/>
-     </div>
      <div id="pinMaxLength" class="config-detail">
        <label>Pin max length:</label>
        <input type="number" size="3" min="0" step="0.1"/>

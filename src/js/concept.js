@@ -5,6 +5,7 @@ var realSynapcesDistance = 0.2;
 var cortexSate = cortexConfigurationFrom(scale, 5, 10, scale / realSynapcesDistance, 0.5, 0.2, 3);
 var knobs;
 var uiCallback;
+var blockerOverlay;
 function plantConcept() {
     knobs = getUIControls();
     uiCallback = function (blastsAmount) {
@@ -22,6 +23,7 @@ function plantConcept() {
     var engine = new BABYLON.Engine(canvas, true);
     var scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
+    blockerOverlay = jQuery(ids.sceneBlocker);
     jQuery(ids.dendritsAmount).find('input').val('' + cortexSate.dendritsAmount);
     jQuery(ids.wavePower).find('input').val('' + cortexSate.wavePower);
     jQuery(ids.synapcesAmount).find('input').val('' + cortexSate.synapcesAmount);
@@ -36,7 +38,11 @@ function plantConcept() {
     });
     wireUI(scene, cortexSate.scale, canvas);
 }
+function showBlocker() {
+    blockerOverlay.removeClass('hidden');
+}
 function wireUI(scene, scale, canvas) {
+    setTimeout(function () { blockerOverlay.addClass('hidden'); }, 1300);
     cortexSate = cortexConfigurationFrom(scale, +knobs.dendritsAmount.val(), +knobs.wavePower.val(), +knobs.synapcesAmount.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val());
     var space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
     var time = new Time(lifetime);
@@ -58,6 +64,7 @@ function wireUI(scene, scale, canvas) {
         }
     });
     knobs.setDendritsButton.off('click').on('click', function () {
+        showBlocker();
         cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
         space.dispose();
         time.dispose();

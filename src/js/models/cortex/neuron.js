@@ -6,7 +6,7 @@ var Neuron = (function () {
         this.code = getRandomSixMap();
         this.synapces = new Array();
         this.step = 0;
-        this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.cortexState);
+        this.mesh = new NeuronMesh(this, this.cortex.scene, this.cortex.cortexState);
         this.toDefaultState();
         this.createSynapces();
     }

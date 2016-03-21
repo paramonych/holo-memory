@@ -15,7 +15,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     public cortex: Cortex,
     public type: NeuronType
   ) {
-    this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.cortexState);
+    this.mesh = new NeuronMesh(this, this.cortex.scene, this.cortex.cortexState);
     this.toDefaultState();
     this.createSynapces();
   }
