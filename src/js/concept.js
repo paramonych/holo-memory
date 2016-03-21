@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
-var cortexSate = cortexConfigurationFrom(5, 5, 10, 5, 0.5, 0.2, 3);
+var scale = 5;
+var realSynapcesDistance = 0.2;
+var cortexSate = cortexConfigurationFrom(scale, 5, 10, scale / realSynapcesDistance, 0.5, 0.2, 3);
 var knobs;
 var uiCallback;
 function plantConcept() {

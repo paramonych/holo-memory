@@ -4,16 +4,16 @@ class NeuronMesh implements ActivatableMesh {
   public material: BABYLON.StandardMaterial;
   public activeMaterial: BABYLON.StandardMaterial;
 
-  constructor(private type: NeuronType, private scene: BABYLON.Scene, public scale: number) {
+  constructor(private type: NeuronType, private scene: BABYLON.Scene, public cortexState: CortexConfiguration) {
     this.setMaterials();
-    this.curve = randomPath(this.scale, this.scale/20, this.scale/60);
+    this.curve = randomPath(this.cortexState.scale, (this.cortexState.synapcesAmount+1)*2);
     this.draw();
   }
 
   draw(): void {
-    let scale = this.scale;
+    let scale = this.cortexState.scale;
     this.mesh = BABYLON.Mesh.CreateTube(
-      't', this.curve.path, this.scale/470, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
+      't', this.curve.path, this.cortexState.scale/400, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
     this.mesh.material = this.material;
   }
 

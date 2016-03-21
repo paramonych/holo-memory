@@ -1,15 +1,15 @@
 var NeuronMesh = (function () {
-    function NeuronMesh(type, scene, scale) {
+    function NeuronMesh(type, scene, cortexState) {
         this.type = type;
         this.scene = scene;
-        this.scale = scale;
+        this.cortexState = cortexState;
         this.setMaterials();
-        this.curve = randomPath(this.scale, this.scale / 20, this.scale / 60);
+        this.curve = randomPath(this.cortexState.scale, (this.cortexState.synapcesAmount + 1) * 2);
         this.draw();
     }
     NeuronMesh.prototype.draw = function () {
-        var scale = this.scale;
-        this.mesh = BABYLON.Mesh.CreateTube('t', this.curve.path, this.scale / 470, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
+        var scale = this.cortexState.scale;
+        this.mesh = BABYLON.Mesh.CreateTube('t', this.curve.path, this.cortexState.scale / 400, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
         this.mesh.material = this.material;
     };
     NeuronMesh.prototype.setMaterials = function () {

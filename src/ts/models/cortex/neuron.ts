@@ -15,7 +15,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     public cortex: Cortex,
     public type: NeuronType
   ) {
-    this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
+    this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.cortexState);
     this.toDefaultState();
     this.createSynapces();
   }
@@ -87,12 +87,11 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
 
   private createSynapces(): void {
     let scale = this.cortex.cortexState.scale;
-    let devideFactor = scale/2;
+    let synapcesAmount = this.cortex.cortexState.synapcesAmount;
     let path = this.mesh.curve.path;
-    this.step = Math.floor(path.length/devideFactor);
-    let halfStep = Math.floor(this.step/2);
-    for(let i=0; i< devideFactor; i++) {
-      let position = path[i*this.step+halfStep];
+
+    for(let i=0; i< synapcesAmount; i++) {
+      let position = path[i*2+1];
       let synapce = new Synapce(this, position.clone());
       this.synapces.push(synapce);
     }

@@ -9,13 +9,16 @@ class SynapceMesh implements ActivatableMesh {
     public scene: BABYLON.Scene, public scale: number,
     public basePosition: BABYLON.Vector3, private neuron: Neuron
   ) {
-    this.position = isMedium(neuron.type) ? this.shiftPosition(this.basePosition.clone()) : basePosition.clone();
+    this.position = this.shiftPosition(this.basePosition.clone());//isMedium(neuron.type) ? this.shiftPosition(this.basePosition.clone()) : basePosition.clone();
     this.setMaterials();
     this.draw(basePosition);
   }
 
   private shiftPosition(basePosition: BABYLON.Vector3): BABYLON.Vector3 {
-    let shift = (this.neuron.cortex.cortexState.pinMaxLength * random()) / 3;
+    let pinMaxLength = this.neuron.cortex.cortexState.pinMaxLength;
+    let synapcesAmount = this.neuron.cortex.cortexState.synapcesAmount;
+    pinMaxLength = pinMaxLength / (synapcesAmount/(this.neuron.cortex.cortexState.scale/realSynapcesDistance));
+    let shift = pinMaxLength * random();
 
     let neuronPath = this.neuron.mesh.curve.path;
     let first = neuronPath[0];
@@ -36,10 +39,10 @@ class SynapceMesh implements ActivatableMesh {
   private draw(basePosition: BABYLON.Vector3): void {
     this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale/(isMedium(this.neuron.type) ? 50:100), this.scene, false);
     this.mesh.position = this.position;
-    if(isMedium(this.neuron.type)) {
+    //if(isMedium(this.neuron.type)) {
       this.synapceLegMesh = BABYLON.Mesh.CreateTube('t', [basePosition, this.position], this.scale / 470, 10, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
       this.synapceLegMesh.material = this.material;
-    }
+    //}
     this.deactivate();
   }
 
