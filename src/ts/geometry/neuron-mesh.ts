@@ -1,9 +1,10 @@
 class NeuronMesh implements ActivatableMesh {
   public mesh: BABYLON.Mesh;
-  private isHighlighted = false;
+  public isHighlighted = false;
   public curve: BABYLON.Path3D;
   public material: BABYLON.StandardMaterial;
   public activeMaterial: BABYLON.StandardMaterial;
+  public selectedMaterial: BABYLON.StandardMaterial;
 
   constructor(private neuron: Neuron, private scene: BABYLON.Scene, public cortexState: CortexConfiguration) {
     this.setMaterials();
@@ -24,7 +25,7 @@ class NeuronMesh implements ActivatableMesh {
 
     this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function() {
       if(!self.isHighlighted) {
-        self.highlightNeuron(self.activeMaterial, false);
+        self.highlightNeuron(self.selectedMaterial, false);
       }
     }));
 
@@ -35,7 +36,7 @@ class NeuronMesh implements ActivatableMesh {
     }));
 
     this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLeftPickTrigger, function() {
-      self.highlightNeuron((self.isHighlighted ? self.material : self.activeMaterial), !self.isHighlighted);
+      self.highlightNeuron((self.isHighlighted ? self.material : self.selectedMaterial), !self.isHighlighted);
     }));
   }
 
@@ -48,13 +49,25 @@ class NeuronMesh implements ActivatableMesh {
     });
   }
 
+  public setAlpha(value: number): void {
+    this.mesh.material.alpha = value;
+    this.neuron.synapces.forEach(function(synapce) {
+      synapce.mesh.mesh.material.alpha = value;
+      if(synapce.codeMesh) {
+        synapce.codeMesh.mesh.material.alpha = Math.round(value);
+      }
+      synapce.mesh.synapceLegMesh.material.alpha = value;
+    });
+  }
+
   setMaterials(): void {
     if(isMedium(this.neuron.type)) {
       this.material = forMediumNeuron(this.scene);
     } else {
       this.material = forProgenyNeuron(this.scene);
     }
-    this.activeMaterial = forActiveNeuron(this.scene);
+    this.activeMaterial = forSignalNeuron(this.scene);
+    this.selectedMaterial = forSelectedNeuron(this.scene);
   }
 
   public activate(): void {

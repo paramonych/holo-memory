@@ -14,5 +14,6 @@ var ids = {
   blastPower: '#blastPower',
   setDendritsButton: '#setDendrits',
   setSignalButton: '#setSignal',
-  processWaveButton: '#processWave'
+  processWaveButton: '#processWave',
+  keepSelected: '#keepSelected'
 }

@@ -17,11 +17,21 @@ function forProgenyNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
  return material;
 }
 
-function forActiveNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
+function forSignalNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
   let material = new BABYLON.StandardMaterial('idd', scene);
   material.ambientColor = new BABYLON.Color3(1,0,0);
   material.specularColor = new BABYLON.Color3(1,1,1);
   material.emissiveColor = new BABYLON.Color3(1,0,0);
+  material.specularPower = 70;
+  material.alpha = 1;
+  return material;
+}
+
+function forSelectedNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
+  let material = new BABYLON.StandardMaterial('idd', scene);
+  material.ambientColor = new BABYLON.Color3(1,0.9,0);
+  material.specularColor = new BABYLON.Color3(1,1,1);
+  material.emissiveColor = new BABYLON.Color3(1,0.9,0);
   material.specularPower = 70;
   material.alpha = 1;
   return material;

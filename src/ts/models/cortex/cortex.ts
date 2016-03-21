@@ -102,6 +102,17 @@ class Cortex implements Disposable {
     });
   }
 
+  public keepSelected(keepSelected: boolean): void {
+    _.each(this.neurons, (n) => {
+      if(keepSelected && !n.mesh.isHighlighted) {
+        n.hide();
+      }
+      if(!keepSelected && !n.mesh.isHighlighted) {
+        n.show();
+      }
+    });
+  }
+
   public dispose(): void {
     _.each(this.neurons, (neuron) => {neuron.dispose();});
 

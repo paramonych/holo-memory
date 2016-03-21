@@ -81,6 +81,16 @@ var Cortex = (function () {
             n.progress(progress);
         });
     };
+    Cortex.prototype.keepSelected = function (keepSelected) {
+        _.each(this.neurons, function (n) {
+            if (keepSelected && !n.mesh.isHighlighted) {
+                n.hide();
+            }
+            if (!keepSelected && !n.mesh.isHighlighted) {
+                n.show();
+            }
+        });
+    };
     Cortex.prototype.dispose = function () {
         _.each(this.neurons, function (neuron) { neuron.dispose(); });
         for (var i = 0; i < this.blastsArray.length; i++) {

@@ -97,6 +97,14 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     }
   }
 
+  public hide(): void {
+    this.mesh.setAlpha(0.03);
+  }
+
+  public show(): void {
+    this.mesh.setAlpha(1);
+  }
+
   private startWatchForSpike(): void {
     this.spike.moved.subscribe((frontPosition) => {
       _.chain(this.synapces)

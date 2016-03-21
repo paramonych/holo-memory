@@ -19,7 +19,7 @@ var NeuronMesh = (function () {
         var self = this;
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function () {
             if (!self.isHighlighted) {
-                self.highlightNeuron(self.activeMaterial, false);
+                self.highlightNeuron(self.selectedMaterial, false);
             }
         }));
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function () {
@@ -28,7 +28,7 @@ var NeuronMesh = (function () {
             }
         }));
         this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLeftPickTrigger, function () {
-            self.highlightNeuron((self.isHighlighted ? self.material : self.activeMaterial), !self.isHighlighted);
+            self.highlightNeuron((self.isHighlighted ? self.material : self.selectedMaterial), !self.isHighlighted);
         }));
     };
     NeuronMesh.prototype.highlightNeuron = function (material, isHighlighted) {
@@ -39,6 +39,16 @@ var NeuronMesh = (function () {
             synapce.mesh.synapceLegMesh.material = material;
         });
     };
+    NeuronMesh.prototype.setAlpha = function (value) {
+        this.mesh.material.alpha = value;
+        this.neuron.synapces.forEach(function (synapce) {
+            synapce.mesh.mesh.material.alpha = value;
+            if (synapce.codeMesh) {
+                synapce.codeMesh.mesh.material.alpha = Math.round(value);
+            }
+            synapce.mesh.synapceLegMesh.material.alpha = value;
+        });
+    };
     NeuronMesh.prototype.setMaterials = function () {
         if (isMedium(this.neuron.type)) {
             this.material = forMediumNeuron(this.scene);
@@ -46,7 +56,8 @@ var NeuronMesh = (function () {
         else {
             this.material = forProgenyNeuron(this.scene);
         }
-        this.activeMaterial = forActiveNeuron(this.scene);
+        this.activeMaterial = forSignalNeuron(this.scene);
+        this.selectedMaterial = forSelectedNeuron(this.scene);
     };
     NeuronMesh.prototype.activate = function () {
         this.mesh.material = this.activeMaterial;

@@ -71,6 +71,7 @@ function wireUI(engine, scene, scale, canvas) {
     });
     knobs.setDendritsButton.off('click').on('click', function () {
         showBlocker();
+        knobs.keepSelected.prop('checked', false);
         cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
         space.dispose();
         time.dispose();
@@ -95,6 +96,9 @@ function wireUI(engine, scene, scale, canvas) {
         time.dispose();
         space.computeBlasts();
     });
+    knobs.keepSelected.off('change').on('change', function () {
+        space.keepSelected(knobs.keepSelected.prop('checked'));
+    });
     time.tense.eventCallback("onUpdate", function () {
         var pg = time.tense.progress();
         var progress = pg * 100;
@@ -108,20 +112,6 @@ function wireUI(engine, scene, scale, canvas) {
         knobs.launch.data('type', 'PAUSE');
     });
     space.expose(time);
-}
-function getUIControls() {
-    var launch = jQuery(ids.launch);
-    var slider = jQuery(ids.slider);
-    var dendritsAmount = jQuery(ids.dendritsAmount);
-    var wavePower = jQuery(ids.wavePower);
-    var synapcesAmount = jQuery(ids.synapcesAmount);
-    var pinMaxLength = jQuery(ids.pinMaxLength);
-    var blastRadius = jQuery(ids.blastRadius);
-    var blastPower = jQuery(ids.blastPower);
-    var setDendritsButton = jQuery(ids.setDendritsButton);
-    var setSignalButton = jQuery(ids.setSignalButton);
-    var processWaveButton = jQuery(ids.processWaveButton);
-    return knobsFrom(launch, slider, dendritsAmount, wavePower, blastRadius, blastPower, synapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton);
 }
 function cortexConfigurationFrom(scale, dendritsAmount, wavePower, synapcesAmount, pinMaxLength, blastRadius, blastPower) {
     return {

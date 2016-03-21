@@ -73,6 +73,12 @@ var Neuron = (function () {
             this.synapces.push(synapce);
         }
     };
+    Neuron.prototype.hide = function () {
+        this.mesh.setAlpha(0.03);
+    };
+    Neuron.prototype.show = function () {
+        this.mesh.setAlpha(1);
+    };
     Neuron.prototype.startWatchForSpike = function () {
         var _this = this;
         this.spike.moved.subscribe(function (frontPosition) {

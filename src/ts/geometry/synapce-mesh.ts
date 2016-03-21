@@ -74,7 +74,7 @@ class SynapceMesh implements ActivatableMesh {
     } else {
       this.material = forProgenyNeuron(this.scene);
     }
-    this.activeMaterial = forActiveNeuron(this.scene);
+    this.activeMaterial = forSignalNeuron(this.scene);
   }
 
   public dispose(): void {

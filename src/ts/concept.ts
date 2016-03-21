@@ -94,7 +94,8 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
   knobs.setDendritsButton.off('click').on('click',function() {
     showBlocker();
-
+    knobs.keepSelected.prop('checked', false);
+    
     cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
     space.dispose();
     time.dispose();
@@ -124,6 +125,10 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     space.computeBlasts();
   });
 
+  knobs.keepSelected.off('change').on('change',function() {
+    space.keepSelected(knobs.keepSelected.prop('checked'));
+  });
+
   time.tense.eventCallback("onUpdate", function() {
     let pg = time.tense.progress();
     let progress = pg * 100;
@@ -151,28 +156,6 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
   });*/
 
   space.expose(time);
-}
-
-function getUIControls(): Knobs {
-  let launch = jQuery(ids.launch);
-  let slider = jQuery(ids.slider);
-  let dendritsAmount = jQuery(ids.dendritsAmount);
-  let wavePower = jQuery(ids.wavePower);
-  let synapcesAmount = jQuery(ids.synapcesAmount);
-  let pinMaxLength = jQuery(ids.pinMaxLength);
-  let blastRadius = jQuery(ids.blastRadius);
-  let blastPower = jQuery(ids.blastPower);
-
-  let setDendritsButton = jQuery(ids.setDendritsButton);
-  let setSignalButton = jQuery(ids.setSignalButton);
-  let processWaveButton = jQuery(ids.processWaveButton);
-
-  return knobsFrom(
-    launch, slider, dendritsAmount,
-    wavePower, blastRadius, blastPower,
-    synapcesAmount, pinMaxLength ,
-    setDendritsButton, setSignalButton, processWaveButton
-  );
 }
 
 interface CortexConfiguration {
