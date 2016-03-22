@@ -15,8 +15,12 @@ class NeuronMesh implements ActivatableMesh {
   draw(): void {
     let scale = this.cortexState.scale;
     this.mesh = BABYLON.Mesh.CreateTube(
-      't', this.curve.path, this.cortexState.scale/400, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
+      't', this.curve.path, this.cortexState.scale/400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
     this.mesh.material = this.material;
+    this.registerActions();
+  }
+
+  private registerActions(): void {
     if(this.mesh.actionManager) {
       this.mesh.actionManager.dispose();
     }
@@ -68,6 +72,12 @@ class NeuronMesh implements ActivatableMesh {
     }
     this.activeMaterial = forSignalNeuron(this.scene);
     this.selectedMaterial = forSelectedNeuron(this.scene);
+  }
+
+  public resetMaterials(): void {
+    this.setMaterials();
+    this.deactivate();
+    this.isHighlighted = false;
   }
 
   public activate(): void {

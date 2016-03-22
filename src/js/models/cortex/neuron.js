@@ -10,6 +10,20 @@ var Neuron = (function () {
         this.toDefaultState();
         this.createSynapces();
     }
+    Neuron.prototype.includeInSignal = function () {
+        this.type = NeuronType.Medium;
+        this.mesh.resetMaterials();
+        this.synapces.forEach(function (synapce) {
+            synapce.reset();
+        });
+    };
+    Neuron.prototype.dropToInitialState = function () {
+        this.type = NeuronType.Progeny;
+        this.mesh.resetMaterials();
+        this.synapces.forEach(function (synapce) {
+            synapce.reset();
+        });
+    };
     Neuron.prototype.allowSpikes = function () {
         if (isMedium(this.type)) {
             this.createSpike();

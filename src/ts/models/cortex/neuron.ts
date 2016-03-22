@@ -20,6 +20,22 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     this.createSynapces();
   }
 
+  public includeInSignal(): void {
+    this.type = NeuronType.Medium;
+    this.mesh.resetMaterials();
+    this.synapces.forEach((synapce) => {
+      synapce.reset();
+    });
+  }
+
+  public dropToInitialState(): void {
+    this.type = NeuronType.Progeny;
+    this.mesh.resetMaterials();
+    this.synapces.forEach((synapce) => {
+      synapce.reset();
+    });
+  }
+
   public allowSpikes(): void {
     if(isMedium(this.type)) {
       this.createSpike();

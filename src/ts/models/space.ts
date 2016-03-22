@@ -37,8 +37,4 @@ class Space {
     this.cortex = null;
     this.time = null;
   }
-
-  public keepSelected(keepSelected: boolean): void {
-    this.cortex.keepSelected(keepSelected);
-  }
 }

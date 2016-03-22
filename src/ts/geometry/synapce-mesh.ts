@@ -37,7 +37,7 @@ class SynapceMesh implements ActivatableMesh {
   }
 
   private draw(basePosition: BABYLON.Vector3): void {
-    this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale/(isMedium(this.neuron.type) ? 50:100), this.scene, false);
+    this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale/(isMedium(this.neuron.type) ? 50:100), this.scene, true);
     this.mesh.position = this.position;
     //if(isMedium(this.neuron.type)) {
       this.synapceLegMesh = BABYLON.Mesh.CreateTube('t', [basePosition, this.position], this.scale / 470, 10, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
@@ -66,6 +66,7 @@ class SynapceMesh implements ActivatableMesh {
 
   public deactivate(): void {
     this.mesh.material = this.material;
+    this.synapceLegMesh.material = this.material;
   }
 
   setMaterials(): void {
@@ -75,6 +76,13 @@ class SynapceMesh implements ActivatableMesh {
       this.material = forProgenyNeuron(this.scene);
     }
     this.activeMaterial = forSignalNeuron(this.scene);
+  }
+
+  public resetMaterials(): void {
+    this.material.dispose();
+    this.activeMaterial.dispose();
+    this.setMaterials();
+    this.deactivate();
   }
 
   public dispose(): void {

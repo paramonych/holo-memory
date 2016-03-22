@@ -17,7 +17,7 @@ function forProgenyNeuron(scene) {
     return material;
 }
 function forSignalNeuron(scene) {
-    var material = new BABYLON.StandardMaterial('idd', scene);
+    var material = new BABYLON.StandardMaterial('idds', scene);
     material.ambientColor = new BABYLON.Color3(1, 0, 0);
     material.specularColor = new BABYLON.Color3(1, 1, 1);
     material.emissiveColor = new BABYLON.Color3(1, 0, 0);

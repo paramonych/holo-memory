@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
 var scale = 5;// mkm
 var realSynapcesDistance = 0.2; //mkm
-var cortexSate = cortexConfigurationFrom(scale, 5, 10, scale/realSynapcesDistance, 0.5, 0.2, 3);
+var cortexSate = cortexConfigurationFrom(scale, 5, 0, scale/realSynapcesDistance, 0.5, 0.2, 3);
 var knobs ;
 var uiCallback;
 var blockerOverlay;
@@ -95,7 +95,7 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
   knobs.setDendritsButton.off('click').on('click',function() {
     showBlocker();
     knobs.keepSelected.prop('checked', false);
-    
+
     cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
     space.dispose();
     time.dispose();
@@ -113,20 +113,22 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
   });
 
   knobs.setSignalButton.off('click').on('click',function() {
-    cortexSate.wavePower = +knobs.wavePower.val();
+    let newValue = +knobs.wavePower.val();
+    cortexSate.wavePower = newValue;
+    space.cortex.initSignal(cortexSate.wavePower);
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
     cortexSate.blastRadius = +knobs.blastRadius.val();
     cortexSate.blastPower = +knobs.blastPower.val();
 
-    space.disposeBlasts();
+    space.cortex.disposeBlasts();
     time.dispose();
-    space.computeBlasts();
+    space.cortex.computeBlasts();
   });
 
   knobs.keepSelected.off('change').on('change',function() {
-    space.keepSelected(knobs.keepSelected.prop('checked'));
+    space.cortex.keepSelected(knobs.keepSelected.prop('checked'));
   });
 
   time.tense.eventCallback("onUpdate", function() {

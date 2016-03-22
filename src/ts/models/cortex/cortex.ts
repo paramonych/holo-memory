@@ -62,13 +62,38 @@ class Cortex implements Disposable {
   private createNeurons(): void {
       //_.each(this.neurons, (n) => n.dispose());
       this.neurons = new Array<Neuron>();
-      let type = NeuronType.Medium;
       for(let i=0; i< this.cortexState.dendritsAmount; i++) {
-        if(i >= this.cortexState.dendritsAmount/2) {
-          type = NeuronType.Progeny;
-        }
-        this.neurons.push(new Neuron(this, type));
+        this.neurons.push(new Neuron(this, NeuronType.Progeny));
       }
+  }
+
+  public initSignal(wavePower: number): void {
+    this.dropSignal();
+
+    for(let i=0; i< wavePower; i++) {
+      let progenyNeurons = _.filter(this.neurons, (neuron) => {
+        return !isMedium(neuron.type);
+      });
+      if(progenyNeurons.length > 0) {
+        let index = Math.floor((progenyNeurons.length-1)*random());
+        progenyNeurons[index].includeInSignal();
+      } else {
+        break;
+      }
+    }
+
+    this.preprocessBlasts();
+  }
+
+  private dropSignal(): void {
+    this.disposeBlasts();
+    this.neurons.forEach((neuron) => {
+      neuron.dropToInitialState();
+    });
+  }
+
+  public computeBlasts(): void {
+    this.preprocessBlasts();
   }
 
   public draw(): void {
@@ -117,14 +142,19 @@ class Cortex implements Disposable {
   }
 
   public dispose(): void {
-    _.each(this.neurons, (neuron) => {neuron.dispose();});
+    this.disposeBlasts();
 
-    //let blastsArray = toValues(this.blasts);
-    for(let i=0; i< this.blastsArray.length; i++) {
-      this.blastsArray[i].dispose();
-    }
+    _.each(this.neurons, (neuron) => {neuron.dispose();});
     this.neurons = null;
-    this.blasts = null;
-    this.blastsArray = null;
+  }
+
+  public disposeBlasts(): void {
+    if(this.blastsArray) {
+      for(let i=0; i< this.blastsArray.length; i++) {
+        this.blastsArray[i].dispose();
+      }
+      this.blasts = null;
+      this.blastsArray = null;
+    }
   }
 }

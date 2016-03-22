@@ -28,8 +28,5 @@ var Space = (function () {
         this.cortex = null;
         this.time = null;
     };
-    Space.prototype.keepSelected = function (keepSelected) {
-        this.cortex.keepSelected(keepSelected);
-    };
     return Space;
 }());

@@ -10,8 +10,11 @@ var NeuronMesh = (function () {
     }
     NeuronMesh.prototype.draw = function () {
         var scale = this.cortexState.scale;
-        this.mesh = BABYLON.Mesh.CreateTube('t', this.curve.path, this.cortexState.scale / 400, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
+        this.mesh = BABYLON.Mesh.CreateTube('t', this.curve.path, this.cortexState.scale / 400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
         this.mesh.material = this.material;
+        this.registerActions();
+    };
+    NeuronMesh.prototype.registerActions = function () {
         if (this.mesh.actionManager) {
             this.mesh.actionManager.dispose();
         }
@@ -58,6 +61,11 @@ var NeuronMesh = (function () {
         }
         this.activeMaterial = forSignalNeuron(this.scene);
         this.selectedMaterial = forSelectedNeuron(this.scene);
+    };
+    NeuronMesh.prototype.resetMaterials = function () {
+        this.setMaterials();
+        this.deactivate();
+        this.isHighlighted = false;
     };
     NeuronMesh.prototype.activate = function () {
         this.mesh.material = this.activeMaterial;

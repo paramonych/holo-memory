@@ -17,6 +17,13 @@ var Synapce = (function () {
             this.codeMesh = new Code(scene, scale, this.mesh.mesh.position, '' + count, isBiggestCount);
         }
     };
+    Synapce.prototype.reset = function () {
+        this.mesh.resetMaterials();
+        if (this.codeMesh) {
+            this.codeMesh.dispose();
+            this.codeMesh = null;
+        }
+    };
     Synapce.prototype.allowMediator = function () {
         this.mediator.willBeUsed();
     };

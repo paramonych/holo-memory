@@ -23,6 +23,14 @@ class Synapce implements Disposable, Dualistic {
     }
   }
 
+  public reset(): void {
+    this.mesh.resetMaterials();
+    if(this.codeMesh) {
+      this.codeMesh.dispose();
+      this.codeMesh = null;
+    }
+  }
+
   public allowMediator(): void {
     this.mediator.willBeUsed();
   }
