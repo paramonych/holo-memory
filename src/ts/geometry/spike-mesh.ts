@@ -1,6 +1,6 @@
 class SpikeMesh implements ActivatableMesh {
   public mesh: BABYLON.Mesh;
-  light: BABYLON.PointLight;
+  //light: BABYLON.PointLight;
   private numberPosition: number;
   private position: BABYLON.Vector3;
   private curve: Array<BABYLON.Vector3>;
@@ -133,11 +133,8 @@ class SpikeMesh implements ActivatableMesh {
 
   public dispose(): void {
     this.scene.removeMesh(this.mesh);
-    this.scene.removeLight(this.light);
     this.mesh.dispose();
     this.mesh = null;
-    this.light.dispose();
-    this.light = null;
     this.curve = null;
   }
 }

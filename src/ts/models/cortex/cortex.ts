@@ -20,9 +20,9 @@ class Cortex implements Disposable {
     this.blastsArray = new Array<NeuroBlast>();
 
     mediumSynapces.forEach((synapce) => {
-      let filteredSynapces = mediumSynapces;/*_.filter(mediumSynapces, function(nextSynapce) {
+      let filteredSynapces = _.filter(mediumSynapces, function(nextSynapce) {
         return synapce.neuron.id !== nextSynapce.neuron.id;
-      });*/
+      });
       let newBlast = new NeuroBlast(synapce, this.cortexState.blastRadius, filteredSynapces, this.scene, this.cortexState.blastPower);
       if(newBlast.isExists) {
         this.blastsArray.push(newBlast);
@@ -32,7 +32,6 @@ class Cortex implements Disposable {
     });
 
     this.spaceCallback(this.blastsArray.length);
-    //console.debug('Blasts: ', mapSize(this.blasts));
   }
 
   private collectMediumSynapces(): Synapce[] {
@@ -60,8 +59,8 @@ class Cortex implements Disposable {
   }
 
   private createNeurons(): void {
-      //_.each(this.neurons, (n) => n.dispose());
       this.neurons = new Array<Neuron>();
+
       for(let i=0; i< this.cortexState.dendritsAmount; i++) {
         this.neurons.push(new Neuron(this, NeuronType.Progeny));
       }
@@ -83,6 +82,12 @@ class Cortex implements Disposable {
     }
 
     this.preprocessBlasts();
+  }
+
+  public resetSynapces(): void {
+    this.neurons.forEach((neuron) => {
+      neuron.resetSynapces();
+    });
   }
 
   private dropSignal(): void {
@@ -140,7 +145,9 @@ class Cortex implements Disposable {
   public dispose(): void {
     this.disposeBlasts();
 
-    _.each(this.neurons, (neuron) => {neuron.dispose();});
+    _.each(this.neurons, (neuron) => {
+      neuron.dispose();
+    });
     this.neurons = null;
   }
 

@@ -103,11 +103,8 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);
-        this.scene.removeLight(this.light);
         this.mesh.dispose();
         this.mesh = null;
-        this.light.dispose();
-        this.light = null;
         this.curve = null;
     };
     return SpikeMesh;

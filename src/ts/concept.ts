@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
 var scale = 5;// mkm
 var realSynapcesDistance = 0.2; //mkm
-var cortexSate = cortexConfigurationFrom(scale, 5, 2, scale/realSynapcesDistance, 0.5, 0.2, 3);
+var cortexSate = cortexConfigurationFrom(scale, 2, 2, scale/(realSynapcesDistance*2.5), 0.7, 0.2, 2);
 var knobs ;
 var uiCallback;
 var blockerOverlay;
@@ -94,6 +94,8 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
   knobs.setDendritsButton.off('click').on('click',function() {
     showBlocker();
+    knobs.processWaveButton.attr('disabled','disabled');
+
     knobs.keepSelected.prop('checked', false);
 
     cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
@@ -116,10 +118,17 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     let newValue = +knobs.wavePower.val();
     cortexSate.wavePower = newValue;
     space.cortex.initSignal(cortexSate.wavePower);
+    knobs.processWaveButton.removeAttr('disabled');
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
-    cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
+    let newPinLength = +knobs.pinMaxLength.val();
+
+    if(newPinLength !== cortexSate.pinMaxLength) {
+      cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
+      space.cortex.resetSynapces();
+    }
+
     cortexSate.blastRadius = +knobs.blastRadius.val();
     cortexSate.blastPower = +knobs.blastPower.val();
 

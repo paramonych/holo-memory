@@ -15,7 +15,9 @@ var Cortex = (function () {
         this.blasts = newMap();
         this.blastsArray = new Array();
         mediumSynapces.forEach(function (synapce) {
-            var filteredSynapces = mediumSynapces;
+            var filteredSynapces = _.filter(mediumSynapces, function (nextSynapce) {
+                return synapce.neuron.id !== nextSynapce.neuron.id;
+            });
             var newBlast = new NeuroBlast(synapce, _this.cortexState.blastRadius, filteredSynapces, _this.scene, _this.cortexState.blastPower);
             if (newBlast.isExists) {
                 _this.blastsArray.push(newBlast);
@@ -66,6 +68,11 @@ var Cortex = (function () {
         }
         this.preprocessBlasts();
     };
+    Cortex.prototype.resetSynapces = function () {
+        this.neurons.forEach(function (neuron) {
+            neuron.resetSynapces();
+        });
+    };
     Cortex.prototype.dropSignal = function () {
         this.disposeBlasts();
         this.neurons.forEach(function (neuron) {
@@ -112,7 +119,9 @@ var Cortex = (function () {
     };
     Cortex.prototype.dispose = function () {
         this.disposeBlasts();
-        _.each(this.neurons, function (neuron) { neuron.dispose(); });
+        _.each(this.neurons, function (neuron) {
+            neuron.dispose();
+        });
         this.neurons = null;
     };
     Cortex.prototype.disposeBlasts = function () {

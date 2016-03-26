@@ -17,6 +17,9 @@ var NeuronMesh = (function () {
         this.deactivate();
         this.registerActions();
     };
+    NeuronMesh.prototype.setSynapces = function (synapces) {
+        this.synapces = synapces;
+    };
     NeuronMesh.prototype.registerActions = function () {
         if (this.mesh.actionManager) {
             this.mesh.actionManager.dispose();

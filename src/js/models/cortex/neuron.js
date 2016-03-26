@@ -4,7 +4,6 @@ var Neuron = (function () {
         this.type = type;
         this.id = getUniqueId();
         this.code = getRandomSixMap();
-        this.synapces = new Array();
         this.mesh = new NeuronMesh(this.synapces, this.type, this.cortex.scene, this.cortex.cortexState);
         this.toDefaultState();
         this.createSynapces();
@@ -77,6 +76,7 @@ var Neuron = (function () {
         }
     };
     Neuron.prototype.createSynapces = function () {
+        this.synapces = new Array();
         var scale = this.cortex.cortexState.scale;
         var synapcesAmount = this.cortex.cortexState.synapcesAmount;
         var path = this.mesh.curve.path;
@@ -85,6 +85,11 @@ var Neuron = (function () {
             var synapce = new Synapce(this, position.clone());
             this.synapces.push(synapce);
         }
+        this.mesh.setSynapces(this.synapces);
+    };
+    Neuron.prototype.resetSynapces = function () {
+        this.disposeSynapces();
+        this.createSynapces();
     };
     Neuron.prototype.hide = function () {
         this.mesh.setAlpha(0.07);
@@ -115,15 +120,20 @@ var Neuron = (function () {
             this.spike.dispose();
             this.spike = null;
         }
-        _.each(this.synapces, function (synapce) { synapce.dispose(); });
+        this.disposeSynapces();
         this.mesh.dispose();
         this.mesh = null;
-        this.synapces = null;
         if (this.codeMesh && this.codeMesh.dispose) {
             this.codeMesh.dispose();
             this.codeMesh = null;
         }
         this.state = null;
+    };
+    Neuron.prototype.disposeSynapces = function () {
+        _.each(this.synapces, function (synapce) {
+            synapce.dispose();
+        });
+        this.synapces = null;
     };
     Neuron.prototype.activate = function () {
         this.state(StateType.Active);

@@ -6,7 +6,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public codeMesh: Code;
   public spike: Spike;
   public state: KnockoutObservable<StateType>;
-  public synapces = new Array<Synapce>();
+  public synapces: Synapce[];
   public mesh: NeuronMesh;
 
   constructor(
@@ -100,6 +100,8 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   private createSynapces(): void {
+    this.synapces = new Array<Synapce>();
+
     let scale = this.cortex.cortexState.scale;
     let synapcesAmount = this.cortex.cortexState.synapcesAmount;
     let path = this.mesh.curve.path;
@@ -109,7 +111,14 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       let synapce = new Synapce(this, position.clone());
       this.synapces.push(synapce);
     }
+    this.mesh.setSynapces(this.synapces);
   }
+
+  public resetSynapces(): void {
+    this.disposeSynapces();
+    this.createSynapces();
+  }
+
 
   public hide(): void {
     this.mesh.setAlpha(0.07);
@@ -142,15 +151,21 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       this.spike.dispose();
       this.spike = null;
     }
-    _.each(this.synapces, (synapce) => {synapce.dispose();});
+    this.disposeSynapces();
     this.mesh.dispose();
     this.mesh = null;
-    this.synapces = null;
     if(this.codeMesh && this.codeMesh.dispose) {
       this.codeMesh.dispose();
       this.codeMesh = null;
     }
     this.state = null;
+  }
+
+  private disposeSynapces(): void {
+    _.each(this.synapces, (synapce) => {
+      synapce.dispose();
+    });
+    this.synapces = null;
   }
 
   public activate(): void {

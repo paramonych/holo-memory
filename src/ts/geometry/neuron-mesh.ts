@@ -23,6 +23,10 @@ class NeuronMesh implements ActivatableMesh {
     this.registerActions();
   }
 
+  public setSynapces(synapces: Synapce[]): void {
+    this.synapces = synapces;
+  }
+
   private registerActions(): void {
     if(this.mesh.actionManager) {
       this.mesh.actionManager.dispose();
