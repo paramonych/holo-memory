@@ -1,4 +1,6 @@
+@vert-step: 30px;
 @top: 30px;
+
 
 html, body {
   overflow: hidden;
@@ -16,13 +18,29 @@ html, body {
   touch-action: none;
 }
 
+#sceneBlocker {
+  z-index: 3;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding-top: 30%;
+  text-align: center;
+  font-family: Arial;
+  color: white;
+  background-color: rgba(0,0,0,0.45);
+}
+
+.hidden {
+  display: none;
+}
+
 button {
   z-index: 2;
   position: absolute;
 }
 
 #launch {
-  top: @top;
+  top: @vert-step;
   right: 20px;
 }
 #restart {
@@ -39,10 +57,17 @@ button {
   background-color:rgba(255, 255, 255, 0.2);
 }
 
-#neuronsAmount,
+#dendritsAmount,
+#setDendrits,
+
+#wavePower,
+#setSignal,
+
+#synapcesAmount,
+#pinMaxLength,
 #blastRadius,
 #blastPower,
-#applyConfig {
+#processWave {
     z-index: 2;
     position: absolute;
     left: 20px;
@@ -57,7 +82,7 @@ button {
 }
 
 .config-detail {
-  width: 130px;
+  width: 200px;
   input {
     position: absolute;
     right: 0px;
@@ -65,15 +90,49 @@ button {
   }
 }
 
-#neuronsAmount {
-  top: @top;
+#keepSelected {
+  z-index: 2;
+  position: absolute;
+  right: 20px;
+  bottom: 30px;
+  font-family: Arial;
+  width: 127px;
+
+  label {
+    color: white;
+  }
+  input {
+    top: 0px;
+  }
+}
+
+#dendritsAmount {
+  top: @vert-step;
+}
+#synapcesAmount {
+  top: @vert-step*2;
+}
+#setDendrits {
+  top: @vert-step*3;
+}
+
+#wavePower {
+  top: @top+@vert-step*4;
+}
+#setSignal {
+  top: @top+@vert-step*5;
+}
+
+
+#pinMaxLength {
+  top: @top*2+@vert-step*6;
 }
 #blastRadius {
-  top: @top*2;
+  top: @top*2+@vert-step*7;
 }
 #blastPower {
-  top: @top*3;
+  top: @top*2+@vert-step*8;
 }
-#applyConfig {
-  top: @top*4;
+#processWave {
+  top: @top*2+@vert-step*9;
 }

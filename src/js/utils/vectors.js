@@ -12,14 +12,14 @@ function randomPointOnSphere(radius) {
     vector.scale(radius);
     return vector;
 }
-function randomPath(scale, deltaRadius, deltaSegment) {
+function randomPath(scale, segmentsAmount) {
     var path = new Array();
     var next = randomVector(scale);
-    var steps = Math.floor(scale / deltaSegment);
     var xSign = (-1) * next.x / Math.abs(next.x);
     var ySign = (-1) * next.y / Math.abs(next.y);
     var zSign = (-1) * next.z / Math.abs(next.z);
-    for (var i = 0; i <= steps; i += 1) {
+    var deltaRadius = scale * 2 / segmentsAmount;
+    for (var i = 0; i <= segmentsAmount; i += 1) {
         path.push(next);
         next = vectorFrom((next.x + xSign * Math.random() * deltaRadius), (next.y + ySign * Math.random() * deltaRadius), (next.z + zSign * Math.random() * deltaRadius));
     }

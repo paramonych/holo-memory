@@ -1,13 +1,13 @@
 var Space = (function () {
-    function Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback) {
+    function Space(scene, scale, lifetime, cortexState, uiCallback) {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.cortex = new Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback);
+        this.cortexState = cortexState;
+        this.cortex = new Cortex(scene, scale, lifetime, cortexState, uiCallback);
     }
     Space.prototype.expose = function (time) {
         this.time = time;
-        this.cortex.draw();
         this.cortex.chargeTense(time);
     };
     Space.prototype.freeze = function (time) {
@@ -21,10 +21,6 @@ var Space = (function () {
     };
     Space.prototype.shift = function (time, progress) {
         this.cortex.shiftTense(time, progress);
-    };
-    Space.prototype.applyConfig = function (neuronsAmount, blastRadius, blastPower) {
-        this.cortex.dispose();
-        this.cortex = new Cortex(this.scene, this.scale, this.lifetime, neuronsAmount, blastRadius, blastPower);
     };
     Space.prototype.dispose = function () {
         this.cortex.dispose();

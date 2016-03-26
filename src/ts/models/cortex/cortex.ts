@@ -7,9 +7,7 @@ class Cortex implements Disposable {
     public scene: BABYLON.Scene,
     public scale: number,
     public lifetime: number,
-    private neuronsAmount: number,
-    private blastRadius: number,
-    private blastPowerLimit: number,
+    public cortexState: CortexConfiguration,
     private spaceCallback: (blastsAmount: number) => void) {
     this.createNeurons();
     this.preprocessBlasts();
@@ -22,7 +20,10 @@ class Cortex implements Disposable {
     this.blastsArray = new Array<NeuroBlast>();
 
     mediumSynapces.forEach((synapce) => {
-      let newBlast = new NeuroBlast(synapce, this.blastRadius, mediumSynapces, this.scene, this.blastPowerLimit);
+      let filteredSynapces = _.filter(mediumSynapces, function(nextSynapce) {
+        return synapce.neuron.id !== nextSynapce.neuron.id;
+      });
+      let newBlast = new NeuroBlast(synapce, this.cortexState.blastRadius, filteredSynapces, this.scene, this.cortexState.blastPower);
       if(newBlast.isExists) {
         this.blastsArray.push(newBlast);
       } else {
@@ -31,7 +32,6 @@ class Cortex implements Disposable {
     });
 
     this.spaceCallback(this.blastsArray.length);
-    //console.debug('Blasts: ', mapSize(this.blasts));
   }
 
   private collectMediumSynapces(): Synapce[] {
@@ -59,19 +59,46 @@ class Cortex implements Disposable {
   }
 
   private createNeurons(): void {
-      //_.each(this.neurons, (n) => n.dispose());
       this.neurons = new Array<Neuron>();
-      let type = NeuronType.Medium;
-      for(let i=0; i< this.neuronsAmount; i++) {
-        if(i >= this.neuronsAmount/2) {
-          type = NeuronType.Progeny;
-        }
-        this.neurons.push(new Neuron(this, type));
+
+      for(let i=0; i< this.cortexState.dendritsAmount; i++) {
+        this.neurons.push(new Neuron(this, NeuronType.Progeny));
       }
   }
 
-  public draw(): void {
-    _.each(this.neurons, (neuron) => neuron.build());
+  public initSignal(wavePower: number): void {
+    this.dropSignal();
+
+    for(let i=0; i< wavePower; i++) {
+      let progenyNeurons = _.filter(this.neurons, (neuron) => {
+        return !isMedium(neuron.type);
+      });
+      if(progenyNeurons.length > 0) {
+        let index = Math.floor((progenyNeurons.length-1)*random());
+        progenyNeurons[index].includeInSignal();
+      } else {
+        break;
+      }
+    }
+
+    this.preprocessBlasts();
+  }
+
+  public resetSynapces(): void {
+    this.neurons.forEach((neuron) => {
+      neuron.resetSynapces();
+    });
+  }
+
+  private dropSignal(): void {
+    this.disposeBlasts();
+    this.neurons.forEach((neuron) => {
+      neuron.dropToInitialState();
+    });
+  }
+
+  public computeBlasts(): void {
+    this.preprocessBlasts();
   }
 
   public chargeTense(time: Time): void {
@@ -104,15 +131,39 @@ class Cortex implements Disposable {
     });
   }
 
-  public dispose(): void {
-    _.each(this.neurons, (neuron) => {neuron.dispose();});
+  public keepSelected(keepSelected: boolean): void {
+    _.each(this.neurons, (n) => {
+      if(keepSelected && !n.mesh.isHighlighted) {
+        n.hide();
+      }
+      if(!keepSelected && !n.mesh.isHighlighted) {
+        n.show();
+      }
+    });
+  }
 
-    //let blastsArray = toValues(this.blasts);
-    for(let i=0; i< this.blastsArray.length; i++) {
-      this.blastsArray[i].dispose();
-    }
+  public dispose(): void {
+    this.disposeBlasts();
+
+    _.each(this.neurons, (neuron) => {
+      neuron.dispose();
+    });
     this.neurons = null;
-    this.blasts = null;
-    this.blastsArray = null;
+  }
+
+  public disposeBlasts(): void {
+    this.disposeMediators();
+
+    if(this.blastsArray) {
+      for(let i=0; i< this.blastsArray.length; i++) {
+        this.blastsArray[i].dispose();
+      }
+      this.blasts = null;
+      this.blastsArray = null;
+    }
+  }
+
+  private disposeMediators(): void {
+    _.each(this.neurons, (neuron) => {neuron.disposeMediators();});
   }
 }

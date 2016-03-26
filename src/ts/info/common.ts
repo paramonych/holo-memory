@@ -11,7 +11,5 @@ interface Dualistic {
 }
 
 interface ActivatableMesh {
-  material: BABYLON.StandardMaterial;
-  activeMaterial: BABYLON.StandardMaterial;
-  setMaterials: () => void;
+  setMaterial: () => void;
 }

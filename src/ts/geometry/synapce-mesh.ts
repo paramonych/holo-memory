@@ -1,21 +1,22 @@
 class SynapceMesh implements ActivatableMesh {
   public mesh: BABYLON.Mesh;
   public synapceLegMesh: BABYLON.Mesh;
-  public material: BABYLON.StandardMaterial;
-  public activeMaterial: BABYLON.StandardMaterial;
   public position: BABYLON.Vector3;
 
   constructor(
     public scene: BABYLON.Scene, public scale: number,
     public basePosition: BABYLON.Vector3, private neuron: Neuron
   ) {
-    this.position = isMedium(neuron.type) ? this.shiftPosition(this.basePosition.clone()) : basePosition.clone();
-    this.setMaterials();
+    this.position = this.shiftPosition(this.basePosition.clone());//isMedium(neuron.type) ? this.shiftPosition(this.basePosition.clone()) : basePosition.clone();
     this.draw(basePosition);
+    this.setMaterial();
   }
 
   private shiftPosition(basePosition: BABYLON.Vector3): BABYLON.Vector3 {
-    let shift = this.scale/3;
+    let pinMaxLength = this.neuron.cortex.cortexState.pinMaxLength;
+    let synapcesAmount = this.neuron.cortex.cortexState.synapcesAmount;
+    pinMaxLength = pinMaxLength / (synapcesAmount/(this.neuron.cortex.cortexState.scale/realSynapcesDistance));
+    let shift = pinMaxLength * random();
 
     let neuronPath = this.neuron.mesh.curve.path;
     let first = neuronPath[0];
@@ -34,12 +35,14 @@ class SynapceMesh implements ActivatableMesh {
   }
 
   private draw(basePosition: BABYLON.Vector3): void {
-    this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale/(isMedium(this.neuron.type) ? 50:100), this.scene, false);
+    this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale/(isMedium(this.neuron.type) ? 50:100), this.scene, true);
     this.mesh.position = this.position;
-    if(isMedium(this.neuron.type)) {
+    //if(isMedium(this.neuron.type)) {
       this.synapceLegMesh = BABYLON.Mesh.CreateTube('t', [basePosition, this.position], this.scale / 470, 10, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
-      this.synapceLegMesh.material = this.material;
-    }
+
+      this.mesh.material = defaultMaterial(this.scene);
+      this.synapceLegMesh.material = defaultMaterial(this.scene);
+    //}
     this.deactivate();
   }
 
@@ -57,22 +60,26 @@ class SynapceMesh implements ActivatableMesh {
   }
 
   public activate(): void {
-    this.mesh.material = this.activeMaterial;
-    this.synapceLegMesh.material = this.activeMaterial;
+    resetMaterial(this.mesh.material, activeMaterial);
+    resetMaterial(this.synapceLegMesh.material, activeMaterial);
   }
 
   public deactivate(): void {
-    this.mesh.material = this.material;
+    this.setMaterial();
   }
 
-  setMaterials(): void {
+  setMaterial(): void {
     if(isMedium(this.neuron.type)) {
-      this.material = forMediumNeuron(this.scene);
-      this.activeMaterial = forMediumActiveNeuron(this.scene);
+      resetMaterial(this.mesh.material, mediumMaterial);
+      resetMaterial(this.synapceLegMesh.material, mediumMaterial);
     } else {
-      this.material = forProgenyNeuron(this.scene);
-      this.activeMaterial = forProgenyActiveNeuron(this.scene);
+      resetMaterial(this.mesh.material, progenyMaterial);
+      resetMaterial(this.synapceLegMesh.material, progenyMaterial);
     }
+  }
+
+  public resetMaterials(): void {
+    this.setMaterial();
   }
 
   public dispose(): void {

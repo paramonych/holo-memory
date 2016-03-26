@@ -1,32 +1,103 @@
-function forMediumNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
- let material = new BABYLON.StandardMaterial('i', scene);
- material.emissiveColor = new BABYLON.Color3(0.5,0.5,0.5);
- material.specularColor = new BABYLON.Color3(1,1,1);
- material.ambientColor = new BABYLON.Color3(0,0,1);
- material.specularPower = 70;
- material.alpha = 1;
- return material;
-}
-function forProgenyNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
- let material = new BABYLON.StandardMaterial('i', scene);
- material.emissiveColor = new BABYLON.Color3(0,0,0.35);
- material.specularColor = new BABYLON.Color3(0,0,0);
- material.specularPower = 70;
- material.alpha = 0.7;
- return material;
+var mediumMaterial = materialConfigFrom(
+  colorFrom(0.5,0.5,0.5),
+  colorFrom(1,1,1),
+  colorFrom(0,0,1),
+  70,
+  1
+);
+var progenyMaterial = materialConfigFrom(
+  colorFrom(0,0,0.35),
+  colorFrom(0,0,0),
+  colorFrom(0,0,0.75),
+  70,
+  1
+);
+var activeMaterial = materialConfigFrom(
+  colorFrom(1,0,0),
+  colorFrom(1,1,1),
+  colorFrom(1,0,0),
+  70,
+  1
+);
+var selectedMaterial = materialConfigFrom(
+  colorFrom(1,0.9,0),
+  colorFrom(1,1,1),
+  colorFrom(1,0.9,0),
+  70,
+  1
+);
+
+interface NeuronMaterials {
+  Medium: string;
+  Progeny: string;
+  Signal: string;
+  Selected: string;
 }
 
+interface MaterialConfig {
+  emissive: Color;
+  specular: Color;
+  ambient : Color;
+  specularPower: number;
+  alpha: number;
+}
+interface Color {
+  r: number;
+  g: number;
+  b: number;
+}
 
-function forMediumActiveNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
-  let material = forMediumNeuron(scene);
-  //material.ambientColor = new BABYLON.Color3(1, 1, 1);
-  return material;
+function colorizeMaterial(config: MaterialConfig, emissive: BABYLON.Color3): MaterialConfig {
+  config.emissive = colorFrom(emissive.r, emissive.g, emissive.b);
+  return config;
 }
-function forProgenyActiveNeuron(scene: BABYLON.Scene): BABYLON.StandardMaterial {
-  let material = forProgenyNeuron(scene);
-  //material.ambientColor = new BABYLON.Color3(1, 1, 1);
-  return material;
+
+function defaultMaterial(scene: BABYLON.Scene): BABYLON.StandardMaterial {
+  return new BABYLON.StandardMaterial('Name-'+(random()*random()), scene);
 }
+
+function colorFrom(r: number, g: number, b: number): Color {
+  return {
+    r: r,
+    g: g,
+    b: b
+  }
+}
+
+function materialConfigFrom(
+  emissive: Color,
+  specular: Color,
+  ambient : Color,
+  specularPower: number,
+  alpha: number): MaterialConfig {
+  return {
+    emissive: emissive,
+    specular: specular,
+    ambient : ambient,
+    specularPower: specularPower,
+    alpha: alpha
+  }
+}
+
+function resetMaterial(material: BABYLON.Material, c: MaterialConfig, alpha ?: number): void {
+  (<BABYLON.StandardMaterial>material).emissiveColor = new BABYLON.Color3(c.emissive.r,c.emissive.g,c.emissive.b);
+  (<BABYLON.StandardMaterial>material).specularColor = new BABYLON.Color3(c.specular.r,c.specular.g,c.specular.b);
+  (<BABYLON.StandardMaterial>material).ambientColor = new BABYLON.Color3(c.ambient.r,c.ambient.g,c.ambient.b);
+  (<BABYLON.StandardMaterial>material).specularPower = c.specularPower;
+  (<BABYLON.StandardMaterial>material).alpha = (alpha === void 0) ? c.alpha : alpha;
+}
+
+function setAlpha(material: BABYLON.Material, alpha: number): void {
+  (<BABYLON.StandardMaterial>material).alpha = alpha;
+}
+
+var neuronMaterials = {
+  Medium: 'medium-neuron',
+  Progeny: 'progeny-neuron',
+  Signal: 'signal-neuron',
+  Selected: 'selected-neuron'
+}
+
 
 // DARK GLASS
 function forMediumNeuronGGZ(scene: BABYLON.Scene): BABYLON.StandardMaterial {

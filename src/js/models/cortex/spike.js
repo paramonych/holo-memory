@@ -17,6 +17,9 @@ var Spike = (function () {
     Spike.prototype.deactivate = function () {
         this.state(StateType.Silent);
     };
+    Spike.prototype.setAlpha = function (value) {
+        setAlpha(this.mesh.mesh.material, value);
+    };
     Spike.prototype.reportMovement = function (vectors) {
         this.moved(vectors);
     };

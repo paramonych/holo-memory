@@ -1,11 +1,9 @@
 var Cortex = (function () {
-    function Cortex(scene, scale, lifetime, neuronsAmount, blastRadius, blastPowerLimit, spaceCallback) {
+    function Cortex(scene, scale, lifetime, cortexState, spaceCallback) {
         this.scene = scene;
         this.scale = scale;
         this.lifetime = lifetime;
-        this.neuronsAmount = neuronsAmount;
-        this.blastRadius = blastRadius;
-        this.blastPowerLimit = blastPowerLimit;
+        this.cortexState = cortexState;
         this.spaceCallback = spaceCallback;
         this.createNeurons();
         this.preprocessBlasts();
@@ -17,7 +15,10 @@ var Cortex = (function () {
         this.blasts = newMap();
         this.blastsArray = new Array();
         mediumSynapces.forEach(function (synapce) {
-            var newBlast = new NeuroBlast(synapce, _this.blastRadius, mediumSynapces, _this.scene, _this.blastPowerLimit);
+            var filteredSynapces = _.filter(mediumSynapces, function (nextSynapce) {
+                return synapce.neuron.id !== nextSynapce.neuron.id;
+            });
+            var newBlast = new NeuroBlast(synapce, _this.cortexState.blastRadius, filteredSynapces, _this.scene, _this.cortexState.blastPower);
             if (newBlast.isExists) {
                 _this.blastsArray.push(newBlast);
             }
@@ -47,16 +48,39 @@ var Cortex = (function () {
     };
     Cortex.prototype.createNeurons = function () {
         this.neurons = new Array();
-        var type = NeuronType.Medium;
-        for (var i = 0; i < this.neuronsAmount; i++) {
-            if (i >= this.neuronsAmount / 2) {
-                type = NeuronType.Progeny;
-            }
-            this.neurons.push(new Neuron(this, type));
+        for (var i = 0; i < this.cortexState.dendritsAmount; i++) {
+            this.neurons.push(new Neuron(this, NeuronType.Progeny));
         }
     };
-    Cortex.prototype.draw = function () {
-        _.each(this.neurons, function (neuron) { return neuron.build(); });
+    Cortex.prototype.initSignal = function (wavePower) {
+        this.dropSignal();
+        for (var i = 0; i < wavePower; i++) {
+            var progenyNeurons = _.filter(this.neurons, function (neuron) {
+                return !isMedium(neuron.type);
+            });
+            if (progenyNeurons.length > 0) {
+                var index = Math.floor((progenyNeurons.length - 1) * random());
+                progenyNeurons[index].includeInSignal();
+            }
+            else {
+                break;
+            }
+        }
+        this.preprocessBlasts();
+    };
+    Cortex.prototype.resetSynapces = function () {
+        this.neurons.forEach(function (neuron) {
+            neuron.resetSynapces();
+        });
+    };
+    Cortex.prototype.dropSignal = function () {
+        this.disposeBlasts();
+        this.neurons.forEach(function (neuron) {
+            neuron.dropToInitialState();
+        });
+    };
+    Cortex.prototype.computeBlasts = function () {
+        this.preprocessBlasts();
     };
     Cortex.prototype.chargeTense = function (time) {
         _.each(this.neurons, function (n) {
@@ -83,14 +107,35 @@ var Cortex = (function () {
             n.progress(progress);
         });
     };
+    Cortex.prototype.keepSelected = function (keepSelected) {
+        _.each(this.neurons, function (n) {
+            if (keepSelected && !n.mesh.isHighlighted) {
+                n.hide();
+            }
+            if (!keepSelected && !n.mesh.isHighlighted) {
+                n.show();
+            }
+        });
+    };
     Cortex.prototype.dispose = function () {
-        _.each(this.neurons, function (neuron) { neuron.dispose(); });
-        for (var i = 0; i < this.blastsArray.length; i++) {
-            this.blastsArray[i].dispose();
-        }
+        this.disposeBlasts();
+        _.each(this.neurons, function (neuron) {
+            neuron.dispose();
+        });
         this.neurons = null;
-        this.blasts = null;
-        this.blastsArray = null;
+    };
+    Cortex.prototype.disposeBlasts = function () {
+        this.disposeMediators();
+        if (this.blastsArray) {
+            for (var i = 0; i < this.blastsArray.length; i++) {
+                this.blastsArray[i].dispose();
+            }
+            this.blasts = null;
+            this.blastsArray = null;
+        }
+    };
+    Cortex.prototype.disposeMediators = function () {
+        _.each(this.neurons, function (neuron) { neuron.disposeMediators(); });
     };
     return Cortex;
 }());

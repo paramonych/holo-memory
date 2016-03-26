@@ -4,12 +4,15 @@ var SynapceMesh = (function () {
         this.scale = scale;
         this.basePosition = basePosition;
         this.neuron = neuron;
-        this.position = isMedium(neuron.type) ? this.shiftPosition(this.basePosition.clone()) : basePosition.clone();
-        this.setMaterials();
+        this.position = this.shiftPosition(this.basePosition.clone());
         this.draw(basePosition);
+        this.setMaterial();
     }
     SynapceMesh.prototype.shiftPosition = function (basePosition) {
-        var shift = this.scale / 3;
+        var pinMaxLength = this.neuron.cortex.cortexState.pinMaxLength;
+        var synapcesAmount = this.neuron.cortex.cortexState.synapcesAmount;
+        pinMaxLength = pinMaxLength / (synapcesAmount / (this.neuron.cortex.cortexState.scale / realSynapcesDistance));
+        var shift = pinMaxLength * random();
         var neuronPath = this.neuron.mesh.curve.path;
         var first = neuronPath[0];
         var last = neuronPath[neuronPath.length - 1];
@@ -24,12 +27,11 @@ var SynapceMesh = (function () {
         return result;
     };
     SynapceMesh.prototype.draw = function (basePosition) {
-        this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale / (isMedium(this.neuron.type) ? 50 : 100), this.scene, false);
+        this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale / (isMedium(this.neuron.type) ? 50 : 100), this.scene, true);
         this.mesh.position = this.position;
-        if (isMedium(this.neuron.type)) {
-            this.synapceLegMesh = BABYLON.Mesh.CreateTube('t', [basePosition, this.position], this.scale / 470, 10, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
-            this.synapceLegMesh.material = this.material;
-        }
+        this.synapceLegMesh = BABYLON.Mesh.CreateTube('t', [basePosition, this.position], this.scale / 470, 10, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
+        this.mesh.material = defaultMaterial(this.scene);
+        this.synapceLegMesh.material = defaultMaterial(this.scene);
         this.deactivate();
     };
     SynapceMesh.prototype.affect = function (frontPosition) {
@@ -44,21 +46,24 @@ var SynapceMesh = (function () {
         return x < delta && y < delta && z < delta;
     };
     SynapceMesh.prototype.activate = function () {
-        this.mesh.material = this.activeMaterial;
-        this.synapceLegMesh.material = this.activeMaterial;
+        resetMaterial(this.mesh.material, activeMaterial);
+        resetMaterial(this.synapceLegMesh.material, activeMaterial);
     };
     SynapceMesh.prototype.deactivate = function () {
-        this.mesh.material = this.material;
+        this.setMaterial();
     };
-    SynapceMesh.prototype.setMaterials = function () {
+    SynapceMesh.prototype.setMaterial = function () {
         if (isMedium(this.neuron.type)) {
-            this.material = forMediumNeuron(this.scene);
-            this.activeMaterial = forMediumActiveNeuron(this.scene);
+            resetMaterial(this.mesh.material, mediumMaterial);
+            resetMaterial(this.synapceLegMesh.material, mediumMaterial);
         }
         else {
-            this.material = forProgenyNeuron(this.scene);
-            this.activeMaterial = forProgenyActiveNeuron(this.scene);
+            resetMaterial(this.mesh.material, progenyMaterial);
+            resetMaterial(this.synapceLegMesh.material, progenyMaterial);
         }
+    };
+    SynapceMesh.prototype.resetMaterials = function () {
+        this.setMaterial();
     };
     SynapceMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);

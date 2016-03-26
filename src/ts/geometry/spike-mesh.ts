@@ -1,8 +1,6 @@
 class SpikeMesh implements ActivatableMesh {
-  mesh: BABYLON.Mesh;
-  light: BABYLON.PointLight;
-  public material: BABYLON.StandardMaterial;
-  public activeMaterial: BABYLON.StandardMaterial;
+  public mesh: BABYLON.Mesh;
+  //light: BABYLON.PointLight;
   private numberPosition: number;
   private position: BABYLON.Vector3;
   private curve: Array<BABYLON.Vector3>;
@@ -18,10 +16,7 @@ class SpikeMesh implements ActivatableMesh {
       this.curve.push(next.clone());
     });
 
-    this.setMaterials();
     this.constructMesh();
-    this.resetPosition();
-
     this.chargeTense();
   }
 
@@ -55,39 +50,27 @@ class SpikeMesh implements ActivatableMesh {
 
   private constructMesh(): void {
     this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale/45, this.scene, false);
-    this.light = this.getLight();
-    this.light.parent = this.mesh;
+    this.mesh.material = defaultMaterial(this.scene);
+    this.deactivate();
   }
 
   private positionShoulders(): void {
     this.mesh.position = this.position.clone();
   }
 
-  private getLight(): BABYLON.PointLight {
-    let light = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 1, 0), this.scene);
-  	light.diffuse = new BABYLON.Color3(1, 0.5, 0);
-  	light.specular = new BABYLON.Color3(0.9, 0.9, 1);
-  	light.intensity = 0;
-    return light;
-  }
-
   public activate(): void {
-    this.styleAsActive(true);
+    resetMaterial(this.mesh.material, activeMaterial);
+    setAlpha(this.mesh.material, 1);
   }
 
   public deactivate(): void {
     this.resetPosition();
-    this.styleAsActive(false);
+    this.setMaterial();
+    setAlpha(this.mesh.material, 0);
   }
 
-  private styleAsActive(isActive: boolean): void {
-    if(isActive) {
-      this.mesh.material = this.activeMaterial;
-      this.light.intensity = .1;
-    } else {
-      this.mesh.material = this.material;
-      this.light.intensity = 0;
-    }
+  setMaterial(): void {
+    resetMaterial(this.mesh.material, mediumMaterial);
   }
 
   private chargeTense(): void {
@@ -148,18 +131,10 @@ class SpikeMesh implements ActivatableMesh {
     this.mesh.position.z = position.z;
   }
 
-  setMaterials(): void {
-    this.material = forSpike(this.scene);
-    this.activeMaterial = forSpikeActive(this.scene);
-  }
-
   public dispose(): void {
     this.scene.removeMesh(this.mesh);
-    this.scene.removeLight(this.light);
     this.mesh.dispose();
     this.mesh = null;
-    this.light.dispose();
-    this.light = null;
     this.curve = null;
   }
 }

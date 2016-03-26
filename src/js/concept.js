@@ -1,34 +1,14 @@
 document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
+var scale = 5;
+var realSynapcesDistance = 0.2;
+var cortexSate = cortexConfigurationFrom(scale, 2, 2, scale / (realSynapcesDistance * 2.5), 1.1, 1, 2);
+var knobs;
+var uiCallback;
+var blockerOverlay;
 function plantConcept() {
-    if (!BABYLON.Engine.isSupported()) {
-        return;
-    }
-    var canvas = jQuery(ids.canvas)[0];
-    var engine = new BABYLON.Engine(canvas, true);
-    var scene = new BABYLON.Scene(engine);
-    scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
-    var scale = 10;
-    var neuronsAmount = 20;
-    var blastRadius = 3;
-    var blastPower = 3;
-    jQuery(ids.neuronsAmount).find('input').val('' + neuronsAmount);
-    jQuery(ids.blastRadius).find('input').val('' + blastRadius);
-    jQuery(ids.blastPower).find('input').val('' + blastPower);
-    attachCamera(canvas, scene, scale);
-    setLight(scene);
-    createPatternSpaceBox(scene, scale);
-    engine.runRenderLoop(function () {
-        scene.render();
-    });
-    wireUI(scene, scale, canvas);
-}
-function wireUI(scene, scale, canvas) {
-    var knobs = getUIControls();
-    var neuronsAmount = +knobs.neuronsAmount.val();
-    var blastRadius = +knobs.blastRadius.val();
-    var blastPower = +knobs.blastPower.val();
-    var uiCallback = function (blastsAmount) {
+    knobs = getUIControls();
+    uiCallback = function (blastsAmount) {
         if (blastsAmount === 0) {
             knobs.launch.attr('disabled', 'disabled');
         }
@@ -36,7 +16,41 @@ function wireUI(scene, scale, canvas) {
             knobs.launch.removeAttr('disabled');
         }
     };
-    var space = new Space(scene, scale, lifetime, neuronsAmount, blastRadius, blastPower, uiCallback);
+    if (!BABYLON.Engine.isSupported()) {
+        return;
+    }
+    var canvas = jQuery(ids.canvas)[0];
+    var engine = new BABYLON.Engine(canvas, true);
+    var scene = getScene(engine);
+    blockerOverlay = jQuery(ids.sceneBlocker);
+    jQuery(ids.dendritsAmount).find('input').val('' + cortexSate.dendritsAmount);
+    jQuery(ids.wavePower).find('input').val('' + cortexSate.wavePower);
+    jQuery(ids.synapcesAmount).find('input').val('' + cortexSate.synapcesAmount);
+    jQuery(ids.pinMaxLength).find('input').val('' + cortexSate.pinMaxLength);
+    jQuery(ids.blastRadius).find('input').val('' + cortexSate.blastRadius);
+    jQuery(ids.blastPower).find('input').val('' + cortexSate.blastPower);
+    attachCamera(canvas, scene, cortexSate.scale);
+    setLight(scene);
+    createPatternSpaceBox(scene, cortexSate.scale);
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+    wireUI(engine, scene, cortexSate.scale, canvas);
+}
+function getScene(engine) {
+    var scene = new BABYLON.Scene(engine);
+    scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+    scene.fogDensity = 0.01;
+    scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
+    return scene;
+}
+function showBlocker() {
+    blockerOverlay.removeClass('hidden');
+}
+function wireUI(engine, scene, scale, canvas) {
+    setTimeout(function () { blockerOverlay.addClass('hidden'); }, 1300);
+    cortexSate = cortexConfigurationFrom(scale, +knobs.dendritsAmount.val(), +knobs.wavePower.val(), +knobs.synapcesAmount.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val());
+    var space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
     var time = new Time(lifetime);
     knobs.launch.off('click').on('click', function () {
         var next = knobs.launch.data('type');
@@ -55,18 +69,43 @@ function wireUI(scene, scale, canvas) {
             time.pause(space);
         }
     });
-    knobs.applyButton.off('click').on('click', function () {
-        neuronsAmount = +knobs.neuronsAmount.val();
-        blastRadius = +knobs.blastRadius.val();
-        blastPower = +knobs.blastPower.val();
+    knobs.setDendritsButton.off('click').on('click', function () {
+        showBlocker();
+        knobs.processWaveButton.attr('disabled', 'disabled');
+        knobs.keepSelected.prop('checked', false);
+        cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
         space.dispose();
         time.dispose();
         scene.dispose();
-        attachCamera(canvas, scene, scale);
-        setLight(scene);
-        createPatternSpaceBox(scene, scale);
-        scene.render();
-        wireUI(scene, scale, canvas);
+        var newScene = getScene(engine);
+        engine.stopRenderLoop();
+        setLight(newScene);
+        createPatternSpaceBox(newScene, scale);
+        engine.runRenderLoop(function () {
+            attachCamera(canvas, newScene, scale);
+            newScene.render();
+        });
+        wireUI(engine, newScene, scale, canvas);
+    });
+    knobs.setSignalButton.off('click').on('click', function () {
+        var newValue = +knobs.wavePower.val();
+        cortexSate.wavePower = newValue;
+        space.cortex.initSignal(cortexSate.wavePower);
+        knobs.processWaveButton.removeAttr('disabled');
+    });
+    knobs.processWaveButton.off('click').on('click', function () {
+        var newPinLength = +knobs.pinMaxLength.val();
+        if (newPinLength !== cortexSate.pinMaxLength) {
+            cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
+            space.cortex.resetSynapces();
+        }
+        cortexSate.blastRadius = +knobs.blastRadius.val();
+        cortexSate.blastPower = +knobs.blastPower.val();
+        space.cortex.disposeBlasts();
+        space.cortex.computeBlasts();
+    });
+    knobs.keepSelected.off('change').on('change', function () {
+        space.cortex.keepSelected(knobs.keepSelected.prop('checked'));
     });
     time.tense.eventCallback("onUpdate", function () {
         var pg = time.tense.progress();
@@ -82,12 +121,14 @@ function wireUI(scene, scale, canvas) {
     });
     space.expose(time);
 }
-function getUIControls() {
-    var launch = jQuery(ids.launch);
-    var slider = jQuery(ids.slider);
-    var neuronsAmount = jQuery(ids.neuronsAmount);
-    var blastRadius = jQuery(ids.blastRadius);
-    var blastPower = jQuery(ids.blastPower);
-    var applyButton = jQuery(ids.applyButton);
-    return knobsFrom(launch, slider, neuronsAmount, blastRadius, blastPower, applyButton);
+function cortexConfigurationFrom(scale, dendritsAmount, wavePower, synapcesAmount, pinMaxLength, blastRadius, blastPower) {
+    return {
+        scale: scale,
+        dendritsAmount: dendritsAmount,
+        wavePower: wavePower,
+        synapcesAmount: synapcesAmount,
+        pinMaxLength: pinMaxLength,
+        blastRadius: blastRadius,
+        blastPower: blastPower
+    };
 }

@@ -2,7 +2,6 @@ function forBlastSphere(scene, emissiveColor) {
     var material = new BABYLON.StandardMaterial('i', scene);
     material.emissiveColor = emissiveColor;
     material.specularColor = new BABYLON.Color3(1, 1, 1);
-    material.alpha = 1;
     return material;
 }
 function forIndicator(scene) {

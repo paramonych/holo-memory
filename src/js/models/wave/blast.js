@@ -37,10 +37,7 @@ var NeuroBlast = (function () {
             useMap(this.synapcesMap, function (synapce) {
                 var coloredMaterial = forBlastSphere(_this.scene, _this.color);
                 synapce.neuron.allowSpikes();
-                synapce.neuron.mesh.material = coloredMaterial;
                 synapce.allowMediator();
-                synapce.mesh.mesh.material = coloredMaterial;
-                synapce.mesh.synapceLegMesh.material = coloredMaterial;
             });
         }
         else {
@@ -77,6 +74,9 @@ var NeuroBlast = (function () {
             this.sphere.dispose();
         }
         this.neuronsMap = null;
+        toValues(this.synapcesMap).forEach(function (synapce) {
+            synapce.disposeCodeMesh();
+        });
         this.synapcesMap = null;
     };
     return NeuroBlast;

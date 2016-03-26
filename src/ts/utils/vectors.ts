@@ -16,15 +16,17 @@ function randomPointOnSphere(radius: number): BABYLON.Vector3 {
   return vector;
 }
 
-function randomPath(scale: number, deltaRadius: number, deltaSegment: number): BABYLON.Path3D {
+function randomPath(scale: number, segmentsAmount: number): BABYLON.Path3D {
   let path = new Array<BABYLON.Vector3>();
   let next = randomVector(scale);//randomPointOnSphere(scale);//vectorFrom(0,0,0);
-  let steps = Math.floor(scale/deltaSegment);
+
   let xSign = (-1)*next.x/Math.abs(next.x);
   let ySign = (-1)*next.y/Math.abs(next.y);
   let zSign = (-1)*next.z/Math.abs(next.z);
 
-  for (let i = 0; i <= steps; i += 1 ) {
+  let deltaRadius = scale*2/segmentsAmount;
+
+  for (let i = 0; i <= segmentsAmount; i += 1 ) {
     path.push( next );
     next = vectorFrom(
       (next.x+xSign*Math.random()*deltaRadius),

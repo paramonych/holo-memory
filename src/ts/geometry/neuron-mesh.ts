@@ -1,41 +1,115 @@
 class NeuronMesh implements ActivatableMesh {
   public mesh: BABYLON.Mesh;
+  public isHighlighted = false;
   public curve: BABYLON.Path3D;
-  public material: BABYLON.StandardMaterial;
-  public activeMaterial: BABYLON.StandardMaterial;
+  private alpha = 1;
 
-  constructor(private type: NeuronType, private scene: BABYLON.Scene, public scale: number) {
-    this.setMaterials();
-    this.curve = randomPath(this.scale, this.scale/20, this.scale/60);
+  constructor(
+    private synapces: Synapce[],
+    private type: NeuronType,
+    private scene: BABYLON.Scene,
+    public cortexState: CortexConfiguration) {
+    this.curve = randomPath(this.cortexState.scale, (this.cortexState.synapcesAmount+1)*2);
     this.draw();
+    this.setMaterial();
   }
 
   draw(): void {
-    let scale = this.scale;
+    let scale = this.cortexState.scale;
     this.mesh = BABYLON.Mesh.CreateTube(
-      't', this.curve.path, this.scale/470, 60, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
-    this.mesh.material = this.material;
+      't', this.curve.path, this.cortexState.scale/400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
+    this.mesh.material = defaultMaterial(this.scene);
+    this.deactivate();
+    this.registerActions();
   }
 
-  setMaterials(): void {
+  public setSynapces(synapces: Synapce[]): void {
+    this.synapces = synapces;
+  }
+
+  private registerActions(): void {
+    if(this.mesh.actionManager) {
+      this.mesh.actionManager.dispose();
+    }
+    this.mesh.actionManager = new BABYLON.ActionManager(this.scene);
+    let self = this;
+
+    this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function() {
+      if(!self.isHighlighted) {
+        self.highlightNeuron(true);
+      }
+    }));
+
+    this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function() {
+      if(!self.isHighlighted) {
+        self.highlightNeuron(false);
+      }
+    }));
+
+    this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLeftPickTrigger, function() {
+      self.highlightNeuron();
+    }));
+  }
+
+  public select(): void {
+    this.isHighlighted = void 0;
+    this.highlightNeuron();
+  }
+
+  private highlightNeuron(isHovered ?: boolean): void {
+    let newMaterialConfig = (isMedium(this.type) ? mediumMaterial : progenyMaterial);
+    let alpha = this.alpha;
+    if((!this.isHighlighted && (isHovered === true)) || isHovered === void 0) {
+      newMaterialConfig = selectedMaterial;
+      alpha = 1;
+    }
+    if(isHovered === void 0) {
+      this.isHighlighted = !this.isHighlighted;
+    }
+    resetMaterial(this.mesh.material, newMaterialConfig, alpha);
+    this.synapces.forEach(function(synapce) {
+      resetMaterial(synapce.mesh.mesh.material, newMaterialConfig, alpha);
+      resetMaterial(synapce.mesh.synapceLegMesh.material, newMaterialConfig, alpha);
+    });
+  }
+
+  public setAlpha(value: number): void {
+    this.alpha = value;
+    setAlpha(this.mesh.material, value);
+    this.synapces.forEach(function(synapce) {
+      setAlpha(synapce.mesh.mesh.material, Math.floor(value));
+      setAlpha(synapce.mesh.synapceLegMesh.material, Math.floor(value));
+      if(synapce.codeMesh) {
+        setAlpha(synapce.codeMesh.mesh.material, Math.floor(value));
+      }
+    });
+  }
+
+  setMaterial(): void {
     if(isMedium(this.type)) {
-      this.material = forMediumNeuron(this.scene);
-      this.activeMaterial = forMediumActiveNeuron(this.scene);
+      resetMaterial(this.mesh.material, mediumMaterial);
     } else {
-      this.material = forProgenyNeuron(this.scene);
-      this.activeMaterial = forProgenyActiveNeuron(this.scene);
+      resetMaterial(this.mesh.material, progenyMaterial);
     }
   }
 
+  public resetMaterials(type: NeuronType): void {
+    this.type = type;
+    this.setMaterial();
+    this.deactivate();
+    this.isHighlighted = false;
+  }
+
   public activate(): void {
-    this.mesh.material = this.activeMaterial;
+    resetMaterial(this.mesh.material, activeMaterial);
   }
   public deactivate(): void {
-    this.mesh.material = this.material;
+    this.setMaterial();
   }
 
   public dispose(): void {
-
+    this.mesh.actionManager.dispose();
+    this.mesh.actionManager = null;
     this.scene.removeMesh(this.mesh);
     this.mesh.dispose();
     this.mesh = null;

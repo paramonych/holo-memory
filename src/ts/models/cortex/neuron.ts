@@ -6,25 +6,38 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public codeMesh: Code;
   public spike: Spike;
   public state: KnockoutObservable<StateType>;
-  public synapces = new Array<Synapce>();
+  public synapces: Synapce[];
   public mesh: NeuronMesh;
-
-  public step: number = 0;
 
   constructor(
     public cortex: Cortex,
     public type: NeuronType
   ) {
-    this.mesh = new NeuronMesh(this.type, this.cortex.scene, this.cortex.scale);
+    this.mesh = new NeuronMesh(this.synapces, this.type, this.cortex.scene, this.cortex.cortexState);
     this.toDefaultState();
     this.createSynapces();
   }
 
+  public includeInSignal(): void {
+    this.type = NeuronType.Medium;
+    this.mesh.resetMaterials(this.type);
+    this.synapces.forEach((synapce) => {
+      synapce.reset();
+    });
+  }
+
+  public dropToInitialState(): void {
+    this.type = NeuronType.Progeny;
+    this.mesh.resetMaterials(this.type);
+    this.synapces.forEach((synapce) => {
+      synapce.reset();
+    });
+  }
+
   public allowSpikes(): void {
-    if(isMedium(this.type)) {
-      this.createSpike();
-      this.startWatchForSpike();
-    }
+    this.createSpike();
+    this.startWatchForSpike();
+    this.mesh.select();
   }
 
   public setProgenyCodeMesh(): void {
@@ -86,15 +99,37 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   private createSynapces(): void {
-    let scale = this.cortex.scale;
-    let devideFactor = scale/2;
+    this.synapces = new Array<Synapce>();
+
+    let scale = this.cortex.cortexState.scale;
+    let synapcesAmount = this.cortex.cortexState.synapcesAmount;
     let path = this.mesh.curve.path;
-    this.step = Math.floor(path.length/devideFactor);
-    let halfStep = Math.floor(this.step/2);
-    for(let i=0; i< devideFactor; i++) {
-      let position = path[i*this.step+halfStep];
+
+    for(let i=0; i< synapcesAmount; i++) {
+      let position = path[i*2+1];
       let synapce = new Synapce(this, position.clone());
       this.synapces.push(synapce);
+    }
+    this.mesh.setSynapces(this.synapces);
+  }
+
+  public resetSynapces(): void {
+    this.disposeSynapces();
+    this.createSynapces();
+  }
+
+
+  public hide(): void {
+    this.mesh.setAlpha(0.07);
+    if(isMedium(this.type) && this.spike) {
+      this.spike.setAlpha(0.07);
+    }
+  }
+
+  public show(): void {
+    this.mesh.setAlpha(1);
+    if(isMedium(this.type) && this.spike) {
+      this.spike.setAlpha(1);
     }
   }
 
@@ -115,10 +150,9 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       this.spike.dispose();
       this.spike = null;
     }
-    _.each(this.synapces, (synapce) => {synapce.dispose();});
+    this.disposeSynapces();
     this.mesh.dispose();
     this.mesh = null;
-    this.synapces = null;
     if(this.codeMesh && this.codeMesh.dispose) {
       this.codeMesh.dispose();
       this.codeMesh = null;
@@ -126,8 +160,11 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     this.state = null;
   }
 
-  public build(): void {
-    this.mesh.draw();
+  private disposeSynapces(): void {
+    _.each(this.synapces, (synapce) => {
+      synapce.dispose();
+    });
+    this.synapces = null;
   }
 
   public activate(): void {
@@ -156,5 +193,9 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
 
   public watchState(action: (state: StateType) => void): void {
     this.state.subscribe(action);
+  }
+
+  public disposeMediators(): void {
+    _.each(this.synapces, (synapce) => {synapce.resetMediator();});
   }
 }

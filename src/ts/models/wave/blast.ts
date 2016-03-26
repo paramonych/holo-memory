@@ -47,10 +47,11 @@ class NeuroBlast {
       useMap(this.synapcesMap, (synapce) => {
         let coloredMaterial = forBlastSphere(this.scene, this.color);
         synapce.neuron.allowSpikes();
-        synapce.neuron.mesh.material = coloredMaterial;
         synapce.allowMediator();
-        synapce.mesh.mesh.material = coloredMaterial;
-        synapce.mesh.synapceLegMesh.material = coloredMaterial;
+
+        /*resetMaterial(synapce.neuron.mesh.mesh.material, colorizeMaterial(mediumMaterial, this.color));
+        resetMaterial(synapce.mesh.mesh.material, colorizeMaterial(mediumMaterial, this.color));
+        resetMaterial(synapce.mesh.synapceLegMesh.material, colorizeMaterial(mediumMaterial, this.color));*/
       });
     } else {
       this.isExists = false;
@@ -93,6 +94,9 @@ class NeuroBlast {
       this.sphere.dispose();
     }
     this.neuronsMap = null;
+    toValues(this.synapcesMap).forEach((synapce) => {
+      synapce.disposeCodeMesh();
+    });
     this.synapcesMap = null;
   }
 }
