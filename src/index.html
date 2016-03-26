@@ -24,17 +24,17 @@
 
      <div id="dendritsAmount" class="config-detail">
        <label>Dendrits amount:</label>
-       <input type="number" size="3"  min="1" max="300"/>
+       <input type="number" size="3"  min="1" max="500"/>
      </div>
      <div id="synapcesAmount" class="config-detail">
        <label>Synapces amount:</label>
-       <input type="number" size="3" max="300"/>
+       <input type="number" size="3"  min="1" step="1" max="300"/>
      </div>
      <button id="setDendrits">RESET DENDRITS</button>
 
      <div id="wavePower" class="config-detail">
        <label>Active dendrits:</label>
-       <input type="number" size="3"/>
+       <input type="number" size="3" min="0" step="1"/>
      </div>
      <button id="setSignal">INIT SIGNAL</button>
 
@@ -48,9 +48,9 @@
      </div>
      <div id="blastPower" class="config-detail">
        <label>Caught synapces:</label>
-       <input type="number" size="3"/>
+       <input type="number" size="3" min="2" step="1"/>
      </div>
-     <button id="processWave" disabled="disabled">CONFIGURE</button>
+     <button id="processWave">CONFIGURE</button>
      <div id="keepSelected" class="config-detail">
        <label>Keep selected:</label>
        <input type="checkbox"/>

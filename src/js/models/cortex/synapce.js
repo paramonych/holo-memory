@@ -63,15 +63,28 @@ var Synapce = (function () {
         return isActiveState(this.state());
     };
     Synapce.prototype.dispose = function () {
+        this.disposeMesh();
+        this.disposeCodeMesh();
+        this.disposeMediator();
+        this.state = null;
+    };
+    Synapce.prototype.disposeMesh = function () {
         this.mesh.dispose();
         this.mesh = null;
+    };
+    Synapce.prototype.disposeMediator = function () {
+        this.mediator.dispose();
+        this.mediator = null;
+    };
+    Synapce.prototype.resetMediator = function () {
+        this.disposeMediator();
+        this.setMediator();
+    };
+    Synapce.prototype.disposeCodeMesh = function () {
         if (this.codeMesh && this.codeMesh.dispose) {
             this.codeMesh.dispose();
             this.codeMesh = null;
         }
-        this.mediator.dispose();
-        this.mediator = null;
-        this.state = null;
     };
     return Synapce;
 }());

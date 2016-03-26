@@ -92,10 +92,10 @@ function wireUI(engine, scene, scale, canvas) {
         space.cortex.initSignal(cortexSate.wavePower);
     });
     knobs.processWaveButton.off('click').on('click', function () {
+        cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
         cortexSate.blastRadius = +knobs.blastRadius.val();
         cortexSate.blastPower = +knobs.blastPower.val();
         space.cortex.disposeBlasts();
-        time.dispose();
         space.cortex.computeBlasts();
     });
     knobs.keepSelected.off('change').on('change', function () {

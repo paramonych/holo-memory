@@ -119,11 +119,11 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
+    cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
     cortexSate.blastRadius = +knobs.blastRadius.val();
     cortexSate.blastPower = +knobs.blastPower.val();
 
     space.cortex.disposeBlasts();
-    time.dispose();
     space.cortex.computeBlasts();
   });
 

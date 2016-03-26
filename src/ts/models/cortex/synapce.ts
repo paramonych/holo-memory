@@ -74,14 +74,31 @@ class Synapce implements Disposable, Dualistic {
   }
 
   public dispose(): void {
+    this.disposeMesh();
+    this.disposeCodeMesh();
+    this.disposeMediator();
+    this.state = null;
+  }
+
+  private disposeMesh(): void {
     this.mesh.dispose();
     this.mesh = null;
+  }
+
+  private disposeMediator(): void {
+    this.mediator.dispose();
+    this.mediator = null;
+  }
+
+  public resetMediator(): void {
+    this.disposeMediator();
+    this.setMediator();
+  }
+
+  public disposeCodeMesh(): void {
     if(this.codeMesh && this.codeMesh.dispose) {
       this.codeMesh.dispose();
       this.codeMesh = null;
     }
-    this.mediator.dispose();
-    this.mediator = null;
-    this.state = null;
   }
 }

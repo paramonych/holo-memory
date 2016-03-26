@@ -94,6 +94,9 @@ class NeuroBlast {
       this.sphere.dispose();
     }
     this.neuronsMap = null;
+    toValues(this.synapcesMap).forEach((synapce) => {
+      synapce.disposeCodeMesh();
+    });
     this.synapcesMap = null;
   }
 }

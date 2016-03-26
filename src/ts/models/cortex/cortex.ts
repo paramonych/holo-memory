@@ -145,6 +145,8 @@ class Cortex implements Disposable {
   }
 
   public disposeBlasts(): void {
+    this.disposeMediators();
+
     if(this.blastsArray) {
       for(let i=0; i< this.blastsArray.length; i++) {
         this.blastsArray[i].dispose();
@@ -152,5 +154,9 @@ class Cortex implements Disposable {
       this.blasts = null;
       this.blastsArray = null;
     }
+  }
+
+  private disposeMediators(): void {
+    _.each(this.neurons, (neuron) => {neuron.disposeMediators();});
   }
 }

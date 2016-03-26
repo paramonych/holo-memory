@@ -145,5 +145,8 @@ var Neuron = (function () {
     Neuron.prototype.watchState = function (action) {
         this.state.subscribe(action);
     };
+    Neuron.prototype.disposeMediators = function () {
+        _.each(this.synapces, function (synapce) { synapce.resetMediator(); });
+    };
     return Neuron;
 }());

@@ -176,4 +176,8 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public watchState(action: (state: StateType) => void): void {
     this.state.subscribe(action);
   }
+
+  public disposeMediators(): void {
+    _.each(this.synapces, (synapce) => {synapce.resetMediator();});
+  }
 }

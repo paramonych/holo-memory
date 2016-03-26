@@ -77,6 +77,9 @@ var NeuroBlast = (function () {
             this.sphere.dispose();
         }
         this.neuronsMap = null;
+        toValues(this.synapcesMap).forEach(function (synapce) {
+            synapce.disposeCodeMesh();
+        });
         this.synapcesMap = null;
     };
     return NeuroBlast;

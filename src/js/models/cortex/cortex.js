@@ -118,6 +118,7 @@ var Cortex = (function () {
         this.neurons = null;
     };
     Cortex.prototype.disposeBlasts = function () {
+        this.disposeMediators();
         if (this.blastsArray) {
             for (var i = 0; i < this.blastsArray.length; i++) {
                 this.blastsArray[i].dispose();
@@ -125,6 +126,9 @@ var Cortex = (function () {
             this.blasts = null;
             this.blastsArray = null;
         }
+    };
+    Cortex.prototype.disposeMediators = function () {
+        _.each(this.neurons, function (neuron) { neuron.disposeMediators(); });
     };
     return Cortex;
 }());
