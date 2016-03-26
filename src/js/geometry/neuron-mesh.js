@@ -40,6 +40,10 @@ var NeuronMesh = (function () {
             self.highlightNeuron();
         }));
     };
+    NeuronMesh.prototype.select = function () {
+        this.isHighlighted = void 0;
+        this.highlightNeuron();
+    };
     NeuronMesh.prototype.highlightNeuron = function (isHovered) {
         var newMaterialConfig = (isMedium(this.type) ? mediumMaterial : progenyMaterial);
         var alpha = this.alpha;

@@ -49,9 +49,9 @@ class NeuroBlast {
         synapce.neuron.allowSpikes();
         synapce.allowMediator();
 
-        resetMaterial(synapce.neuron.mesh.mesh.material, colorizeMaterial(mediumMaterial, this.color));
+        /*resetMaterial(synapce.neuron.mesh.mesh.material, colorizeMaterial(mediumMaterial, this.color));
         resetMaterial(synapce.mesh.mesh.material, colorizeMaterial(mediumMaterial, this.color));
-        resetMaterial(synapce.mesh.synapceLegMesh.material, colorizeMaterial(mediumMaterial, this.color));
+        resetMaterial(synapce.mesh.synapceLegMesh.material, colorizeMaterial(mediumMaterial, this.color));*/
       });
     } else {
       this.isExists = false;

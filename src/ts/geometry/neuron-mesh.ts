@@ -51,6 +51,11 @@ class NeuronMesh implements ActivatableMesh {
     }));
   }
 
+  public select(): void {
+    this.isHighlighted = void 0;
+    this.highlightNeuron();
+  }
+
   private highlightNeuron(isHovered ?: boolean): void {
     let newMaterialConfig = (isMedium(this.type) ? mediumMaterial : progenyMaterial);
     let alpha = this.alpha;

@@ -38,9 +38,6 @@ var NeuroBlast = (function () {
                 var coloredMaterial = forBlastSphere(_this.scene, _this.color);
                 synapce.neuron.allowSpikes();
                 synapce.allowMediator();
-                resetMaterial(synapce.neuron.mesh.mesh.material, colorizeMaterial(mediumMaterial, _this.color));
-                resetMaterial(synapce.mesh.mesh.material, colorizeMaterial(mediumMaterial, _this.color));
-                resetMaterial(synapce.mesh.synapceLegMesh.material, colorizeMaterial(mediumMaterial, _this.color));
             });
         }
         else {

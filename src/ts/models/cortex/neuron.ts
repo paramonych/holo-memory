@@ -35,10 +35,9 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   public allowSpikes(): void {
-    if(isMedium(this.type)) {
-      this.createSpike();
-      this.startWatchForSpike();
-    }
+    this.createSpike();
+    this.startWatchForSpike();
+    this.mesh.select();
   }
 
   public setProgenyCodeMesh(): void {

@@ -23,10 +23,9 @@ var Neuron = (function () {
         });
     };
     Neuron.prototype.allowSpikes = function () {
-        if (isMedium(this.type)) {
-            this.createSpike();
-            this.startWatchForSpike();
-        }
+        this.createSpike();
+        this.startWatchForSpike();
+        this.mesh.select();
     };
     Neuron.prototype.setProgenyCodeMesh = function () {
         var scene = this.cortex.scene;
