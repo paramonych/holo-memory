@@ -9,9 +9,7 @@ var SpikeMesh = (function () {
         _.each(this.spike.neuron.mesh.curve.path, function (next) {
             _this.curve.push(next.clone());
         });
-        this.setMaterials();
         this.constructMesh();
-        this.resetPosition();
         this.chargeTense();
     }
     SpikeMesh.prototype.setPositionInCurve = function () {
@@ -41,35 +39,23 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.constructMesh = function () {
         this.mesh = BABYLON.Mesh.CreateSphere('s', 8, this.scale / 45, this.scene, false);
-        this.light = this.getLight();
-        this.light.parent = this.mesh;
+        this.mesh.material = defaultMaterial(this.scene);
+        this.deactivate();
     };
     SpikeMesh.prototype.positionShoulders = function () {
         this.mesh.position = this.position.clone();
     };
-    SpikeMesh.prototype.getLight = function () {
-        var light = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 1, 0), this.scene);
-        light.diffuse = new BABYLON.Color3(1, 0.5, 0);
-        light.specular = new BABYLON.Color3(0.9, 0.9, 1);
-        light.intensity = 0;
-        return light;
-    };
     SpikeMesh.prototype.activate = function () {
-        this.styleAsActive(true);
+        resetMaterial(this.mesh.material, activeMaterial);
+        setAlpha(this.mesh.material, 1);
     };
     SpikeMesh.prototype.deactivate = function () {
         this.resetPosition();
-        this.styleAsActive(false);
+        this.setMaterial();
+        setAlpha(this.mesh.material, 0);
     };
-    SpikeMesh.prototype.styleAsActive = function (isActive) {
-        if (isActive) {
-            this.mesh.material = this.activeMaterial;
-            this.light.intensity = .1;
-        }
-        else {
-            this.mesh.material = this.material;
-            this.light.intensity = 0;
-        }
+    SpikeMesh.prototype.setMaterial = function () {
+        resetMaterial(this.mesh.material, mediumMaterial);
     };
     SpikeMesh.prototype.chargeTense = function () {
         var _this = this;
@@ -114,10 +100,6 @@ var SpikeMesh = (function () {
         this.mesh.position.x = position.x;
         this.mesh.position.y = position.y;
         this.mesh.position.z = position.z;
-    };
-    SpikeMesh.prototype.setMaterials = function () {
-        this.material = forSpike(this.scene);
-        this.activeMaterial = forSpikeActive(this.scene);
     };
     SpikeMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);

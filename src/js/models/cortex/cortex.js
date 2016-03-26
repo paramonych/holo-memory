@@ -15,9 +15,7 @@ var Cortex = (function () {
         this.blasts = newMap();
         this.blastsArray = new Array();
         mediumSynapces.forEach(function (synapce) {
-            var filteredSynapces = _.filter(mediumSynapces, function (nextSynapce) {
-                return synapce.neuron.id !== nextSynapce.neuron.id;
-            });
+            var filteredSynapces = mediumSynapces;
             var newBlast = new NeuroBlast(synapce, _this.cortexState.blastRadius, filteredSynapces, _this.scene, _this.cortexState.blastPower);
             if (newBlast.isExists) {
                 _this.blastsArray.push(newBlast);

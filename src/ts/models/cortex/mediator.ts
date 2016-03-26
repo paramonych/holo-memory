@@ -7,9 +7,9 @@ class Mediator {
     this.scene = this.synapce.neuron.cortex.scene;
     this.texture = new BABYLON.Texture(particleUrl, this.scene);
 
-    this.cloud = new BABYLON.ParticleSystem("cloud", 2000, this.scene);
+    this.cloud = new BABYLON.ParticleSystem("cloud", 10, this.scene);
     this.cloud.disposeOnStop  = false;
-    var step = this.synapce.neuron.step/2.5;
+    var step = this.synapce.neuron.cortex.cortexState.blastRadius;
     this.cloud.updateFunction = function (newParticles) {
     	var stop = false;
       for (var index = 0; index < this.particles.length; index++) {

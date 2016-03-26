@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
 var scale = 5;
 var realSynapcesDistance = 0.2;
-var cortexSate = cortexConfigurationFrom(scale, 5, 0, scale / realSynapcesDistance, 0.5, 0.2, 3);
+var cortexSate = cortexConfigurationFrom(scale, 5, 2, scale / realSynapcesDistance, 0.5, 0.2, 3);
 var knobs;
 var uiCallback;
 var blockerOverlay;

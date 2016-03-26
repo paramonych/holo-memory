@@ -5,7 +5,6 @@ var Neuron = (function () {
         this.id = getUniqueId();
         this.code = getRandomSixMap();
         this.synapces = new Array();
-        this.step = 0;
         this.mesh = new NeuronMesh(this.synapces, this.type, this.cortex.scene, this.cortex.cortexState);
         this.toDefaultState();
         this.createSynapces();
@@ -89,9 +88,15 @@ var Neuron = (function () {
     };
     Neuron.prototype.hide = function () {
         this.mesh.setAlpha(0.07);
+        if (isMedium(this.type) && this.spike) {
+            this.spike.setAlpha(0.07);
+        }
     };
     Neuron.prototype.show = function () {
         this.mesh.setAlpha(1);
+        if (isMedium(this.type) && this.spike) {
+            this.spike.setAlpha(1);
+        }
     };
     Neuron.prototype.startWatchForSpike = function () {
         var _this = this;

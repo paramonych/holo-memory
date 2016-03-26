@@ -20,9 +20,9 @@ class Cortex implements Disposable {
     this.blastsArray = new Array<NeuroBlast>();
 
     mediumSynapces.forEach((synapce) => {
-      let filteredSynapces = _.filter(mediumSynapces, function(nextSynapce) {
+      let filteredSynapces = mediumSynapces;/*_.filter(mediumSynapces, function(nextSynapce) {
         return synapce.neuron.id !== nextSynapce.neuron.id;
-      });
+      });*/
       let newBlast = new NeuroBlast(synapce, this.cortexState.blastRadius, filteredSynapces, this.scene, this.cortexState.blastPower);
       if(newBlast.isExists) {
         this.blastsArray.push(newBlast);

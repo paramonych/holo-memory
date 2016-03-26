@@ -26,6 +26,10 @@ class Spike implements Disposable, Dualistic {
     this.state(StateType.Silent);
   }
 
+  public setAlpha(value: number): void {
+    setAlpha(this.mesh.mesh.material, value);
+  }
+
   public reportMovement(vectors: DoubleVector): void {
     this.moved(vectors);
   }

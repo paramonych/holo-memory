@@ -9,8 +9,6 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public synapces = new Array<Synapce>();
   public mesh: NeuronMesh;
 
-  public step: number = 0;
-
   constructor(
     public cortex: Cortex,
     public type: NeuronType
@@ -115,10 +113,16 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
 
   public hide(): void {
     this.mesh.setAlpha(0.07);
+    if(isMedium(this.type) && this.spike) {
+      this.spike.setAlpha(0.07);
+    }
   }
 
   public show(): void {
     this.mesh.setAlpha(1);
+    if(isMedium(this.type) && this.spike) {
+      this.spike.setAlpha(1);
+    }
   }
 
   private startWatchForSpike(): void {
