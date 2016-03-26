@@ -5,8 +5,8 @@ var SynapceMesh = (function () {
         this.basePosition = basePosition;
         this.neuron = neuron;
         this.position = this.shiftPosition(this.basePosition.clone());
-        this.setMaterials();
         this.draw(basePosition);
+        this.setMaterial();
     }
     SynapceMesh.prototype.shiftPosition = function (basePosition) {
         var pinMaxLength = this.neuron.cortex.cortexState.pinMaxLength;
@@ -30,7 +30,8 @@ var SynapceMesh = (function () {
         this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale / (isMedium(this.neuron.type) ? 50 : 100), this.scene, true);
         this.mesh.position = this.position;
         this.synapceLegMesh = BABYLON.Mesh.CreateTube('t', [basePosition, this.position], this.scale / 470, 10, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
-        this.synapceLegMesh.material = this.material;
+        this.mesh.material = defaultMaterial(this.scene);
+        this.synapceLegMesh.material = defaultMaterial(this.scene);
         this.deactivate();
     };
     SynapceMesh.prototype.affect = function (frontPosition) {
@@ -45,27 +46,24 @@ var SynapceMesh = (function () {
         return x < delta && y < delta && z < delta;
     };
     SynapceMesh.prototype.activate = function () {
-        this.mesh.material = this.activeMaterial;
-        this.synapceLegMesh.material = this.activeMaterial;
+        resetMaterial(this.mesh.material, activeMaterial);
+        resetMaterial(this.synapceLegMesh.material, activeMaterial);
     };
     SynapceMesh.prototype.deactivate = function () {
-        this.mesh.material = this.material;
-        this.synapceLegMesh.material = this.material;
+        this.setMaterial();
     };
-    SynapceMesh.prototype.setMaterials = function () {
+    SynapceMesh.prototype.setMaterial = function () {
         if (isMedium(this.neuron.type)) {
-            this.material = forMediumNeuron(this.scene);
+            resetMaterial(this.mesh.material, mediumMaterial);
+            resetMaterial(this.synapceLegMesh.material, mediumMaterial);
         }
         else {
-            this.material = forProgenyNeuron(this.scene);
+            resetMaterial(this.mesh.material, progenyMaterial);
+            resetMaterial(this.synapceLegMesh.material, progenyMaterial);
         }
-        this.activeMaterial = forSignalNeuron(this.scene);
     };
     SynapceMesh.prototype.resetMaterials = function () {
-        this.material.dispose();
-        this.activeMaterial.dispose();
-        this.setMaterials();
-        this.deactivate();
+        this.setMaterial();
     };
     SynapceMesh.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);

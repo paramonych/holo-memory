@@ -77,9 +77,6 @@ var Cortex = (function () {
     Cortex.prototype.computeBlasts = function () {
         this.preprocessBlasts();
     };
-    Cortex.prototype.draw = function () {
-        _.each(this.neurons, function (neuron) { return neuron.build(); });
-    };
     Cortex.prototype.chargeTense = function (time) {
         _.each(this.neurons, function (n) {
             time.tense.add(function () { return n.play(); }, 0);

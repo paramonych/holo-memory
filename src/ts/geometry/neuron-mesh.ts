@@ -2,21 +2,24 @@ class NeuronMesh implements ActivatableMesh {
   public mesh: BABYLON.Mesh;
   public isHighlighted = false;
   public curve: BABYLON.Path3D;
-  public material: BABYLON.StandardMaterial;
-  public activeMaterial: BABYLON.StandardMaterial;
-  public selectedMaterial: BABYLON.StandardMaterial;
+  private alpha = 1;
 
-  constructor(private neuron: Neuron, private scene: BABYLON.Scene, public cortexState: CortexConfiguration) {
-    this.setMaterials();
+  constructor(
+    private synapces: Synapce[],
+    private type: NeuronType,
+    private scene: BABYLON.Scene,
+    public cortexState: CortexConfiguration) {
     this.curve = randomPath(this.cortexState.scale, (this.cortexState.synapcesAmount+1)*2);
     this.draw();
+    this.setMaterial();
   }
 
   draw(): void {
     let scale = this.cortexState.scale;
     this.mesh = BABYLON.Mesh.CreateTube(
       't', this.curve.path, this.cortexState.scale/400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
-    this.mesh.material = this.material;
+    this.mesh.material = defaultMaterial(this.scene);
+    this.deactivate();
     this.registerActions();
   }
 
@@ -29,62 +32,70 @@ class NeuronMesh implements ActivatableMesh {
 
     this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function() {
       if(!self.isHighlighted) {
-        self.highlightNeuron(self.selectedMaterial, false);
+        self.highlightNeuron(true);
       }
     }));
 
     this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, function() {
       if(!self.isHighlighted) {
-        self.highlightNeuron(self.material, false);
+        self.highlightNeuron(false);
       }
     }));
 
     this.mesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLeftPickTrigger, function() {
-      self.highlightNeuron((self.isHighlighted ? self.material : self.selectedMaterial), !self.isHighlighted);
+      self.highlightNeuron();
     }));
   }
 
-  private highlightNeuron(material: BABYLON.StandardMaterial, isHighlighted: boolean): void {
-    this.isHighlighted = isHighlighted;
-    this.mesh.material = material;
-    this.neuron.synapces.forEach(function(synapce) {
-      synapce.mesh.mesh.material = material;
-      synapce.mesh.synapceLegMesh.material = material;
+  private highlightNeuron(isHovered ?: boolean): void {
+    let newMaterialConfig = (isMedium(this.type) ? mediumMaterial : progenyMaterial);
+    let alpha = this.alpha;
+    if((!this.isHighlighted && (isHovered === true)) || isHovered === void 0) {
+      newMaterialConfig = selectedMaterial;
+      alpha = 1;
+    }
+    if(isHovered === void 0) {
+      this.isHighlighted = !this.isHighlighted;
+    }
+    resetMaterial(this.mesh.material, newMaterialConfig, alpha);
+    this.synapces.forEach(function(synapce) {
+      resetMaterial(synapce.mesh.mesh.material, newMaterialConfig, alpha);
+      resetMaterial(synapce.mesh.synapceLegMesh.material, newMaterialConfig, alpha);
     });
   }
 
   public setAlpha(value: number): void {
-    this.mesh.material.alpha = value;
-    this.neuron.synapces.forEach(function(synapce) {
-      synapce.mesh.mesh.material.alpha = value;
+    this.alpha = value;
+    setAlpha(this.mesh.material, value);
+    this.synapces.forEach(function(synapce) {
+      setAlpha(synapce.mesh.mesh.material, Math.floor(value));
+      setAlpha(synapce.mesh.synapceLegMesh.material, Math.floor(value));
       if(synapce.codeMesh) {
-        synapce.codeMesh.mesh.material.alpha = Math.round(value);
+        setAlpha(synapce.codeMesh.mesh.material, Math.floor(value));
       }
-      synapce.mesh.synapceLegMesh.material.alpha = value;
     });
   }
 
-  setMaterials(): void {
-    if(isMedium(this.neuron.type)) {
-      this.material = forMediumNeuron(this.scene);
+  setMaterial(): void {
+    if(isMedium(this.type)) {
+      resetMaterial(this.mesh.material, mediumMaterial);
     } else {
-      this.material = forProgenyNeuron(this.scene);
+      resetMaterial(this.mesh.material, progenyMaterial);
     }
-    this.activeMaterial = forSignalNeuron(this.scene);
-    this.selectedMaterial = forSelectedNeuron(this.scene);
   }
 
-  public resetMaterials(): void {
-    this.setMaterials();
+  public resetMaterials(type: NeuronType): void {
+    this.type = type;
+    this.setMaterial();
     this.deactivate();
     this.isHighlighted = false;
   }
 
   public activate(): void {
-    this.mesh.material = this.activeMaterial;
+    resetMaterial(this.mesh.material, activeMaterial);
   }
   public deactivate(): void {
-    this.mesh.material = this.material;
+    this.setMaterial();
   }
 
   public dispose(): void {

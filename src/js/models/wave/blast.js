@@ -37,10 +37,10 @@ var NeuroBlast = (function () {
             useMap(this.synapcesMap, function (synapce) {
                 var coloredMaterial = forBlastSphere(_this.scene, _this.color);
                 synapce.neuron.allowSpikes();
-                synapce.neuron.mesh.material = coloredMaterial;
                 synapce.allowMediator();
-                synapce.mesh.mesh.material = coloredMaterial;
-                synapce.mesh.synapceLegMesh.material = coloredMaterial;
+                resetMaterial(synapce.neuron.mesh.mesh.material, colorizeMaterial(mediumMaterial, _this.color));
+                resetMaterial(synapce.mesh.mesh.material, colorizeMaterial(mediumMaterial, _this.color));
+                resetMaterial(synapce.mesh.synapceLegMesh.material, colorizeMaterial(mediumMaterial, _this.color));
             });
         }
         else {

@@ -15,14 +15,14 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     public cortex: Cortex,
     public type: NeuronType
   ) {
-    this.mesh = new NeuronMesh(this, this.cortex.scene, this.cortex.cortexState);
+    this.mesh = new NeuronMesh(this.synapces, this.type, this.cortex.scene, this.cortex.cortexState);
     this.toDefaultState();
     this.createSynapces();
   }
 
   public includeInSignal(): void {
     this.type = NeuronType.Medium;
-    this.mesh.resetMaterials();
+    this.mesh.resetMaterials(this.type);
     this.synapces.forEach((synapce) => {
       synapce.reset();
     });
@@ -30,7 +30,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
 
   public dropToInitialState(): void {
     this.type = NeuronType.Progeny;
-    this.mesh.resetMaterials();
+    this.mesh.resetMaterials(this.type);
     this.synapces.forEach((synapce) => {
       synapce.reset();
     });
@@ -114,7 +114,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   public hide(): void {
-    this.mesh.setAlpha(0.03);
+    this.mesh.setAlpha(0.07);
   }
 
   public show(): void {
@@ -147,10 +147,6 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       this.codeMesh = null;
     }
     this.state = null;
-  }
-
-  public build(): void {
-    this.mesh.draw();
   }
 
   public activate(): void {
