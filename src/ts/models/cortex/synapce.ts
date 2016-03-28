@@ -25,13 +25,11 @@ class Synapce implements Disposable, Dualistic {
 
   public reset(): void {
     this.mesh.resetMaterials();
-    if(this.codeMesh) {
-      this.codeMesh.dispose();
-      this.codeMesh = null;
-    }
+    this.disposeCodeMesh();
   }
 
   public allowMediator(): void {
+    this.neuron.allowSpikes();
     this.mediator.willBeUsed();
   }
 
@@ -92,6 +90,7 @@ class Synapce implements Disposable, Dualistic {
 
   public resetMediator(): void {
     this.disposeMediator();
+    this.disposeCodeMesh();
     this.setMediator();
   }
 

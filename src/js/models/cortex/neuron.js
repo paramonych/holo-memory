@@ -21,11 +21,15 @@ var Neuron = (function () {
         this.synapces.forEach(function (synapce) {
             synapce.reset();
         });
+        this.preventSpikes();
     };
     Neuron.prototype.allowSpikes = function () {
         this.createSpike();
         this.startWatchForSpike();
         this.mesh.select();
+    };
+    Neuron.prototype.preventSpikes = function () {
+        this.disposeSpike();
     };
     Neuron.prototype.setProgenyCodeMesh = function () {
         var scene = this.cortex.scene;
@@ -92,13 +96,13 @@ var Neuron = (function () {
     };
     Neuron.prototype.hide = function () {
         this.mesh.setAlpha(0.07);
-        if (isMedium(this.type) && this.spike) {
+        if (this.spike) {
             this.spike.setAlpha(0.07);
         }
     };
     Neuron.prototype.show = function () {
         this.mesh.setAlpha(1);
-        if (isMedium(this.type) && this.spike) {
+        if (this.spike) {
             this.spike.setAlpha(1);
         }
     };
@@ -115,18 +119,27 @@ var Neuron = (function () {
         });
     };
     Neuron.prototype.dispose = function () {
-        if (isMedium(this.type) && this.spike) {
+        this.disposeSpike();
+        this.disposeSynapces();
+        this.disposeMesh();
+        this.disposeCodeMesh();
+        this.state = null;
+    };
+    Neuron.prototype.disposeSpike = function () {
+        if (this.spike) {
             this.spike.dispose();
             this.spike = null;
         }
-        this.disposeSynapces();
-        this.mesh.dispose();
-        this.mesh = null;
+    };
+    Neuron.prototype.disposeCodeMesh = function () {
         if (this.codeMesh && this.codeMesh.dispose) {
             this.codeMesh.dispose();
             this.codeMesh = null;
         }
-        this.state = null;
+    };
+    Neuron.prototype.disposeMesh = function () {
+        this.mesh.dispose();
+        this.mesh = null;
     };
     Neuron.prototype.disposeSynapces = function () {
         _.each(this.synapces, function (synapce) {

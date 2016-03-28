@@ -32,12 +32,17 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     this.synapces.forEach((synapce) => {
       synapce.reset();
     });
+    this.preventSpikes();
   }
 
   public allowSpikes(): void {
     this.createSpike();
     this.startWatchForSpike();
     this.mesh.select();
+  }
+
+  public preventSpikes(): void {
+    this.disposeSpike();
   }
 
   public setProgenyCodeMesh(): void {
@@ -118,17 +123,16 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     this.createSynapces();
   }
 
-
   public hide(): void {
     this.mesh.setAlpha(0.07);
-    if(isMedium(this.type) && this.spike) {
+    if(this.spike) {
       this.spike.setAlpha(0.07);
     }
   }
 
   public show(): void {
     this.mesh.setAlpha(1);
-    if(isMedium(this.type) && this.spike) {
+    if(this.spike) {
       this.spike.setAlpha(1);
     }
   }
@@ -146,18 +150,30 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   }
 
   public dispose(): void {
-    if(isMedium(this.type) && this.spike) {
+    this.disposeSpike();
+    this.disposeSynapces();
+    this.disposeMesh();
+    this.disposeCodeMesh();
+    this.state = null;
+  }
+
+  private disposeSpike(): void  {
+    if(this.spike) {
       this.spike.dispose();
       this.spike = null;
     }
-    this.disposeSynapces();
-    this.mesh.dispose();
-    this.mesh = null;
+  }
+
+  private disposeCodeMesh(): void {
     if(this.codeMesh && this.codeMesh.dispose) {
       this.codeMesh.dispose();
       this.codeMesh = null;
     }
-    this.state = null;
+  }
+
+  private disposeMesh(): void {
+    this.mesh.dispose();
+    this.mesh = null;
   }
 
   private disposeSynapces(): void {

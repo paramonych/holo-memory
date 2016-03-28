@@ -90,6 +90,12 @@ class Cortex implements Disposable {
     });
   }
 
+  public dropSpikes(): void {
+    this.neurons.forEach((neuron) => {
+      neuron.preventSpikes();
+    }); 
+  }
+
   private dropSignal(): void {
     this.disposeBlasts();
     this.neurons.forEach((neuron) => {

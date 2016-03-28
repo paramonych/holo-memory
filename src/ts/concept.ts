@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
 var scale = 5;// mkm
 var realSynapcesDistance = 0.2; //mkm
-var cortexSate = cortexConfigurationFrom(scale, 2, 2, scale/(realSynapcesDistance*2.5), 1.1, 1, 2);
+var cortexSate = cortexConfigurationFrom(scale, 10, 5, scale/realSynapcesDistance, 0.5, 0.2, 2);
 var knobs ;
 var uiCallback;
 var blockerOverlay;
@@ -132,6 +132,7 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     cortexSate.blastRadius = +knobs.blastRadius.val();
     cortexSate.blastPower = +knobs.blastPower.val();
 
+    space.cortex.dropSpikes();
     space.cortex.disposeBlasts();
     space.cortex.computeBlasts();
   });

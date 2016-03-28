@@ -56,6 +56,11 @@ class NeuronMesh implements ActivatableMesh {
     this.highlightNeuron();
   }
 
+  public deselect(): void {
+    this.isHighlighted = true;
+    this.highlightNeuron(false);
+  }
+
   private highlightNeuron(isHovered ?: boolean): void {
     let newMaterialConfig = (isMedium(this.type) ? mediumMaterial : progenyMaterial);
     let alpha = this.alpha;
@@ -96,8 +101,7 @@ class NeuronMesh implements ActivatableMesh {
   public resetMaterials(type: NeuronType): void {
     this.type = type;
     this.setMaterial();
-    this.deactivate();
-    this.isHighlighted = false;
+    this.isHighlighted = void 0;
   }
 
   public activate(): void {

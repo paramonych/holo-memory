@@ -65,7 +65,6 @@ class SpikeMesh implements ActivatableMesh {
 
   public deactivate(): void {
     this.resetPosition();
-    this.setMaterial();
     setAlpha(this.mesh.material, 0);
   }
 
@@ -132,7 +131,8 @@ class SpikeMesh implements ActivatableMesh {
   }
 
   public dispose(): void {
-    this.scene.removeMesh(this.mesh);
+    //this.scene.removeMesh(this.mesh);
+    this.deactivate();
     this.mesh.dispose();
     this.mesh = null;
     this.curve = null;

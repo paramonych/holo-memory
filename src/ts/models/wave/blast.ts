@@ -35,7 +35,6 @@ class NeuroBlast {
     this.synapcesCount = mapSize(this.synapcesMap);
 
     let isEnoughIntersections = (this.synapcesCount >= this.blastPowerLimit);
-    this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
 
     if(this.isExists && isEnoughIntersections) {
       this.sphere = BABYLON.Mesh.CreateSphere('s', 32, this.radius*2, this.scene, false);
@@ -46,7 +45,6 @@ class NeuroBlast {
       this.synapce.mesh.mesh.material = forBlastSphere(this.scene, this.color);
       useMap(this.synapcesMap, (synapce) => {
         let coloredMaterial = forBlastSphere(this.scene, this.color);
-        synapce.neuron.allowSpikes();
         synapce.allowMediator();
 
         /*resetMaterial(synapce.neuron.mesh.mesh.material, colorizeMaterial(mediumMaterial, this.color));
@@ -55,8 +53,9 @@ class NeuroBlast {
       });
     } else {
       this.isExists = false;
-      this.dispose();
     }
+
+    this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
   }
 
   private checkIntersection(nextSynapce: Synapce): boolean {
@@ -94,9 +93,6 @@ class NeuroBlast {
       this.sphere.dispose();
     }
     this.neuronsMap = null;
-    toValues(this.synapcesMap).forEach((synapce) => {
-      synapce.disposeCodeMesh();
-    });
     this.synapcesMap = null;
   }
 }

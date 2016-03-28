@@ -51,7 +51,6 @@ var SpikeMesh = (function () {
     };
     SpikeMesh.prototype.deactivate = function () {
         this.resetPosition();
-        this.setMaterial();
         setAlpha(this.mesh.material, 0);
     };
     SpikeMesh.prototype.setMaterial = function () {
@@ -102,7 +101,7 @@ var SpikeMesh = (function () {
         this.mesh.position.z = position.z;
     };
     SpikeMesh.prototype.dispose = function () {
-        this.scene.removeMesh(this.mesh);
+        this.deactivate();
         this.mesh.dispose();
         this.mesh = null;
         this.curve = null;

@@ -19,12 +19,10 @@ var Synapce = (function () {
     };
     Synapce.prototype.reset = function () {
         this.mesh.resetMaterials();
-        if (this.codeMesh) {
-            this.codeMesh.dispose();
-            this.codeMesh = null;
-        }
+        this.disposeCodeMesh();
     };
     Synapce.prototype.allowMediator = function () {
+        this.neuron.allowSpikes();
         this.mediator.willBeUsed();
     };
     Synapce.prototype.getId = function () {
@@ -78,6 +76,7 @@ var Synapce = (function () {
     };
     Synapce.prototype.resetMediator = function () {
         this.disposeMediator();
+        this.disposeCodeMesh();
         this.setMediator();
     };
     Synapce.prototype.disposeCodeMesh = function () {

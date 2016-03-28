@@ -27,7 +27,6 @@ var NeuroBlast = (function () {
         });
         this.synapcesCount = mapSize(this.synapcesMap);
         var isEnoughIntersections = (this.synapcesCount >= this.blastPowerLimit);
-        this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
         if (this.isExists && isEnoughIntersections) {
             this.sphere = BABYLON.Mesh.CreateSphere('s', 32, this.radius * 2, this.scene, false);
             this.sphere.material = glass(this.scene);
@@ -36,14 +35,13 @@ var NeuroBlast = (function () {
             this.synapce.mesh.mesh.material = forBlastSphere(this.scene, this.color);
             useMap(this.synapcesMap, function (synapce) {
                 var coloredMaterial = forBlastSphere(_this.scene, _this.color);
-                synapce.neuron.allowSpikes();
                 synapce.allowMediator();
             });
         }
         else {
             this.isExists = false;
-            this.dispose();
         }
+        this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
     }
     NeuroBlast.prototype.checkIntersection = function (nextSynapce) {
         var hasIntersections = this.checkIntersections(nextSynapce.mesh.position);
@@ -74,9 +72,6 @@ var NeuroBlast = (function () {
             this.sphere.dispose();
         }
         this.neuronsMap = null;
-        toValues(this.synapcesMap).forEach(function (synapce) {
-            synapce.disposeCodeMesh();
-        });
         this.synapcesMap = null;
     };
     return NeuroBlast;

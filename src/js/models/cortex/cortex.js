@@ -73,6 +73,11 @@ var Cortex = (function () {
             neuron.resetSynapces();
         });
     };
+    Cortex.prototype.dropSpikes = function () {
+        this.neurons.forEach(function (neuron) {
+            neuron.preventSpikes();
+        });
+    };
     Cortex.prototype.dropSignal = function () {
         this.disposeBlasts();
         this.neurons.forEach(function (neuron) {
