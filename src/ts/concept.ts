@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
 var scale = 5;// mkm
 var realSynapcesDistance = 0.5; //mkm
-var cortexSate = cortexConfigurationFrom(scale, 10, 5, scale/realSynapcesDistance, 0.5, 0.2, 2);
+var cortexSate = cortexConfigurationFrom(scale, 20, 10, scale/realSynapcesDistance, 0.5, 0.5, 2);
 var knobs ;
 var uiCallback;
 var blockerOverlay;
@@ -82,6 +82,17 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
   let space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
   let time = new Time(lifetime);
 
+  let refillConfiguration = (): void => {
+    let newPinLength = +knobs.pinMaxLength.val();
+    if(newPinLength !== cortexSate.pinMaxLength) {
+      cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
+      space.cortex.resetSynapces();
+    }
+
+    cortexSate.blastRadius = +knobs.blastRadius.val();
+    cortexSate.blastPower = +knobs.blastPower.val();
+  }
+
   knobs.launch.off('click').on('click', function() {
     let next = knobs.launch.data('type');
     let html = knobs.launch.html();
@@ -124,20 +135,15 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
   knobs.setSignalButton.off('click').on('click',function() {
     let newValue = +knobs.wavePower.val();
     cortexSate.wavePower = newValue;
+
+    refillConfiguration();
+
     space.cortex.initSignal(cortexSate.wavePower);
     knobs.processWaveButton.removeAttr('disabled');
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
-    let newPinLength = +knobs.pinMaxLength.val();
-
-    if(newPinLength !== cortexSate.pinMaxLength) {
-      cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
-      space.cortex.resetSynapces();
-    }
-
-    cortexSate.blastRadius = +knobs.blastRadius.val();
-    cortexSate.blastPower = +knobs.blastPower.val();
+    refillConfiguration();
 
     space.cortex.dropSpikes();
     space.cortex.disposeBlasts();

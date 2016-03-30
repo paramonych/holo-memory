@@ -58,7 +58,7 @@ class NeuroBlast {
     this.synapce.setMediumCodeMesh(this.synapcesCount, isEnoughIntersections);
   }
 
-  private checkIntersection(nextSynapce: Synapce): boolean {
+  public checkIntersection(nextSynapce: Synapce): boolean {
     let hasIntersections = this.checkIntersections(nextSynapce.mesh.position);
 
     if(hasIntersections) {

@@ -15,8 +15,8 @@ var Neuron = (function () {
             synapce.reset();
         });
     };
-    Neuron.prototype.dropToInitialState = function () {
-        this.type = NeuronType.Progeny;
+    Neuron.prototype.dropToInitialState = function (type) {
+        this.type = type;
         this.mesh.resetMaterials(this.type);
         this.synapces.forEach(function (synapce) {
             synapce.reset();

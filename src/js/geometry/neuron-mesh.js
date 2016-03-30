@@ -6,6 +6,7 @@ var NeuronMesh = (function () {
         this.cortexState = cortexState;
         this.isHighlighted = false;
         this.alpha = 1;
+        this.isLegatee = false;
         this.curve = randomPath(this.cortexState.scale, (this.cortexState.synapcesAmount + 1) * 2);
         this.draw();
         this.setMaterial();
@@ -45,14 +46,14 @@ var NeuronMesh = (function () {
         this.highlightNeuron();
     };
     NeuronMesh.prototype.deselect = function () {
-        this.isHighlighted = true;
+        this.isHighlighted = false;
         this.highlightNeuron(false);
     };
     NeuronMesh.prototype.highlightNeuron = function (isHovered) {
         var newMaterialConfig = (isMedium(this.type) ? mediumMaterial : progenyMaterial);
         var alpha = this.alpha;
         if ((!this.isHighlighted && (isHovered === true)) || isHovered === void 0) {
-            newMaterialConfig = selectedMaterial;
+            newMaterialConfig = this.isLegatee ? activeMaterial : selectedMaterial;
             alpha = 1;
         }
         if (isHovered === void 0) {
@@ -82,6 +83,9 @@ var NeuronMesh = (function () {
         else {
             resetMaterial(this.mesh.material, progenyMaterial);
         }
+    };
+    NeuronMesh.prototype.setLegatee = function (value) {
+        this.isLegatee = value;
     };
     NeuronMesh.prototype.resetMaterials = function (type) {
         this.type = type;

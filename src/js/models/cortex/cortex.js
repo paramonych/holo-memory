@@ -27,7 +27,31 @@ var Cortex = (function () {
                 newBlast = null;
             }
         });
+        this.resolveSignalInheritanse();
         this.spaceCallback(this.blastsArray.length);
+    };
+    Cortex.prototype.resolveSignalInheritanse = function () {
+        for (var i = 0; i < this.blastsArray.length; i++) {
+            var nextBlast = this.blastsArray[i];
+            for (var n = 0; n < this.neurons.length; n++) {
+                var isLegatee = false;
+                var nextNeuron = this.neurons[n];
+                if (!isMedium(nextNeuron.type)) {
+                    for (var s = 0; s < nextNeuron.synapces.length; s++) {
+                        isLegatee = nextBlast.checkIntersection(nextNeuron.synapces[s]);
+                        if (isLegatee) {
+                            break;
+                        }
+                    }
+                    if (isLegatee) {
+                        nextNeuron.mesh.setLegatee(true);
+                        nextNeuron.mesh.select();
+                        break;
+                    }
+                }
+            }
+        }
+        ;
     };
     Cortex.prototype.collectMediumSynapces = function () {
         var allSynapces = new Array();
@@ -92,13 +116,13 @@ var Cortex = (function () {
     };
     Cortex.prototype.dropSpikes = function () {
         this.neurons.forEach(function (neuron) {
-            neuron.preventSpikes();
+            neuron.dropToInitialState(neuron.type);
         });
     };
     Cortex.prototype.dropSignal = function () {
         this.disposeBlasts();
         this.neurons.forEach(function (neuron) {
-            neuron.dropToInitialState();
+            neuron.dropToInitialState(NeuronType.Progeny);
         });
     };
     Cortex.prototype.computeBlasts = function () {

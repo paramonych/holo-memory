@@ -3,6 +3,7 @@ class NeuronMesh implements ActivatableMesh {
   public isHighlighted = false;
   public curve: BABYLON.Path3D;
   private alpha = 1;
+  public isLegatee = false;
 
   constructor(
     private synapces: Synapce[],
@@ -57,7 +58,7 @@ class NeuronMesh implements ActivatableMesh {
   }
 
   public deselect(): void {
-    this.isHighlighted = true;
+    this.isHighlighted = false;
     this.highlightNeuron(false);
   }
 
@@ -65,7 +66,7 @@ class NeuronMesh implements ActivatableMesh {
     let newMaterialConfig = (isMedium(this.type) ? mediumMaterial : progenyMaterial);
     let alpha = this.alpha;
     if((!this.isHighlighted && (isHovered === true)) || isHovered === void 0) {
-      newMaterialConfig = selectedMaterial;
+      newMaterialConfig = this.isLegatee ? activeMaterial : selectedMaterial;
       alpha = 1;
     }
     if(isHovered === void 0) {
@@ -96,6 +97,10 @@ class NeuronMesh implements ActivatableMesh {
     } else {
       resetMaterial(this.mesh.material, progenyMaterial);
     }
+  }
+
+  public setLegatee(value: boolean): void {
+    this.isLegatee = value;
   }
 
   public resetMaterials(type: NeuronType): void {

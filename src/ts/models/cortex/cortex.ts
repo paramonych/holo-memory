@@ -31,8 +31,32 @@ class Cortex implements Disposable {
         newBlast = null;
       }
     });
-
+    this.resolveSignalInheritanse();
     this.spaceCallback(this.blastsArray.length);
+  }
+
+  private resolveSignalInheritanse(): void {
+
+    for(let i=0; i< this.blastsArray.length; i++) {
+      let nextBlast = this.blastsArray[i];
+      for(let n=0; n< this.neurons.length; n++) {
+        let isLegatee = false;
+        let nextNeuron = this.neurons[n];
+        if(!isMedium(nextNeuron.type)) {
+          for(let s=0; s< nextNeuron.synapces.length; s++) {
+            isLegatee = nextBlast.checkIntersection(nextNeuron.synapces[s]);
+            if(isLegatee) {
+              break;
+            }
+          }
+          if(isLegatee) {
+            nextNeuron.mesh.setLegatee(true);
+            nextNeuron.mesh.select();
+            break;
+          }
+        }
+      }
+    };
   }
 
   private collectMediumSynapces(): Synapce[] {
@@ -112,14 +136,14 @@ class Cortex implements Disposable {
 
   public dropSpikes(): void {
     this.neurons.forEach((neuron) => {
-      neuron.preventSpikes();
+      neuron.dropToInitialState(neuron.type);
     });
   }
 
   private dropSignal(): void {
     this.disposeBlasts();
     this.neurons.forEach((neuron) => {
-      neuron.dropToInitialState();
+      neuron.dropToInitialState(NeuronType.Progeny);
     });
   }
 

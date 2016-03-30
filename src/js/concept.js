@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
 var scale = 5;
 var realSynapcesDistance = 0.5;
-var cortexSate = cortexConfigurationFrom(scale, 10, 5, scale / realSynapcesDistance, 0.5, 0.2, 2);
+var cortexSate = cortexConfigurationFrom(scale, 20, 10, scale / realSynapcesDistance, 0.5, 0.5, 2);
 var knobs;
 var uiCallback;
 var blockerOverlay;
@@ -59,6 +59,15 @@ function wireUI(engine, scene, scale, canvas) {
     cortexSate = cortexConfigurationFrom(scale, +knobs.dendritsAmount.val(), +knobs.wavePower.val(), +knobs.synapcesAmount.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val());
     var space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
     var time = new Time(lifetime);
+    var refillConfiguration = function () {
+        var newPinLength = +knobs.pinMaxLength.val();
+        if (newPinLength !== cortexSate.pinMaxLength) {
+            cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
+            space.cortex.resetSynapces();
+        }
+        cortexSate.blastRadius = +knobs.blastRadius.val();
+        cortexSate.blastPower = +knobs.blastPower.val();
+    };
     knobs.launch.off('click').on('click', function () {
         var next = knobs.launch.data('type');
         var html = knobs.launch.html();
@@ -97,17 +106,12 @@ function wireUI(engine, scene, scale, canvas) {
     knobs.setSignalButton.off('click').on('click', function () {
         var newValue = +knobs.wavePower.val();
         cortexSate.wavePower = newValue;
+        refillConfiguration();
         space.cortex.initSignal(cortexSate.wavePower);
         knobs.processWaveButton.removeAttr('disabled');
     });
     knobs.processWaveButton.off('click').on('click', function () {
-        var newPinLength = +knobs.pinMaxLength.val();
-        if (newPinLength !== cortexSate.pinMaxLength) {
-            cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
-            space.cortex.resetSynapces();
-        }
-        cortexSate.blastRadius = +knobs.blastRadius.val();
-        cortexSate.blastPower = +knobs.blastPower.val();
+        refillConfiguration();
         space.cortex.dropSpikes();
         space.cortex.disposeBlasts();
         space.cortex.computeBlasts();

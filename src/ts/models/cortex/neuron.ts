@@ -26,8 +26,8 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     });
   }
 
-  public dropToInitialState(): void {
-    this.type = NeuronType.Progeny;
+  public dropToInitialState(type: NeuronType): void {
+    this.type = type;
     this.mesh.resetMaterials(this.type);
     this.synapces.forEach((synapce) => {
       synapce.reset();
