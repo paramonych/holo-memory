@@ -1,19 +1,26 @@
 document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
 var scale = 5;
-var realSynapcesDistance = 0.2;
+var realSynapcesDistance = 0.5;
 var cortexSate = cortexConfigurationFrom(scale, 10, 5, scale / realSynapcesDistance, 0.5, 0.2, 2);
 var knobs;
 var uiCallback;
 var blockerOverlay;
+var box;
 function plantConcept() {
     knobs = getUIControls();
-    uiCallback = function (blastsAmount) {
-        if (blastsAmount === 0) {
+    uiCallback = function (blastsAmount, synapcesDensity) {
+        if (blastsAmount != null && blastsAmount === 0) {
             knobs.launch.attr('disabled', 'disabled');
         }
         else {
             knobs.launch.removeAttr('disabled');
+        }
+        if (synapcesDensity) {
+            var actualScale = cortexSate.synapcesAmount * realSynapcesDistance;
+            knobs.measure.find('.measure-value span').html(actualScale);
+            var actualDensity = (synapcesDensity / actualScale).toFixed(1);
+            knobs.measure.find('.actual-density span').html(actualDensity);
         }
     };
     if (!BABYLON.Engine.isSupported()) {
@@ -31,7 +38,7 @@ function plantConcept() {
     jQuery(ids.blastPower).find('input').val('' + cortexSate.blastPower);
     attachCamera(canvas, scene, cortexSate.scale);
     setLight(scene);
-    createPatternSpaceBox(scene, cortexSate.scale);
+    box = createPatternSpaceBox(scene, cortexSate.scale);
     engine.runRenderLoop(function () {
         scene.render();
     });
@@ -80,7 +87,7 @@ function wireUI(engine, scene, scale, canvas) {
         var newScene = getScene(engine);
         engine.stopRenderLoop();
         setLight(newScene);
-        createPatternSpaceBox(newScene, scale);
+        box = createPatternSpaceBox(newScene, scale);
         engine.runRenderLoop(function () {
             attachCamera(canvas, newScene, scale);
             newScene.render();
@@ -107,6 +114,12 @@ function wireUI(engine, scene, scale, canvas) {
     });
     knobs.keepSelected.off('change').on('change', function () {
         space.cortex.keepSelected(knobs.keepSelected.prop('checked'));
+    });
+    knobs.measure.off('mouseenter').on('mouseenter', function () {
+        box.material.emissiveColor = new BABYLON.Color3(1, 1, 0);
+    });
+    knobs.measure.off('mouseleave').on('mouseleave', function () {
+        box.material.emissiveColor = new BABYLON.Color3(0, 0, 0);
     });
     time.tense.eventCallback("onUpdate", function () {
         var pg = time.tense.progress();

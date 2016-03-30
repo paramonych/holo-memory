@@ -11,6 +11,7 @@ interface Knobs {
   setSignalButton: JQuery;
   processWaveButton: JQuery;
   keepSelected: JQuery;
+  measure: JQuery;
 }
 
 function knobsFrom(
@@ -25,7 +26,8 @@ function knobsFrom(
   setDendritsButton: JQuery,
   setSignalButton: JQuery,
   processWaveButton: JQuery,
-  keepSelected: JQuery
+  keepSelected: JQuery,
+  measure: JQuery
 ): Knobs {
   return {
     launch: launch,
@@ -39,7 +41,8 @@ function knobsFrom(
     setDendritsButton: setDendritsButton,
     setSignalButton: setSignalButton,
     processWaveButton: processWaveButton,
-    keepSelected: keepSelected.find('input')
+    keepSelected: keepSelected.find('input'),
+    measure: measure
   }
 }
 
@@ -53,6 +56,7 @@ function getUIControls(): Knobs {
   let blastRadius = jQuery(ids.blastRadius);
   let blastPower = jQuery(ids.blastPower);
   let keepSelected = jQuery(ids.keepSelected);
+  let measure = jQuery(ids.measure);
 
   let setDendritsButton = jQuery(ids.setDendritsButton);
   let setSignalButton = jQuery(ids.setSignalButton);
@@ -63,6 +67,7 @@ function getUIControls(): Knobs {
     wavePower, blastRadius, blastPower,
     synapcesAmount, pinMaxLength ,
     setDendritsButton, setSignalButton,
-    processWaveButton, keepSelected
+    processWaveButton, keepSelected,
+    measure
   );
 }

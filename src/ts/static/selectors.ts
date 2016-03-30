@@ -15,5 +15,6 @@ var ids = {
   setDendritsButton: '#setDendrits',
   setSignalButton: '#setSignal',
   processWaveButton: '#processWave',
-  keepSelected: '#keepSelected'
+  keepSelected: '#keepSelected',
+  measure: '#measure'
 }

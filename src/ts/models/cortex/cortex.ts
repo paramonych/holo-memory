@@ -8,8 +8,9 @@ class Cortex implements Disposable {
     public scale: number,
     public lifetime: number,
     public cortexState: CortexConfiguration,
-    private spaceCallback: (blastsAmount: number) => void) {
+    private spaceCallback: (blastsAmount: number, density ?: number) => void) {
     this.createNeurons();
+    this.spaceCallback(null, this.checkSynapcesDensity());
     this.preprocessBlasts();
   }
 
@@ -58,12 +59,31 @@ class Cortex implements Disposable {
     return allSynapces;
   }
 
-  private createNeurons(): void {
-      this.neurons = new Array<Neuron>();
+  private checkSynapcesDensity(): number {
+    let density = 0;
+    let checkBounds = (val: number): boolean => {
+      let bound = cortexSate.scale/2;
+      return (val < bound) && (val > -bound);
+    }
 
-      for(let i=0; i< this.cortexState.dendritsAmount; i++) {
-        this.neurons.push(new Neuron(this, NeuronType.Progeny));
-      }
+    this.neurons.forEach((neuron) => {
+      neuron.synapces.forEach((synapce) => {
+        let pos = synapce.mesh.position;
+        if(checkBounds(pos.x) && checkBounds(pos.y) && checkBounds(pos.z)) {
+          density++;
+        }
+      });
+    });
+
+    return density;
+  }
+
+  private createNeurons(): void {
+    this.neurons = new Array<Neuron>();
+
+    for(let i=0; i< this.cortexState.dendritsAmount; i++) {
+      this.neurons.push(new Neuron(this, NeuronType.Progeny));
+    }
   }
 
   public initSignal(wavePower: number): void {
@@ -93,7 +113,7 @@ class Cortex implements Disposable {
   public dropSpikes(): void {
     this.neurons.forEach((neuron) => {
       neuron.preventSpikes();
-    }); 
+    });
   }
 
   private dropSignal(): void {

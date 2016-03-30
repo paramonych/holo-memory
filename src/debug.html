@@ -21,6 +21,16 @@
      <canvas id="renderCanvas"></canvas>
      <div id="sceneBlocker">Configuring the scene. Please wait.</div>
      <button id="launch">PLAY</button>
+     <div id="measure">
+       <div class="measure-value"><span>5</span>&nbsp;&mu;m</div>
+       <div class="scale">
+         <div class="top"></div>
+         <div class="bot"></div>
+       </div>
+       <div class="actual-density">
+         <label>Actual density of synapces: <span>0</span> x 10<sup>8</sup> mm<sup>3</sup></label>
+       </div>
+     </div>
 
      <div id="dendritsAmount" class="config-detail">
        <label>Dendrits amount:</label>
@@ -39,11 +49,11 @@
      <button id="setSignal">INIT SIGNAL</button>
 
      <div id="pinMaxLength" class="config-detail">
-       <label>Pin max length:</label>
+       <label>Pin max length (&mu;m):</label>
        <input type="number" size="3" min="0" step="0.1"/>
      </div>
      <div id="blastRadius" class="config-detail">
-       <label>Spread radius:</label>
+       <label>Spread radius (&mu;m):</label>
        <input type="number" size="3" min="0" step="0.1"/>
      </div>
      <div id="blastPower" class="config-detail">
@@ -54,6 +64,13 @@
      <div id="keepSelected" class="config-detail">
        <label>Keep selected:</label>
        <input type="checkbox"/>
+     </div>
+
+     <div id="averageSynapcesDist" class="config-info">
+       <label>Avg. distance of synpces: 0.5 &mu;m</label>
+     </div>
+     <div id="averageSynapcesDens" class="config-info">
+       <label>Avg. density of synpces: 7 x 10<sup>8</sup> mm<sup>3</sup></label>
      </div>
    </body>
 </html>

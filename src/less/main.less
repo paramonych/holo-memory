@@ -1,5 +1,5 @@
-@vert-step: 30px;
-@top: 30px;
+@vert-step: 25px;
+@top: 20px;
 
 
 html, body {
@@ -90,11 +90,13 @@ button {
   }
 }
 
+@bt: 20px;
+
 #keepSelected {
   z-index: 2;
   position: absolute;
   right: 20px;
-  bottom: 30px;
+  bottom: @bt;
   font-family: Arial;
   width: 127px;
 
@@ -103,6 +105,48 @@ button {
   }
   input {
     top: 0px;
+  }
+}
+
+@onepx-border: 1px solid white;
+@hd: 80px;
+
+#measure {
+  z-index: 2;
+  position: absolute;
+  left: 50%;
+  bottom: @bt;
+  font-family: Arial;
+  width: @hd*4;
+  margin-left: -@hd*1.5;
+  text-align: center;
+  cursor: pointer;
+
+  @tp: 20px;
+  @sh: 10px;
+
+  .measure-value,
+  .actual-density {
+    color: white;
+    height: @tp;
+    line-height: @tp;
+  }
+  .actual-density {
+    font-size: 14px;
+  }
+  .scale {
+    height: @sh;
+    width: @hd;
+    margin: auto;
+    border-left: @onepx-border;
+    border-right: @onepx-border;
+
+    .top, .bot {
+      height: @sh/2;
+    }
+    .top {
+      border-bottom: @onepx-border;
+    }
   }
 }
 
@@ -135,4 +179,25 @@ button {
 }
 #processWave {
   top: @top*2+@vert-step*9;
+}
+
+.config-info {
+  z-index: 2;
+  position: absolute;
+  left: 20px;
+  font-family: Arial;
+  font-size: 14px;
+
+  label {
+    color: silver;
+  }
+}
+
+@info-shift: @bt+4;
+
+#averageSynapcesDist {
+  bottom: @info-shift*2;
+}
+#averageSynapcesDens {
+  bottom: @info-shift;
 }

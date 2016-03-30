@@ -1,6 +1,7 @@
 node_modules
 bower_components
 build
+docs
 app/bower_components
 test/bower_components
 markup/bower_components

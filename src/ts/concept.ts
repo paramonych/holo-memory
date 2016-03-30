@@ -3,19 +3,26 @@ document.addEventListener('DOMContentLoaded', plantConcept, false);
 
 var lifetime = 7;
 var scale = 5;// mkm
-var realSynapcesDistance = 0.2; //mkm
+var realSynapcesDistance = 0.5; //mkm
 var cortexSate = cortexConfigurationFrom(scale, 10, 5, scale/realSynapcesDistance, 0.5, 0.2, 2);
 var knobs ;
 var uiCallback;
 var blockerOverlay;
+var box: BABYLON.Mesh;
 
 function plantConcept(): void {
   knobs = getUIControls();
-  uiCallback = (blastsAmount: number): void => {
-    if(blastsAmount === 0) {
+  uiCallback = (blastsAmount: number, synapcesDensity?: number): void => {
+    if(blastsAmount != null && blastsAmount === 0) {
       knobs.launch.attr('disabled', 'disabled');
     } else {
       knobs.launch.removeAttr('disabled');
+    }
+    if(synapcesDensity) {
+      let actualScale = cortexSate.synapcesAmount * realSynapcesDistance;
+      knobs.measure.find('.measure-value span').html(actualScale);
+      let actualDensity = (synapcesDensity/actualScale).toFixed(1);
+      knobs.measure.find('.actual-density span').html(actualDensity);
     }
   };
 
@@ -35,7 +42,7 @@ function plantConcept(): void {
 
   attachCamera(canvas, scene, cortexSate.scale);
   setLight(scene);
-  createPatternSpaceBox(scene, cortexSate.scale);
+  box = createPatternSpaceBox(scene, cortexSate.scale);
   engine.runRenderLoop(() => {
     scene.render();
   });
@@ -106,7 +113,7 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     let newScene = getScene(engine);
     engine.stopRenderLoop();
     setLight(newScene);
-    createPatternSpaceBox(newScene, scale);
+    box = createPatternSpaceBox(newScene, scale);
     engine.runRenderLoop(() => {
       attachCamera(canvas, newScene, scale);
       newScene.render();
@@ -139,6 +146,13 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
   knobs.keepSelected.off('change').on('change',function() {
     space.cortex.keepSelected(knobs.keepSelected.prop('checked'));
+  });
+
+  knobs.measure.off('mouseenter').on('mouseenter', function() {
+    (<BABYLON.StandardMaterial>box.material).emissiveColor = new BABYLON.Color3(1, 1, 0);
+  });
+  knobs.measure.off('mouseleave').on('mouseleave', function() {
+    (<BABYLON.StandardMaterial>box.material).emissiveColor = new BABYLON.Color3(0, 0, 0);
   });
 
   time.tense.eventCallback("onUpdate", function() {

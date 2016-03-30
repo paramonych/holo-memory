@@ -6,6 +6,7 @@ var Cortex = (function () {
         this.cortexState = cortexState;
         this.spaceCallback = spaceCallback;
         this.createNeurons();
+        this.spaceCallback(null, this.checkSynapcesDensity());
         this.preprocessBlasts();
     }
     Cortex.prototype.preprocessBlasts = function () {
@@ -45,6 +46,22 @@ var Cortex = (function () {
             }
         });
         return allSynapces;
+    };
+    Cortex.prototype.checkSynapcesDensity = function () {
+        var density = 0;
+        var checkBounds = function (val) {
+            var bound = cortexSate.scale / 2;
+            return (val < bound) && (val > -bound);
+        };
+        this.neurons.forEach(function (neuron) {
+            neuron.synapces.forEach(function (synapce) {
+                var pos = synapce.mesh.position;
+                if (checkBounds(pos.x) && checkBounds(pos.y) && checkBounds(pos.z)) {
+                    density++;
+                }
+            });
+        });
+        return density;
     };
     Cortex.prototype.createNeurons = function () {
         this.neurons = new Array();

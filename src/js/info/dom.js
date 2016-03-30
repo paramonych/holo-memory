@@ -1,4 +1,4 @@
-function knobsFrom(launch, slider, dendritsAmount, wavePower, blastRadius, blastPower, synapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected) {
+function knobsFrom(launch, slider, dendritsAmount, wavePower, blastRadius, blastPower, synapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure) {
     return {
         launch: launch,
         slider: slider,
@@ -11,7 +11,8 @@ function knobsFrom(launch, slider, dendritsAmount, wavePower, blastRadius, blast
         setDendritsButton: setDendritsButton,
         setSignalButton: setSignalButton,
         processWaveButton: processWaveButton,
-        keepSelected: keepSelected.find('input')
+        keepSelected: keepSelected.find('input'),
+        measure: measure
     };
 }
 function getUIControls() {
@@ -24,8 +25,9 @@ function getUIControls() {
     var blastRadius = jQuery(ids.blastRadius);
     var blastPower = jQuery(ids.blastPower);
     var keepSelected = jQuery(ids.keepSelected);
+    var measure = jQuery(ids.measure);
     var setDendritsButton = jQuery(ids.setDendritsButton);
     var setSignalButton = jQuery(ids.setSignalButton);
     var processWaveButton = jQuery(ids.processWaveButton);
-    return knobsFrom(launch, slider, dendritsAmount, wavePower, blastRadius, blastPower, synapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected);
+    return knobsFrom(launch, slider, dendritsAmount, wavePower, blastRadius, blastPower, synapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure);
 }

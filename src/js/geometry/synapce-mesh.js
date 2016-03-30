@@ -27,7 +27,7 @@ var SynapceMesh = (function () {
         return result;
     };
     SynapceMesh.prototype.draw = function (basePosition) {
-        this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale / (isMedium(this.neuron.type) ? 50 : 100), this.scene, true);
+        this.mesh = BABYLON.Mesh.CreateSphere('s', 4, this.scale / (isMedium(this.neuron.type) ? 50 : 85), this.scene, true);
         this.mesh.position = this.position;
         this.synapceLegMesh = BABYLON.Mesh.CreateTube('t', [basePosition, this.position], this.scale / 470, 10, null, 0, this.scene, true, BABYLON.Mesh.FRONTSIDE);
         this.mesh.material = defaultMaterial(this.scene);
