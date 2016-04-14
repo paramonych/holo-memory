@@ -41,5 +41,8 @@ class Code {
   public dispose(): void {
     this.scene.removeMesh(this.mesh);
     this.mesh.dispose();
+    this.mesh = null;
+    this.scene = null;
+    this.position = null;
   }
 }

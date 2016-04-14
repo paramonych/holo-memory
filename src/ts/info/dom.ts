@@ -1,73 +1,78 @@
 interface Knobs {
   launch: JQuery;
   slider: JQuery;
-  dendritsAmount: JQuery;
+  actualDendritsAmount: JQuery;
   wavePower: JQuery;
   blastRadius: JQuery;
   blastPower: JQuery;
-  synapcesAmount: JQuery;
+  actualSynapcesAmount: JQuery;
   pinMaxLength: JQuery;
   setDendritsButton: JQuery;
   setSignalButton: JQuery;
   processWaveButton: JQuery;
   keepSelected: JQuery;
   measure: JQuery;
+  scale: JQuery;
 }
 
 function knobsFrom(
   launch: JQuery,
   slider: JQuery,
-  dendritsAmount: JQuery,
+  actualDendritsAmount: JQuery,
   wavePower: JQuery,
   blastRadius: JQuery,
   blastPower: JQuery,
-  synapcesAmount: JQuery,
+  actualSynapcesAmount: JQuery,
   pinMaxLength: JQuery,
   setDendritsButton: JQuery,
   setSignalButton: JQuery,
   processWaveButton: JQuery,
   keepSelected: JQuery,
-  measure: JQuery
+  measure: JQuery,
+  scale: JQuery
 ): Knobs {
   return {
     launch: launch,
     slider: slider,
-    dendritsAmount: dendritsAmount.find('input'),
+    actualDendritsAmount: actualDendritsAmount.find('span'),
     wavePower: wavePower.find('input'),
     blastRadius: blastRadius.find('input'),
     blastPower: blastPower.find('input'),
-    synapcesAmount: synapcesAmount.find('input'),
+    actualSynapcesAmount: actualSynapcesAmount.find('span'),
     pinMaxLength: pinMaxLength.find('input'),
     setDendritsButton: setDendritsButton,
     setSignalButton: setSignalButton,
     processWaveButton: processWaveButton,
     keepSelected: keepSelected.find('input'),
-    measure: measure
+    measure: measure,
+    scale: scale.find('input')
+
   }
 }
 
 function getUIControls(): Knobs {
   let launch = jQuery(ids.launch);
   let slider = jQuery(ids.slider);
-  let dendritsAmount = jQuery(ids.dendritsAmount);
+  let actualDendritsAmount = jQuery(ids.actualDendritsAmount);
   let wavePower = jQuery(ids.wavePower);
-  let synapcesAmount = jQuery(ids.synapcesAmount);
+  let actualSynapcesAmount = jQuery(ids.actualSynapcesAmount);
   let pinMaxLength = jQuery(ids.pinMaxLength);
   let blastRadius = jQuery(ids.blastRadius);
   let blastPower = jQuery(ids.blastPower);
   let keepSelected = jQuery(ids.keepSelected);
   let measure = jQuery(ids.measure);
+  let scale = jQuery(ids.sceneScale);
 
   let setDendritsButton = jQuery(ids.setDendritsButton);
   let setSignalButton = jQuery(ids.setSignalButton);
   let processWaveButton = jQuery(ids.processWaveButton);
 
   return knobsFrom(
-    launch, slider, dendritsAmount,
+    launch, slider, actualDendritsAmount,
     wavePower, blastRadius, blastPower,
-    synapcesAmount, pinMaxLength ,
+    actualSynapcesAmount, pinMaxLength,
     setDendritsButton, setSignalButton,
     processWaveButton, keepSelected,
-    measure
+    measure, scale
   );
 }

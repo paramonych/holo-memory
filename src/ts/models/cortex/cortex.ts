@@ -10,7 +10,7 @@ class Cortex implements Disposable {
     public cortexState: CortexConfiguration,
     private spaceCallback: (blastsAmount: number, density ?: number) => void) {
     this.createNeurons();
-    this.spaceCallback(null, this.checkSynapcesDensity());
+    this.spaceCallback(null, this.checkSynapcesAmountInBox());
     this.preprocessBlasts();
   }
 
@@ -83,10 +83,10 @@ class Cortex implements Disposable {
     return allSynapces;
   }
 
-  private checkSynapcesDensity(): number {
-    let density = 0;
+  private checkSynapcesAmountInBox(): number {
+    let amount = 0;
     let checkBounds = (val: number): boolean => {
-      let bound = cortexSate.scale/2;
+      let bound = cortexSate.scale/1.25;
       return (val < bound) && (val > -bound);
     }
 
@@ -94,12 +94,12 @@ class Cortex implements Disposable {
       neuron.synapces.forEach((synapce) => {
         let pos = synapce.mesh.position;
         if(checkBounds(pos.x) && checkBounds(pos.y) && checkBounds(pos.z)) {
-          density++;
+          amount++;
         }
       });
     });
 
-    return density;
+    return amount;
   }
 
   private createNeurons(): void {
@@ -198,7 +198,11 @@ class Cortex implements Disposable {
     _.each(this.neurons, (neuron) => {
       neuron.dispose();
     });
+
     this.neurons = null;
+    this.scene = null;
+    this.cortexState = null;
+    this.spaceCallback = null;
   }
 
   public disposeBlasts(): void {

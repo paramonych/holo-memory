@@ -57,13 +57,12 @@ button {
   background-color:rgba(255, 255, 255, 0.2);
 }
 
-#dendritsAmount,
+#boxSize,
 #setDendrits,
 
 #wavePower,
 #setSignal,
 
-#synapcesAmount,
 #pinMaxLength,
 #blastRadius,
 #blastPower,
@@ -82,7 +81,7 @@ button {
 }
 
 .config-detail {
-  width: 200px;
+  width: 190px;
   input {
     position: absolute;
     right: 0px;
@@ -122,7 +121,7 @@ button {
   text-align: center;
   cursor: pointer;
 
-  @tp: 20px;
+  @tp: 26px;
   @sh: 10px;
 
   .measure-value,
@@ -136,7 +135,7 @@ button {
   }
   .scale {
     height: @sh;
-    width: @hd;
+    width: @hd*1.5;
     margin: auto;
     border-left: @onepx-border;
     border-right: @onepx-border;
@@ -150,35 +149,31 @@ button {
   }
 }
 
-#dendritsAmount {
+#boxSize {
   top: @vert-step;
 }
-#synapcesAmount {
-  top: @vert-step*2;
-}
 #setDendrits {
-  top: @vert-step*3;
+  top: @vert-step*2;
 }
 
 #wavePower {
-  top: @top+@vert-step*4;
+  top: @top+@vert-step*3;
 }
 #setSignal {
-  top: @top+@vert-step*5;
+  top: @top+@vert-step*4;
 }
-
 
 #pinMaxLength {
-  top: @top*2+@vert-step*6;
+  top: @top*2+@vert-step*5;
 }
 #blastRadius {
-  top: @top*2+@vert-step*7;
+  top: @top*2+@vert-step*6;
 }
 #blastPower {
-  top: @top*2+@vert-step*8;
+  top: @top*2+@vert-step*7;
 }
 #processWave {
-  top: @top*2+@vert-step*9;
+  top: @top*2+@vert-step*8;
 }
 
 .config-info {
@@ -194,6 +189,13 @@ button {
 }
 
 @info-shift: @bt+4;
+
+#actualDendritsAmount {
+  bottom: @info-shift*4;
+}
+#actualSynapcesAmount {
+  bottom: @info-shift*3;
+}
 
 #averageSynapcesDist {
   bottom: @info-shift*2;

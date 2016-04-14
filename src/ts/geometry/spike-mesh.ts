@@ -12,7 +12,7 @@ class SpikeMesh implements ActivatableMesh {
     public direction: SpikeDirection
   ) {
     this.curve = new Array<BABYLON.Vector3>();
-    _.each(this.spike.neuron.mesh.curve.path, (next) => {
+    _.each(this.spike.neuron.mesh.curve, (next) => {
       this.curve.push(next.clone());
     });
 
@@ -136,5 +136,9 @@ class SpikeMesh implements ActivatableMesh {
     this.mesh.dispose();
     this.mesh = null;
     this.curve = null;
+    this.position = null;
+    this.scene = null;
+    this.spike = null;
+    this.direction = null;
   }
 }

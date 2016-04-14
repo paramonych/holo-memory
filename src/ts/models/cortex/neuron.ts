@@ -48,7 +48,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public setProgenyCodeMesh(): void {
     let scene = this.cortex.scene;
     let scale = this.cortex.scale;
-    let path = this.mesh.curve.path;
+    let path = this.mesh.curve;
     let code =  toValues(this.code).join('');
     this.codeMesh = new Code(scene, scale, path[Math.floor(path.length/2)], code, true);
   }
@@ -108,7 +108,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
 
     let scale = this.cortex.cortexState.scale;
     let synapcesAmount = this.cortex.cortexState.synapcesAmount;
-    let path = this.mesh.curve.path;
+    let path = this.mesh.curve;
 
     for(let i=0; i< synapcesAmount; i++) {
       let position = path[i*2+1];
@@ -155,6 +155,8 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     this.disposeMesh();
     this.disposeCodeMesh();
     this.state = null;
+    this.cortex = null;
+    this.type = null;
   }
 
   private disposeSpike(): void  {

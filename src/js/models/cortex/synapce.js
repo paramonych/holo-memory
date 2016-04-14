@@ -65,6 +65,7 @@ var Synapce = (function () {
         this.disposeCodeMesh();
         this.disposeMediator();
         this.state = null;
+        this.neuron = null;
     };
     Synapce.prototype.disposeMesh = function () {
         this.mesh.dispose();

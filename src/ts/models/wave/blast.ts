@@ -91,8 +91,14 @@ class NeuroBlast {
     this.scene.removeMesh(this.sphere);
     if(this.sphere && this.sphere.dispose) {
       this.sphere.dispose();
+      this.sphere = null;
     }
     this.neuronsMap = null;
     this.synapcesMap = null;
+    this.color = null;
+
+    this.synapce = null;
+    this.synapces = null;
+    this.scene = null;
   }
 }

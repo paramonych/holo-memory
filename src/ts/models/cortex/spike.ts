@@ -41,6 +41,7 @@ class Spike implements Disposable, Dualistic {
     this.tense = null;
     this.state = null;
     this.moved = null
+    this.neuron = null;
   }
 
   serveState(newState: StateType): void {

@@ -6,9 +6,9 @@ var ids = {
     pause: '#pause',
     restart: '#restart',
     slider: '#slider',
-    dendritsAmount: '#dendritsAmount',
+    actualDendritsAmount: '#actualDendritsAmount',
     wavePower: '#wavePower',
-    synapcesAmount: '#synapcesAmount',
+    actualSynapcesAmount: '#actualSynapcesAmount',
     pinMaxLength: '#pinMaxLength',
     blastRadius: '#blastRadius',
     blastPower: '#blastPower',
@@ -16,5 +16,6 @@ var ids = {
     setSignalButton: '#setSignal',
     processWaveButton: '#processWave',
     keepSelected: '#keepSelected',
-    measure: '#measure'
+    measure: '#measure',
+    sceneScale: '#boxSize'
 };

@@ -35,5 +35,7 @@ class Space {
     this.cortex.dispose();
     this.cortex = null;
     this.time = null;
+    this.scene = null;
+    this.cortexState = null;
   }
 }

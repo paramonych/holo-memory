@@ -34,7 +34,7 @@ var Neuron = (function () {
     Neuron.prototype.setProgenyCodeMesh = function () {
         var scene = this.cortex.scene;
         var scale = this.cortex.scale;
-        var path = this.mesh.curve.path;
+        var path = this.mesh.curve;
         var code = toValues(this.code).join('');
         this.codeMesh = new Code(scene, scale, path[Math.floor(path.length / 2)], code, true);
     };
@@ -82,7 +82,7 @@ var Neuron = (function () {
         this.synapces = new Array();
         var scale = this.cortex.cortexState.scale;
         var synapcesAmount = this.cortex.cortexState.synapcesAmount;
-        var path = this.mesh.curve.path;
+        var path = this.mesh.curve;
         for (var i = 0; i < synapcesAmount; i++) {
             var position = path[i * 2 + 1];
             var synapce = new Synapce(this, position.clone());
@@ -124,6 +124,8 @@ var Neuron = (function () {
         this.disposeMesh();
         this.disposeCodeMesh();
         this.state = null;
+        this.cortex = null;
+        this.type = null;
     };
     Neuron.prototype.disposeSpike = function () {
         if (this.spike) {

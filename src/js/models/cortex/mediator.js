@@ -70,6 +70,10 @@ var Mediator = (function () {
     };
     Mediator.prototype.dispose = function () {
         this.cloud.dispose();
+        this.scene = null;
+        this.texture = null;
+        this.cloud = null;
+        this.synapce = null;
     };
     return Mediator;
 }());

@@ -1,25 +1,24 @@
 document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
-var scale = 5;
-var realSynapcesDistance = 0.5;
-var cortexSate = cortexConfigurationFrom(scale, 20, 10, scale / realSynapcesDistance, 0.5, 0.5, 2);
+var cortexSate;
 var knobs;
 var uiCallback;
 var blockerOverlay;
 var box;
+var camera;
+var light;
 function plantConcept() {
     knobs = getUIControls();
-    uiCallback = function (blastsAmount, synapcesDensity) {
+    cortexSate = cortexConfigurationFrom(knobs, 5, 3, 0.5, 0.5, 2);
+    uiCallback = function (blastsAmount, synapcesAmountInBox) {
         if (blastsAmount != null && blastsAmount === 0) {
             knobs.launch.attr('disabled', 'disabled');
         }
         else {
             knobs.launch.removeAttr('disabled');
         }
-        if (synapcesDensity) {
-            var actualScale = cortexSate.synapcesAmount * realSynapcesDistance;
-            knobs.measure.find('.measure-value span').html(actualScale);
-            var actualDensity = (synapcesDensity / actualScale).toFixed(1);
+        if (synapcesAmountInBox) {
+            var actualDensity = (10 * synapcesAmountInBox / Math.pow(cortexSate.scale, 3)).toFixed(1);
             knobs.measure.find('.actual-density span').html(actualDensity);
         }
     };
@@ -30,14 +29,13 @@ function plantConcept() {
     var engine = new BABYLON.Engine(canvas, true);
     var scene = getScene(engine);
     blockerOverlay = jQuery(ids.sceneBlocker);
-    jQuery(ids.dendritsAmount).find('input').val('' + cortexSate.dendritsAmount);
+    jQuery(ids.sceneScale).find('input').val('' + cortexSate.scale);
     jQuery(ids.wavePower).find('input').val('' + cortexSate.wavePower);
-    jQuery(ids.synapcesAmount).find('input').val('' + cortexSate.synapcesAmount);
     jQuery(ids.pinMaxLength).find('input').val('' + cortexSate.pinMaxLength);
     jQuery(ids.blastRadius).find('input').val('' + cortexSate.blastRadius);
     jQuery(ids.blastPower).find('input').val('' + cortexSate.blastPower);
-    attachCamera(canvas, scene, cortexSate.scale);
-    setLight(scene);
+    camera = attachCamera(canvas, scene, cortexSate.scale);
+    light = setLight(scene);
     box = createPatternSpaceBox(scene, cortexSate.scale);
     engine.runRenderLoop(function () {
         scene.render();
@@ -56,7 +54,7 @@ function showBlocker() {
 }
 function wireUI(engine, scene, scale, canvas) {
     setTimeout(function () { blockerOverlay.addClass('hidden'); }, 1300);
-    cortexSate = cortexConfigurationFrom(scale, +knobs.dendritsAmount.val(), +knobs.wavePower.val(), +knobs.synapcesAmount.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val());
+    cortexSate = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val());
     var space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
     var time = new Time(lifetime);
     var refillConfiguration = function () {
@@ -89,19 +87,23 @@ function wireUI(engine, scene, scale, canvas) {
         showBlocker();
         knobs.processWaveButton.attr('disabled', 'disabled');
         knobs.keepSelected.prop('checked', false);
-        cortexSate.dendritsAmount = +knobs.dendritsAmount.val();
+        cortexSate.scale = +knobs.scale.val();
+        doScale(cortexSate, knobs);
+        knobs.measure.find('.measure-value span').html(cortexSate.scale);
         space.dispose();
         time.dispose();
         scene.dispose();
+        box.dispose();
+        camera.dispose();
         var newScene = getScene(engine);
         engine.stopRenderLoop();
         setLight(newScene);
-        box = createPatternSpaceBox(newScene, scale);
+        box = createPatternSpaceBox(newScene, cortexSate.scale);
+        camera = attachCamera(canvas, newScene, cortexSate.scale);
         engine.runRenderLoop(function () {
-            attachCamera(canvas, newScene, scale);
             newScene.render();
         });
-        wireUI(engine, newScene, scale, canvas);
+        wireUI(engine, newScene, cortexSate.scale, canvas);
     });
     knobs.setSignalButton.off('click').on('click', function () {
         var newValue = +knobs.wavePower.val();
@@ -139,14 +141,28 @@ function wireUI(engine, scene, scale, canvas) {
     });
     space.expose(time);
 }
-function cortexConfigurationFrom(scale, dendritsAmount, wavePower, synapcesAmount, pinMaxLength, blastRadius, blastPower) {
-    return {
+function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, blastRadius, blastPower) {
+    var configuration = {
         scale: scale,
-        dendritsAmount: dendritsAmount,
+        dendritsAmount: 0,
+        synapcesAmount: 0,
         wavePower: wavePower,
-        synapcesAmount: synapcesAmount,
-        pinMaxLength: pinMaxLength,
+        pinMaxLength: realSynapcesDistance,
         blastRadius: blastRadius,
-        blastPower: blastPower
+        blastPower: blastPower,
+        realSynapcesDistance: realSynapcesDistance
     };
+    doScale(configuration, knobs);
+    return configuration;
+}
+function doScale(configuration, knobs) {
+    var cubicMkmInCubicMm = 1000000000;
+    var averageSynapcesDensity = 700000000;
+    var scaleFactorToCubicMillimeter = Math.pow(configuration.scale, 3) / cubicMkmInCubicMm;
+    var synapcesPerDendritInActualScale = Math.round(configuration.scale / configuration.realSynapcesDistance);
+    var synapcesTotalInActualScale = Math.ceil(averageSynapcesDensity * scaleFactorToCubicMillimeter);
+    configuration.dendritsAmount = Math.ceil(synapcesTotalInActualScale / synapcesPerDendritInActualScale);
+    configuration.synapcesAmount = Math.round(synapcesTotalInActualScale / configuration.dendritsAmount);
+    knobs.actualDendritsAmount.html('' + configuration.dendritsAmount);
+    knobs.actualSynapcesAmount.html('' + synapcesTotalInActualScale);
 }

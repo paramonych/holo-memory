@@ -1,7 +1,7 @@
 class NeuronMesh implements ActivatableMesh {
   public mesh: BABYLON.Mesh;
   public isHighlighted = false;
-  public curve: BABYLON.Path3D;
+  public curve: BABYLON.Vector3[];
   private alpha = 1;
   public isLegatee = false;
 
@@ -18,7 +18,7 @@ class NeuronMesh implements ActivatableMesh {
   draw(): void {
     let scale = this.cortexState.scale;
     this.mesh = BABYLON.Mesh.CreateTube(
-      't', this.curve.path, this.cortexState.scale/400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
+      't', this.curve, this.cortexState.scale/400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
     this.mesh.material = defaultMaterial(this.scene);
     this.deactivate();
     this.registerActions();
@@ -122,5 +122,12 @@ class NeuronMesh implements ActivatableMesh {
     this.scene.removeMesh(this.mesh);
     this.mesh.dispose();
     this.mesh = null;
+
+    this.curve = null;
+
+    this.synapces = null;
+    this.type = null;
+    this.scene = null;
+    this.cortexState = null;
   }
 }

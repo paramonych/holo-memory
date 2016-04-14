@@ -16,26 +16,34 @@ function randomPointOnSphere(radius: number): BABYLON.Vector3 {
   return vector;
 }
 
-function randomPath(scale: number, segmentsAmount: number): BABYLON.Path3D {
+function randomPath(scale: number, segmentsAmount: number): BABYLON.Vector3[] {
   let path = new Array<BABYLON.Vector3>();
-  let next = randomVector(scale);//randomPointOnSphere(scale);//vectorFrom(0,0,0);
+  let shift = -scale/2;
 
-  let xSign = (-1)*next.x/Math.abs(next.x);
-  let ySign = (-1)*next.y/Math.abs(next.y);
-  let zSign = (-1)*next.z/Math.abs(next.z);
-
+  let point = vectorFrom(shift,shift,shift);
   let deltaRadius = scale*2/segmentsAmount;
 
+  let matrix = BABYLON.Matrix.Compose(
+    new BABYLON.Vector3(0,0,0),
+    new BABYLON.Quaternion(0,0,0),//Math.PI*random()*randomSign(), Math.PI*random()*randomSign(), Math.PI*random()*randomSign()),
+    new BABYLON.Vector3(1,1,1)
+  );
+
   for (let i = 0; i <= segmentsAmount; i += 1 ) {
-    path.push( next );
-    next = vectorFrom(
-      (next.x+xSign*Math.random()*deltaRadius),
-      (next.y+ySign*Math.random()*deltaRadius),
-      (next.z+zSign*Math.random()*deltaRadius)
+    let rotatedVector = BABYLON.Vector3.TransformCoordinates(point.clone(), matrix);
+
+    path.push( point);//rotatedVector.clone() );
+
+    let doRandomSign = false;//(i%5 == 0) || (i%6 == 0) ? true : false;
+
+    point = vectorFrom(
+      (point.x + random()*deltaRadius),
+      (point.y + random()*deltaRadius),
+      (point.z + random()*deltaRadius)
     );
   }
-  let path3D = new BABYLON.Path3D(path);
-  return path3D;
+
+  return path;
 }
 
 function vectorFrom(x: number, y: number, z: number): BABYLON.Vector3 {

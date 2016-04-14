@@ -11,9 +11,9 @@ var SynapceMesh = (function () {
     SynapceMesh.prototype.shiftPosition = function (basePosition) {
         var pinMaxLength = this.neuron.cortex.cortexState.pinMaxLength;
         var synapcesAmount = this.neuron.cortex.cortexState.synapcesAmount;
-        pinMaxLength = pinMaxLength / (synapcesAmount / (this.neuron.cortex.cortexState.scale / realSynapcesDistance));
+        pinMaxLength = pinMaxLength / (synapcesAmount / (this.neuron.cortex.cortexState.scale / this.neuron.cortex.cortexState.realSynapcesDistance));
         var shift = pinMaxLength * random();
-        var neuronPath = this.neuron.mesh.curve.path;
+        var neuronPath = this.neuron.mesh.curve;
         var first = neuronPath[0];
         var last = neuronPath[neuronPath.length - 1];
         var baseVector = last.subtract(first).normalize();
@@ -72,8 +72,13 @@ var SynapceMesh = (function () {
         this.scene.removeMesh(this.synapceLegMesh);
         if (this.synapceLegMesh && this.synapceLegMesh.dispose) {
             this.synapceLegMesh.dispose();
+            this.synapceLegMesh = null;
         }
         this.synapceLegMesh = null;
+        this.scene = null;
+        this.basePosition = null;
+        this.position = null;
+        this.neuron = null;
     };
     return SynapceMesh;
 }());

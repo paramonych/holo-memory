@@ -24,6 +24,9 @@ var Code = (function () {
     Code.prototype.dispose = function () {
         this.scene.removeMesh(this.mesh);
         this.mesh.dispose();
+        this.mesh = null;
+        this.scene = null;
+        this.position = null;
     };
     return Code;
 }());

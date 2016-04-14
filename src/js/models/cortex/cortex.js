@@ -6,7 +6,7 @@ var Cortex = (function () {
         this.cortexState = cortexState;
         this.spaceCallback = spaceCallback;
         this.createNeurons();
-        this.spaceCallback(null, this.checkSynapcesDensity());
+        this.spaceCallback(null, this.checkSynapcesAmountInBox());
         this.preprocessBlasts();
     }
     Cortex.prototype.preprocessBlasts = function () {
@@ -71,21 +71,21 @@ var Cortex = (function () {
         });
         return allSynapces;
     };
-    Cortex.prototype.checkSynapcesDensity = function () {
-        var density = 0;
+    Cortex.prototype.checkSynapcesAmountInBox = function () {
+        var amount = 0;
         var checkBounds = function (val) {
-            var bound = cortexSate.scale / 2;
+            var bound = cortexSate.scale / 1.25;
             return (val < bound) && (val > -bound);
         };
         this.neurons.forEach(function (neuron) {
             neuron.synapces.forEach(function (synapce) {
                 var pos = synapce.mesh.position;
                 if (checkBounds(pos.x) && checkBounds(pos.y) && checkBounds(pos.z)) {
-                    density++;
+                    amount++;
                 }
             });
         });
-        return density;
+        return amount;
     };
     Cortex.prototype.createNeurons = function () {
         this.neurons = new Array();
@@ -169,6 +169,9 @@ var Cortex = (function () {
             neuron.dispose();
         });
         this.neurons = null;
+        this.scene = null;
+        this.cortexState = null;
+        this.spaceCallback = null;
     };
     Cortex.prototype.disposeBlasts = function () {
         this.disposeMediators();

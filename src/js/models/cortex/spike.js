@@ -30,6 +30,7 @@ var Spike = (function () {
         this.tense = null;
         this.state = null;
         this.moved = null;
+        this.neuron = null;
     };
     Spike.prototype.serveState = function (newState) {
         if (newState === StateType.Active) {

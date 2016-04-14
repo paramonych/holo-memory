@@ -13,7 +13,7 @@ var NeuronMesh = (function () {
     }
     NeuronMesh.prototype.draw = function () {
         var scale = this.cortexState.scale;
-        this.mesh = BABYLON.Mesh.CreateTube('t', this.curve.path, this.cortexState.scale / 400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
+        this.mesh = BABYLON.Mesh.CreateTube('t', this.curve, this.cortexState.scale / 400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
         this.mesh.material = defaultMaterial(this.scene);
         this.deactivate();
         this.registerActions();
@@ -104,6 +104,11 @@ var NeuronMesh = (function () {
         this.scene.removeMesh(this.mesh);
         this.mesh.dispose();
         this.mesh = null;
+        this.curve = null;
+        this.synapces = null;
+        this.type = null;
+        this.scene = null;
+        this.cortexState = null;
     };
     return NeuronMesh;
 }());

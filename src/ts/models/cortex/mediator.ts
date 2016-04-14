@@ -99,5 +99,9 @@ class Mediator {
 
   public dispose(): void {
     this.cloud.dispose();
+    this.scene = null;
+    this.texture = null;
+    this.cloud = null;
+    this.synapce = null;
   }
 }

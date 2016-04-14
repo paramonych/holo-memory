@@ -6,7 +6,7 @@ var SpikeMesh = (function () {
         this.spike = spike;
         this.direction = direction;
         this.curve = new Array();
-        _.each(this.spike.neuron.mesh.curve.path, function (next) {
+        _.each(this.spike.neuron.mesh.curve, function (next) {
             _this.curve.push(next.clone());
         });
         this.constructMesh();
@@ -105,6 +105,10 @@ var SpikeMesh = (function () {
         this.mesh.dispose();
         this.mesh = null;
         this.curve = null;
+        this.position = null;
+        this.scene = null;
+        this.spike = null;
+        this.direction = null;
     };
     return SpikeMesh;
 }());

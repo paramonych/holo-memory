@@ -26,6 +26,8 @@ var Space = (function () {
         this.cortex.dispose();
         this.cortex = null;
         this.time = null;
+        this.scene = null;
+        this.cortexState = null;
     };
     return Space;
 }());

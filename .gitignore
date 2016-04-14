@@ -7,6 +7,7 @@ test/bower_components
 markup/bower_components
 .idea
 npm-debug.log
+logo.png
 src/js/main.js
 src/js/*.min.js
 src/css/*.min.css

@@ -14,17 +14,17 @@ function randomPointOnSphere(radius) {
 }
 function randomPath(scale, segmentsAmount) {
     var path = new Array();
-    var next = randomVector(scale);
-    var xSign = (-1) * next.x / Math.abs(next.x);
-    var ySign = (-1) * next.y / Math.abs(next.y);
-    var zSign = (-1) * next.z / Math.abs(next.z);
+    var shift = -scale / 2;
+    var point = vectorFrom(shift, shift, shift);
     var deltaRadius = scale * 2 / segmentsAmount;
+    var matrix = BABYLON.Matrix.Compose(new BABYLON.Vector3(0, 0, 0), new BABYLON.Quaternion(0, 0, 0), new BABYLON.Vector3(1, 1, 1));
     for (var i = 0; i <= segmentsAmount; i += 1) {
-        path.push(next);
-        next = vectorFrom((next.x + xSign * Math.random() * deltaRadius), (next.y + ySign * Math.random() * deltaRadius), (next.z + zSign * Math.random() * deltaRadius));
+        var rotatedVector = BABYLON.Vector3.TransformCoordinates(point.clone(), matrix);
+        path.push(point);
+        var doRandomSign = false;
+        point = vectorFrom((point.x + random() * deltaRadius), (point.y + random() * deltaRadius), (point.z + random() * deltaRadius));
     }
-    var path3D = new BABYLON.Path3D(path);
-    return path3D;
+    return path;
 }
 function vectorFrom(x, y, z) {
     return new BABYLON.Vector3(x, y, z);

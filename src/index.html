@@ -1,8 +1,14 @@
-
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:locale:alternate" content="ru_RU" />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="http://gazer.pro" />
+      <meta property="og:image" content="http://gazer.pro/logo.png" />
+      <meta property="og:site_name" content="HMM" />
+
       <title>HMM</title>
       <link href="css/style.min.css" rel="stylesheet" media="screen">
       <script src="libs/babylon.2.3.js"></script>
@@ -15,30 +21,17 @@
       <script src="libs/TimelineMax.js"></script>
       <script src="libs/BezierPlugin.js"></script>
       <script src="js/main.min.js"></script>
+
    </head>
 
    <body>
      <canvas id="renderCanvas"></canvas>
      <div id="sceneBlocker">Configuring the scene. Please wait.</div>
      <button id="launch">PLAY</button>
-     <div id="measure">
-       <div class="measure-value"><span>5</span>&nbsp;&mu;m</div>
-       <div class="scale">
-         <div class="top"></div>
-         <div class="bot"></div>
-       </div>
-       <div class="actual-density">
-         <label>Actual density of synapces: <span>0</span> x 10<sup>8</sup> mm<sup>3</sup></label>
-       </div>
-     </div>
 
-     <div id="dendritsAmount" class="config-detail">
-       <label>Dendrits amount:</label>
-       <input type="number" size="3"  min="1" max="500"/>
-     </div>
-     <div id="synapcesAmount" class="config-detail">
-       <label>Synapces amount:</label>
-       <input type="number" size="3"  min="1" step="1" max="300"/>
+     <div id="boxSize" class="config-detail">
+       <label>Scene scale (&mu;m):</label>
+       <input type="number" size="3"  min="0.5" max="200" step="0.5"/>
      </div>
      <button id="setDendrits">RESET DENDRITS</button>
 
@@ -49,7 +42,7 @@
      <button id="setSignal">INIT SIGNAL</button>
 
      <div id="pinMaxLength" class="config-detail">
-       <label>Pin max length (&mu;m):</label>
+       <label>Spine length (&mu;m):</label>
        <input type="number" size="3" min="0" step="0.1"/>
      </div>
      <div id="blastRadius" class="config-detail">
@@ -66,11 +59,29 @@
        <input type="checkbox"/>
      </div>
 
+
+     <div id="actualDendritsAmount" class="config-info">
+       <label>Actual dendrits amount: <span>0</span></label>
+     </div>
+     <div id="actualSynapcesAmount" class="config-info">
+       <label>Actual synapces amount: <span>0</span></label>
+     </div>
      <div id="averageSynapcesDist" class="config-info">
        <label>Avg. distance of synpces: 0.5 &mu;m</label>
      </div>
      <div id="averageSynapcesDens" class="config-info">
        <label>Avg. density of synpces: 7 x 10<sup>8</sup> mm<sup>3</sup></label>
+     </div>
+
+     <div id="measure">
+       <div class="measure-value">Scale: <span>5</span>&nbsp;&mu;m</div>
+       <div class="scale">
+         <div class="top"></div>
+         <div class="bot"></div>
+       </div>
+       <div class="actual-density">
+         <label>Actual density of synapces: <span>0</span> x 10<sup>8</sup> mm<sup>3</sup></label>
+       </div>
      </div>
 
      <div id="counter" style="display:none;">

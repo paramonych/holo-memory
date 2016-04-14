@@ -15,10 +15,10 @@ class SynapceMesh implements ActivatableMesh {
   private shiftPosition(basePosition: BABYLON.Vector3): BABYLON.Vector3 {
     let pinMaxLength = this.neuron.cortex.cortexState.pinMaxLength;
     let synapcesAmount = this.neuron.cortex.cortexState.synapcesAmount;
-    pinMaxLength = pinMaxLength / (synapcesAmount/(this.neuron.cortex.cortexState.scale/realSynapcesDistance));
+    pinMaxLength = pinMaxLength / (synapcesAmount/(this.neuron.cortex.cortexState.scale/this.neuron.cortex.cortexState.realSynapcesDistance));
     let shift = pinMaxLength * random();
 
-    let neuronPath = this.neuron.mesh.curve.path;
+    let neuronPath = this.neuron.mesh.curve;
     let first = neuronPath[0];
     let last = neuronPath[neuronPath.length-1];
 
@@ -89,7 +89,12 @@ class SynapceMesh implements ActivatableMesh {
     this.scene.removeMesh(this.synapceLegMesh);
     if(this.synapceLegMesh && this.synapceLegMesh.dispose) {
       this.synapceLegMesh.dispose();
+      this.synapceLegMesh = null;
     }
     this.synapceLegMesh = null;
+    this.scene = null;
+    this.basePosition = null;
+    this.position = null;
+    this.neuron = null;
   }
 }
