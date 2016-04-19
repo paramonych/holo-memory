@@ -14,17 +14,38 @@ function randomPointOnSphere(radius) {
 }
 function randomPath(scale, segmentsAmount) {
     var path = new Array();
-    var shift = -scale / 2;
-    var point = vectorFrom(shift, shift, shift);
-    var deltaRadius = scale * 2 / segmentsAmount;
-    var matrix = BABYLON.Matrix.Compose(new BABYLON.Vector3(0, 0, 0), new BABYLON.Quaternion(0, 0, 0), new BABYLON.Vector3(1, 1, 1));
+    var defaultHelper = new Array();
+    var rotationHelper = new Array();
+    var point = vectorFrom(0, 0, 0);
+    var deltaRadius = (scale * 2) / segmentsAmount;
     for (var i = 0; i <= segmentsAmount; i += 1) {
-        var rotatedVector = BABYLON.Vector3.TransformCoordinates(point.clone(), matrix);
-        path.push(point);
-        var doRandomSign = false;
-        point = vectorFrom((point.x + random() * deltaRadius), (point.y + random() * deltaRadius), (point.z + random() * deltaRadius));
+        defaultHelper.push(point);
+        var doRandomSign = (i % 7 == 0) || (i % 6 == 0) ? true : false;
+        point = vectorFrom((point.x + random() * deltaRadius * (doRandomSign ? randomSign() : 1)), (point.y + random() * deltaRadius * (doRandomSign ? randomSign() : 1)), (point.z + random() * deltaRadius * (doRandomSign ? randomSign() : 1)));
     }
-    return path;
+    var quaternion = (new BABYLON.Quaternion(random() * randomSign(), random() * randomSign(), random() * randomSign())).normalize();
+    var rotationMatrix = BABYLON.Matrix.Compose(new BABYLON.Vector3(1, 1, 1), quaternion, new BABYLON.Vector3(0, 0, 0));
+    for (var i = 0; i < defaultHelper.length; i += 1) {
+        var rotatedVector = BABYLON.Vector3.TransformCoordinates(defaultHelper[i].clone(), rotationMatrix);
+        rotationHelper.push(rotatedVector);
+    }
+    if (rotationHelper.length) {
+        var rotatedPathEndPoint = rotationHelper[rotationHelper.length - 1];
+        var endPointX = rotatedPathEndPoint.x;
+        var endPointY = rotatedPathEndPoint.y;
+        var endPointZ = rotatedPathEndPoint.z;
+        var shift = scale / 2.2;
+        var xShift = negate(endPointX / 2) + random() * randomSign() * shift;
+        var yShift = negate(endPointY / 2) + random() * randomSign() * shift;
+        var zShift = negate(endPointZ / 2) + random() * randomSign() * shift;
+        var translationMatrix = BABYLON.Matrix.Compose(new BABYLON.Vector3(1, 1, 1), quaternion, new BABYLON.Vector3(xShift, yShift, zShift));
+        for (var i = 0; i < defaultHelper.length; i += 1) {
+            var rotatedVector = BABYLON.Vector3.TransformCoordinates(defaultHelper[i].clone(), translationMatrix);
+            path.push(rotatedVector);
+        }
+        return path;
+    }
+    return rotationHelper;
 }
 function vectorFrom(x, y, z) {
     return new BABYLON.Vector3(x, y, z);

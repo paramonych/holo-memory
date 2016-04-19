@@ -40,7 +40,9 @@ var Synapce = (function () {
         setTimeout(function () { return _this.deactivate(); }, timeInMillis);
     };
     Synapce.prototype.deactivate = function () {
-        this.state(StateType.Silent);
+        if (this.state) {
+            this.state(StateType.Silent);
+        }
     };
     Synapce.prototype.toDefaultState = function () {
         var _this = this;

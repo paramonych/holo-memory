@@ -27,3 +27,6 @@ function ra() {
     var r = random();
     return (r < 0.1) ? (1 - r) : r;
 }
+function negate(value) {
+    return (-1) * value;
+}

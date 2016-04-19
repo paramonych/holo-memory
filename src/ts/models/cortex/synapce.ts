@@ -49,7 +49,9 @@ class Synapce implements Disposable, Dualistic {
     setTimeout(() => this.deactivate(), timeInMillis);
   }
   public deactivate(): void {
-    this.state(StateType.Silent);
+    if(this.state) { // need to check this invokation from timeout
+      this.state(StateType.Silent);
+    }
   }
 
   public toDefaultState(): void {

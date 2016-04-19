@@ -56,8 +56,8 @@ function getScene(engine: BABYLON.Engine): BABYLON.Scene {
   //scene.fogStart = 20.0;
   //scene.fogEnd = 60.0;
   //scene.fogColor = new BABYLON.Color3(0.1, 0.9, 0.15);
-  scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
-  scene.fogDensity = 0.01;
+  //scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+  //scene.fogDensity = 0.01;
   scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.13);
   return scene;
 }
