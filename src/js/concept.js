@@ -52,7 +52,7 @@ function showBlocker() {
 }
 function wireUI(engine, scene, scale, canvas) {
     setTimeout(function () { blockerOverlay.addClass('hidden'); }, 1300);
-    cortexSate = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val());
+    cortexSate = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val(), outOfKnobsResolution(knobs.resolution));
     var space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
     var time = new Time(lifetime);
     var refillConfiguration = function () {
@@ -81,28 +81,7 @@ function wireUI(engine, scene, scale, canvas) {
             time.pause(space);
         }
     });
-    knobs.setDendritsButton.off('click').on('click', function () {
-        showBlocker();
-        knobs.processWaveButton.attr('disabled', 'disabled');
-        knobs.keepSelected.prop('checked', false);
-        cortexSate.scale = +knobs.scale.val();
-        doScale(cortexSate, knobs);
-        knobs.measure.find('.measure-value span').html(cortexSate.scale);
-        space.dispose();
-        time.dispose();
-        scene.dispose();
-        box.dispose();
-        camera.dispose();
-        var newScene = getScene(engine);
-        engine.stopRenderLoop();
-        setLight(newScene);
-        box = createPatternSpaceBox(newScene, cortexSate.scale);
-        camera = attachCamera(canvas, newScene, cortexSate.scale);
-        engine.runRenderLoop(function () {
-            newScene.render();
-        });
-        wireUI(engine, newScene, cortexSate.scale, canvas);
-    });
+    knobs.setDendritsButton.off('click').on('click', rebuildConcept);
     knobs.setSignalButton.off('click').on('click', function () {
         var newValue = +knobs.wavePower.val();
         cortexSate.wavePower = newValue;
@@ -115,6 +94,13 @@ function wireUI(engine, scene, scale, canvas) {
         space.cortex.dropSpikes();
         space.cortex.disposeBlasts();
         space.cortex.computeBlasts();
+    });
+    knobs.resolution.off('click').on('click', function (e) {
+        if (isSameResolution(knobs.resolution, $(e.target))) {
+            return;
+        }
+        cortexSate.resolution = switchResolution(knobs.resolution);
+        rebuildConcept();
     });
     knobs.keepSelected.off('change').on('change', function () {
         space.cortex.keepSelected(knobs.keepSelected.prop('checked'));
@@ -138,8 +124,30 @@ function wireUI(engine, scene, scale, canvas) {
         knobs.launch.data('type', 'PAUSE');
     });
     space.expose(time);
+    function rebuildConcept() {
+        showBlocker();
+        knobs.processWaveButton.attr('disabled', 'disabled');
+        knobs.keepSelected.prop('checked', false);
+        cortexSate.scale = +knobs.scale.val();
+        doScale(cortexSate, knobs);
+        knobs.measure.find('.measure-value span').html(cortexSate.scale);
+        space.dispose();
+        time.dispose();
+        scene.dispose();
+        box.dispose();
+        camera.dispose();
+        var newScene = getScene(engine);
+        engine.stopRenderLoop();
+        setLight(newScene);
+        box = createPatternSpaceBox(newScene, cortexSate.scale);
+        camera = attachCamera(canvas, newScene, cortexSate.scale);
+        engine.runRenderLoop(function () {
+            newScene.render();
+        });
+        wireUI(engine, newScene, cortexSate.scale, canvas);
+    }
 }
-function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, blastRadius, blastPower) {
+function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, blastRadius, blastPower, resolution) {
     var configuration = {
         scale: scale,
         dendritsAmount: 0,
@@ -148,7 +156,8 @@ function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, 
         pinMaxLength: realSynapcesDistance,
         blastRadius: blastRadius,
         blastPower: blastPower,
-        realSynapcesDistance: realSynapcesDistance
+        realSynapcesDistance: realSynapcesDistance,
+        resolution: resolution
     };
     doScale(configuration, knobs);
     return configuration;

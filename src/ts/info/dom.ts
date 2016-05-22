@@ -13,6 +13,7 @@ interface Knobs {
   keepSelected: JQuery;
   measure: JQuery;
   scale: JQuery;
+  resolution: JQuery;
 }
 
 function knobsFrom(
@@ -29,7 +30,8 @@ function knobsFrom(
   processWaveButton: JQuery,
   keepSelected: JQuery,
   measure: JQuery,
-  scale: JQuery
+  scale: JQuery,
+  resolution: JQuery
 ): Knobs {
   return {
     launch: launch,
@@ -45,8 +47,8 @@ function knobsFrom(
     processWaveButton: processWaveButton,
     keepSelected: keepSelected.find('input'),
     measure: measure,
-    scale: scale.find('input')
-
+    scale: scale.find('input'),
+    resolution: resolution.find('label')
   }
 }
 
@@ -62,6 +64,7 @@ function getUIControls(): Knobs {
   let keepSelected = jQuery(ids.keepSelected);
   let measure = jQuery(ids.measure);
   let scale = jQuery(ids.sceneScale);
+  let resolution = jQuery(ids.resolution);
 
   let setDendritsButton = jQuery(ids.setDendritsButton);
   let setSignalButton = jQuery(ids.setSignalButton);
@@ -73,6 +76,31 @@ function getUIControls(): Knobs {
     actualSynapcesAmount, pinMaxLength,
     setDendritsButton, setSignalButton,
     processWaveButton, keepSelected,
-    measure, scale
+    measure, scale, resolution
+  );
+}
+
+function outOfKnobsResolution(resolution: JQuery) {
+  let isHigh = resolution.filter('.active').hasClass('high');
+  return isHigh ? Resolution.High : Resolution.Low;
+}
+
+function switchResolution(resolution: JQuery) {
+  let active = resolution.filter('.active');
+  let inactive = resolution.filter(':not(.active)');
+
+  active.removeClass('active');
+  inactive.addClass('active');
+
+  return outOfKnobsResolution(resolution);
+}
+
+function isSameResolution(resolution: JQuery, selectedResolution: JQuery) {
+  return outOfResolution(
+    outOfKnobsResolution(resolution),
+    {
+      Low: () => selectedResolution.hasClass('low'),
+      High: () => selectedResolution.hasClass('high')
+    }
   );
 }

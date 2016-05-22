@@ -17,5 +17,6 @@ var ids = {
     processWaveButton: '#processWave',
     keepSelected: '#keepSelected',
     measure: '#measure',
-    sceneScale: '#boxSize'
+    sceneScale: '#boxSize',
+    resolution: '#resolution'
 };

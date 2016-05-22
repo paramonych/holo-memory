@@ -117,7 +117,7 @@ button {
   bottom: @bt;
   font-family: Arial;
   width: @hd*4;
-  margin-left: -@hd*1.5;
+  margin-left: -@hd*2;
   text-align: center;
   cursor: pointer;
 
@@ -149,6 +149,33 @@ button {
   }
 }
 
+#resolution {
+  z-index: 2;
+  position: absolute;
+  left: 50%;
+  top: @top;
+  font-family: Arial;
+  width: @hd*4;
+  margin-left: -@hd*2;
+  text-align: center;
+  cursor: pointer;
+
+  label {
+    color: #fff;
+    cursor: pointer;
+  }
+  .low {
+    margin-right: 20px;
+  }
+  .high {
+    margin-left: 20px;
+  }
+  .active {
+    font-weight: bolder;
+    font-size: 21px;
+    cursor: default;
+  }
+}
 #boxSize {
   top: @vert-step;
 }
