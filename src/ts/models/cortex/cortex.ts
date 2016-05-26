@@ -86,7 +86,7 @@ class Cortex implements Disposable {
   private checkSynapcesAmountInBox(): number {
     let amount = 0;
     let checkBounds = (val: number): boolean => {
-      let bound = cortexSate.scale/1.25;
+      let bound = cortexState.scale/1.25;
       return (val < bound) && (val > -bound);
     }
 

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', plantConcept, false);
 
 var lifetime = 7;
 
-var cortexSate;
+var cortexState;
 var knobs;
 var uiCallback;
 var blockerOverlay;
@@ -13,7 +13,7 @@ var light: BABYLON.PointLight;
 
 function plantConcept(): void {
   knobs = getUIControls();
-  cortexSate = cortexConfigurationFrom(knobs, 5, 3, 0.5, 0.5, 2);
+  cortexState = cortexConfigurationFrom(knobs, 5, 3, 0.5, 0.5, 2, Resolution.Low);
 
   uiCallback = (blastsAmount: number, synapcesAmountInBox?: number): void => {
     if(blastsAmount != null && blastsAmount === 0) {
@@ -22,7 +22,7 @@ function plantConcept(): void {
       knobs.launch.removeAttr('disabled');
     }
     if(synapcesAmountInBox) {
-      let actualDensity = (10*synapcesAmountInBox/Math.pow(cortexSate.scale,3)).toFixed(1);
+      let actualDensity = (10*synapcesAmountInBox/Math.pow(cortexState.scale,3)).toFixed(1);
       knobs.measure.find('.actual-density span').html(actualDensity);
     }
   };
@@ -34,19 +34,19 @@ function plantConcept(): void {
 
   blockerOverlay = jQuery(ids.sceneBlocker);
 
-  jQuery(ids.sceneScale).find('input').val(''+cortexSate.scale);
-  jQuery(ids.wavePower).find('input').val(''+cortexSate.wavePower);
-  jQuery(ids.pinMaxLength).find('input').val(''+cortexSate.pinMaxLength);
-  jQuery(ids.blastRadius).find('input').val(''+cortexSate.blastRadius);
-  jQuery(ids.blastPower).find('input').val(''+cortexSate.blastPower);
+  jQuery(ids.sceneScale).find('input').val(''+cortexState.scale);
+  jQuery(ids.wavePower).find('input').val(''+cortexState.wavePower);
+  jQuery(ids.pinMaxLength).find('input').val(''+cortexState.pinMaxLength);
+  jQuery(ids.blastRadius).find('input').val(''+cortexState.blastRadius);
+  jQuery(ids.blastPower).find('input').val(''+cortexState.blastPower);
 
-  camera = attachCamera(canvas, scene, cortexSate.scale);
+  camera = attachCamera(canvas, scene, cortexState.scale);
   light = setLight(scene);
-  box = createPatternSpaceBox(scene, cortexSate.scale);
+  box = createPatternSpaceBox(scene, cortexState.scale);
   engine.runRenderLoop(() => {
     scene.render();
   });
-  wireUI(engine, scene, cortexSate.scale, canvas);
+  wireUI(engine, scene, cortexState.scale, canvas);
 }
 
 function getScene(engine: BABYLON.Engine): BABYLON.Scene {
@@ -69,7 +69,7 @@ function showBlocker(): void {
 function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, canvas: HTMLCanvasElement): void {
   setTimeout(() => {blockerOverlay.addClass('hidden');}, 1300);
 
-  cortexSate = cortexConfigurationFrom(
+  cortexState = cortexConfigurationFrom(
     knobs,
     +knobs.scale.val(),
     +knobs.wavePower.val(),
@@ -79,18 +79,18 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     outOfKnobsResolution(knobs.resolution)
   );
 
-  let space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
+  let space = new Space(scene, scale, lifetime, cortexState, uiCallback);
   let time = new Time(lifetime);
 
   let refillConfiguration = (): void => {
     let newPinLength = +knobs.pinMaxLength.val();
-    if(newPinLength !== cortexSate.pinMaxLength) {
-      cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
+    if(newPinLength !== cortexState.pinMaxLength) {
+      cortexState.pinMaxLength = +knobs.pinMaxLength.val();
       space.cortex.resetSynapces();
     }
 
-    cortexSate.blastRadius = +knobs.blastRadius.val();
-    cortexSate.blastPower = +knobs.blastPower.val();
+    cortexState.blastRadius = +knobs.blastRadius.val();
+    cortexState.blastPower = +knobs.blastPower.val();
   }
 
   knobs.launch.off('click').on('click', function() {
@@ -110,15 +110,24 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     }
   });
 
-  knobs.setDendritsButton.off('click').on('click', rebuildConcept);
+  knobs.setDendritsButton.off('click').on('click', function() {
+    cortexState.scale = +knobs.scale.val();
+    let resolution = (cortexState.scale < 15) ? Resolution.Low : Resolution.High;
+
+    if(cortexState.resolution !== resolution) {
+      cortexState.resolution = switchResolution(knobs.resolution);
+    }
+
+    rebuildConcept();
+  });
 
   knobs.setSignalButton.off('click').on('click', function() {
     let newValue = +knobs.wavePower.val();
-    cortexSate.wavePower = newValue;
+    cortexState.wavePower = newValue;
 
     refillConfiguration();
 
-    space.cortex.initSignal(cortexSate.wavePower);
+    space.cortex.initSignal(cortexState.wavePower);
     knobs.processWaveButton.removeAttr('disabled');
   });
 
@@ -132,7 +141,16 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
   knobs.resolution.off('click').on('click', function(e) {
     if(isSameResolution(knobs.resolution, $(e.target))) {return;}
-    cortexSate.resolution = switchResolution(knobs.resolution);
+    cortexState.resolution = switchResolution(knobs.resolution);
+
+    if(cortexState.resolution == Resolution.Low) {
+       knobs.scale.val(5); //mkm
+    } else {
+      knobs.scale.val(15); // mkm
+    }
+
+    cortexState.scale = +knobs.scale.val();
+
     rebuildConcept();
   });
 
@@ -181,9 +199,8 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
     knobs.keepSelected.prop('checked', false);
 
-    cortexSate.scale = +knobs.scale.val();
-    doScale(cortexSate, knobs);
-    knobs.measure.find('.measure-value span').html(cortexSate.scale);
+    doScale(cortexState, knobs);
+    knobs.measure.find('.measure-value span').html(cortexState.scale);
 
     space.dispose();
     time.dispose();
@@ -195,13 +212,13 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     let newScene = getScene(engine);
     engine.stopRenderLoop();
     setLight(newScene);
-    box = createPatternSpaceBox(newScene, cortexSate.scale);
-    camera = attachCamera(canvas, newScene, cortexSate.scale);
+    box = createPatternSpaceBox(newScene, cortexState.scale);
+    camera = attachCamera(canvas, newScene, cortexState.scale);
 
     engine.runRenderLoop(() => {
       newScene.render();
     });
-    wireUI(engine, newScene, cortexSate.scale, canvas);
+    wireUI(engine, newScene, cortexState.scale, canvas);
   }
 }
 

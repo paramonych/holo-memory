@@ -74,7 +74,7 @@ var Cortex = (function () {
     Cortex.prototype.checkSynapcesAmountInBox = function () {
         var amount = 0;
         var checkBounds = function (val) {
-            var bound = cortexSate.scale / 1.25;
+            var bound = cortexState.scale / 1.25;
             return (val < bound) && (val > -bound);
         };
         this.neurons.forEach(function (neuron) {

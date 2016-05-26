@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', plantConcept, false);
 var lifetime = 7;
-var cortexSate;
+var cortexState;
 var knobs;
 var uiCallback;
 var blockerOverlay;
@@ -9,7 +9,7 @@ var camera;
 var light;
 function plantConcept() {
     knobs = getUIControls();
-    cortexSate = cortexConfigurationFrom(knobs, 5, 3, 0.5, 0.5, 2);
+    cortexState = cortexConfigurationFrom(knobs, 5, 3, 0.5, 0.5, 2, Resolution.Low);
     uiCallback = function (blastsAmount, synapcesAmountInBox) {
         if (blastsAmount != null && blastsAmount === 0) {
             knobs.launch.attr('disabled', 'disabled');
@@ -18,7 +18,7 @@ function plantConcept() {
             knobs.launch.removeAttr('disabled');
         }
         if (synapcesAmountInBox) {
-            var actualDensity = (10 * synapcesAmountInBox / Math.pow(cortexSate.scale, 3)).toFixed(1);
+            var actualDensity = (10 * synapcesAmountInBox / Math.pow(cortexState.scale, 3)).toFixed(1);
             knobs.measure.find('.actual-density span').html(actualDensity);
         }
     };
@@ -29,18 +29,18 @@ function plantConcept() {
     var engine = new BABYLON.Engine(canvas, true);
     var scene = getScene(engine);
     blockerOverlay = jQuery(ids.sceneBlocker);
-    jQuery(ids.sceneScale).find('input').val('' + cortexSate.scale);
-    jQuery(ids.wavePower).find('input').val('' + cortexSate.wavePower);
-    jQuery(ids.pinMaxLength).find('input').val('' + cortexSate.pinMaxLength);
-    jQuery(ids.blastRadius).find('input').val('' + cortexSate.blastRadius);
-    jQuery(ids.blastPower).find('input').val('' + cortexSate.blastPower);
-    camera = attachCamera(canvas, scene, cortexSate.scale);
+    jQuery(ids.sceneScale).find('input').val('' + cortexState.scale);
+    jQuery(ids.wavePower).find('input').val('' + cortexState.wavePower);
+    jQuery(ids.pinMaxLength).find('input').val('' + cortexState.pinMaxLength);
+    jQuery(ids.blastRadius).find('input').val('' + cortexState.blastRadius);
+    jQuery(ids.blastPower).find('input').val('' + cortexState.blastPower);
+    camera = attachCamera(canvas, scene, cortexState.scale);
     light = setLight(scene);
-    box = createPatternSpaceBox(scene, cortexSate.scale);
+    box = createPatternSpaceBox(scene, cortexState.scale);
     engine.runRenderLoop(function () {
         scene.render();
     });
-    wireUI(engine, scene, cortexSate.scale, canvas);
+    wireUI(engine, scene, cortexState.scale, canvas);
 }
 function getScene(engine) {
     var scene = new BABYLON.Scene(engine);
@@ -52,17 +52,17 @@ function showBlocker() {
 }
 function wireUI(engine, scene, scale, canvas) {
     setTimeout(function () { blockerOverlay.addClass('hidden'); }, 1300);
-    cortexSate = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val(), outOfKnobsResolution(knobs.resolution));
-    var space = new Space(scene, scale, lifetime, cortexSate, uiCallback);
+    cortexState = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val(), outOfKnobsResolution(knobs.resolution));
+    var space = new Space(scene, scale, lifetime, cortexState, uiCallback);
     var time = new Time(lifetime);
     var refillConfiguration = function () {
         var newPinLength = +knobs.pinMaxLength.val();
-        if (newPinLength !== cortexSate.pinMaxLength) {
-            cortexSate.pinMaxLength = +knobs.pinMaxLength.val();
+        if (newPinLength !== cortexState.pinMaxLength) {
+            cortexState.pinMaxLength = +knobs.pinMaxLength.val();
             space.cortex.resetSynapces();
         }
-        cortexSate.blastRadius = +knobs.blastRadius.val();
-        cortexSate.blastPower = +knobs.blastPower.val();
+        cortexState.blastRadius = +knobs.blastRadius.val();
+        cortexState.blastPower = +knobs.blastPower.val();
     };
     knobs.launch.off('click').on('click', function () {
         var next = knobs.launch.data('type');
@@ -81,12 +81,19 @@ function wireUI(engine, scene, scale, canvas) {
             time.pause(space);
         }
     });
-    knobs.setDendritsButton.off('click').on('click', rebuildConcept);
+    knobs.setDendritsButton.off('click').on('click', function () {
+        cortexState.scale = +knobs.scale.val();
+        var resolution = (cortexState.scale < 15) ? Resolution.Low : Resolution.High;
+        if (cortexState.resolution !== resolution) {
+            cortexState.resolution = switchResolution(knobs.resolution);
+        }
+        rebuildConcept();
+    });
     knobs.setSignalButton.off('click').on('click', function () {
         var newValue = +knobs.wavePower.val();
-        cortexSate.wavePower = newValue;
+        cortexState.wavePower = newValue;
         refillConfiguration();
-        space.cortex.initSignal(cortexSate.wavePower);
+        space.cortex.initSignal(cortexState.wavePower);
         knobs.processWaveButton.removeAttr('disabled');
     });
     knobs.processWaveButton.off('click').on('click', function () {
@@ -99,7 +106,14 @@ function wireUI(engine, scene, scale, canvas) {
         if (isSameResolution(knobs.resolution, $(e.target))) {
             return;
         }
-        cortexSate.resolution = switchResolution(knobs.resolution);
+        cortexState.resolution = switchResolution(knobs.resolution);
+        if (cortexState.resolution == Resolution.Low) {
+            knobs.scale.val(5);
+        }
+        else {
+            knobs.scale.val(15);
+        }
+        cortexState.scale = +knobs.scale.val();
         rebuildConcept();
     });
     knobs.keepSelected.off('change').on('change', function () {
@@ -128,9 +142,8 @@ function wireUI(engine, scene, scale, canvas) {
         showBlocker();
         knobs.processWaveButton.attr('disabled', 'disabled');
         knobs.keepSelected.prop('checked', false);
-        cortexSate.scale = +knobs.scale.val();
-        doScale(cortexSate, knobs);
-        knobs.measure.find('.measure-value span').html(cortexSate.scale);
+        doScale(cortexState, knobs);
+        knobs.measure.find('.measure-value span').html(cortexState.scale);
         space.dispose();
         time.dispose();
         scene.dispose();
@@ -139,12 +152,12 @@ function wireUI(engine, scene, scale, canvas) {
         var newScene = getScene(engine);
         engine.stopRenderLoop();
         setLight(newScene);
-        box = createPatternSpaceBox(newScene, cortexSate.scale);
-        camera = attachCamera(canvas, newScene, cortexSate.scale);
+        box = createPatternSpaceBox(newScene, cortexState.scale);
+        camera = attachCamera(canvas, newScene, cortexState.scale);
         engine.runRenderLoop(function () {
             newScene.render();
         });
-        wireUI(engine, newScene, cortexSate.scale, canvas);
+        wireUI(engine, newScene, cortexState.scale, canvas);
     }
 }
 function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, blastRadius, blastPower, resolution) {
