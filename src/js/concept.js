@@ -9,7 +9,7 @@ var camera;
 var light;
 function plantConcept() {
     knobs = getUIControls();
-    cortexState = cortexConfigurationFrom(knobs, 5, 3, 0.5, 0.5, 2, Resolution.Low);
+    cortexState = cortexConfigurationFrom(knobs, SCALE_LOWER_LIMIT, 3, 0.5, 0.5, 2, Resolution.Low);
     uiCallback = function (blastsAmount, synapcesAmountInBox) {
         if (blastsAmount != null && blastsAmount === 0) {
             knobs.launch.attr('disabled', 'disabled');
@@ -83,7 +83,7 @@ function wireUI(engine, scene, scale, canvas) {
     });
     knobs.setDendritsButton.off('click').on('click', function () {
         cortexState.scale = +knobs.scale.val();
-        var resolution = (cortexState.scale < 15) ? Resolution.Low : Resolution.High;
+        var resolution = (cortexState.scale < SCALE_THRESHOLD) ? Resolution.Low : Resolution.High;
         if (cortexState.resolution !== resolution) {
             cortexState.resolution = switchResolution(knobs.resolution);
         }
@@ -107,11 +107,11 @@ function wireUI(engine, scene, scale, canvas) {
             return;
         }
         cortexState.resolution = switchResolution(knobs.resolution);
-        if (cortexState.resolution == Resolution.Low) {
-            knobs.scale.val(5);
+        if (isLowResolution(cortexState.resolution)) {
+            knobs.scale.val(SCALE_LOWER_LIMIT);
         }
         else {
-            knobs.scale.val(15);
+            knobs.scale.val(SCALE_THRESHOLD);
         }
         cortexState.scale = +knobs.scale.val();
         rebuildConcept();

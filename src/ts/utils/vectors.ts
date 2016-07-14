@@ -22,7 +22,7 @@ function randomPath(scale: number, segmentsAmount: number): BABYLON.Vector3[] {
   let rotationHelper = new Array<BABYLON.Vector3>();
 
   let point = vectorFrom(0,0,0);
-  let deltaRadius = (scale*2)/segmentsAmount;
+  let deltaRadius = (segmentsAmount>1)?(scale*2)/segmentsAmount: 15;
 
   for (let i = 0; i <= segmentsAmount; i += 1 ) {
     defaultHelper.push( point );
@@ -30,9 +30,9 @@ function randomPath(scale: number, segmentsAmount: number): BABYLON.Vector3[] {
     let doRandomSign = (i%7 == 0) || (i%6 == 0) ? true : false;
 
     point = vectorFrom(
-      (point.x + random()*deltaRadius*(doRandomSign?randomSign():1)),
-      (point.y + random()*deltaRadius*(doRandomSign?randomSign():1)),
-      (point.z + random()*deltaRadius*(doRandomSign?randomSign():1))
+      (point.x + ((segmentsAmount>1)?random():1)*deltaRadius*(doRandomSign?randomSign():1)),
+      (point.y + ((segmentsAmount>1)?random():1)*deltaRadius*(doRandomSign?randomSign():1)),
+      (point.z + ((segmentsAmount>1)?random():1)*deltaRadius*(doRandomSign?randomSign():1))
     );
   }
 
@@ -55,7 +55,7 @@ function randomPath(scale: number, segmentsAmount: number): BABYLON.Vector3[] {
     let endPointY = rotatedPathEndPoint.y;
     let endPointZ = rotatedPathEndPoint.z;
 
-    let shift = scale/2.2;
+    let shift = scale/((segmentsAmount>1)?2.2:1.8);
 
     let xShift = negate(endPointX/2) + random()*randomSign()*shift;
     let yShift = negate(endPointY/2) + random()*randomSign()*shift;
@@ -85,4 +85,12 @@ function vectorFrom(x: number, y: number, z: number): BABYLON.Vector3 {
 function compareVectors(one: BABYLON.Vector3, two: BABYLON.Vector3): boolean {
   var sum = one.add(two.negate());
   return sum.x === 0 && sum.y === 0 && sum.z === 0;
+}
+
+function vectorMiddlePoint(start: BABYLON.Vector3, end: BABYLON.Vector3): BABYLON.Vector3 {
+  var x = (start.x + end.x)/2;
+  var y = (start.y + end.y)/2;
+  var z = (start.z + end.z)/2;
+
+  return vectorFrom(x,y,z);
 }

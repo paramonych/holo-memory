@@ -7,7 +7,9 @@ var NeuronMesh = (function () {
         this.isHighlighted = false;
         this.alpha = 1;
         this.isLegatee = false;
-        this.curve = randomPath(this.cortexState.scale, (this.cortexState.synapcesAmount + 1) * 2);
+        var segmentsAmount = isLowResolution(this.cortexState.resolution) ? (this.cortexState.synapcesAmount + 1) * 2 : 1;
+        this.curve = randomPath(this.cortexState.scale, segmentsAmount);
+        this.center = vectorMiddlePoint(this.curve[0], this.curve[this.curve.length - 1]);
         this.draw();
         this.setMaterial();
     }
@@ -60,21 +62,25 @@ var NeuronMesh = (function () {
             this.isHighlighted = !this.isHighlighted;
         }
         resetMaterial(this.mesh.material, newMaterialConfig, alpha);
-        this.synapces.forEach(function (synapce) {
-            resetMaterial(synapce.mesh.mesh.material, newMaterialConfig, alpha);
-            resetMaterial(synapce.mesh.synapceLegMesh.material, newMaterialConfig, alpha);
-        });
+        if (isLowResolution(this.cortexState.resolution) && this.synapces) {
+            this.synapces.forEach(function (synapce) {
+                resetMaterial(synapce.mesh.mesh.material, newMaterialConfig, alpha);
+                resetMaterial(synapce.mesh.synapceLegMesh.material, newMaterialConfig, alpha);
+            });
+        }
     };
     NeuronMesh.prototype.setAlpha = function (value) {
         this.alpha = value;
         setAlpha(this.mesh.material, value);
-        this.synapces.forEach(function (synapce) {
-            setAlpha(synapce.mesh.mesh.material, Math.floor(value));
-            setAlpha(synapce.mesh.synapceLegMesh.material, Math.floor(value));
-            if (synapce.codeMesh) {
-                setAlpha(synapce.codeMesh.mesh.material, Math.floor(value));
-            }
-        });
+        if (isLowResolution(this.cortexState.resolution) && this.synapces) {
+            this.synapces.forEach(function (synapce) {
+                setAlpha(synapce.mesh.mesh.material, Math.floor(value));
+                setAlpha(synapce.mesh.synapceLegMesh.material, Math.floor(value));
+                if (synapce.codeMesh) {
+                    setAlpha(synapce.codeMesh.mesh.material, Math.floor(value));
+                }
+            });
+        }
     };
     NeuronMesh.prototype.setMaterial = function () {
         if (isMedium(this.type)) {

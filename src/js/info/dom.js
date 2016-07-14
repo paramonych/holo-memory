@@ -52,3 +52,6 @@ function isSameResolution(resolution, selectedResolution) {
         High: function () { return selectedResolution.hasClass('high'); }
     });
 }
+function isLowResolution(resolution) {
+    return (resolution == Resolution.Low);
+}

@@ -104,3 +104,7 @@ function isSameResolution(resolution: JQuery, selectedResolution: JQuery) {
     }
   );
 }
+
+function isLowResolution(resolution: Resolution): boolean {
+    return (resolution == Resolution.Low);
+}

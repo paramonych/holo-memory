@@ -6,10 +6,12 @@ var Cortex = (function () {
         this.cortexState = cortexState;
         this.spaceCallback = spaceCallback;
         this.createNeurons();
-        this.spaceCallback(null, this.checkSynapcesAmountInBox());
-        this.preprocessBlasts();
+        if (isLowResolution(cortexState.resolution)) {
+            this.spaceCallback(null, this.checkSynapcesAmountInBox());
+            this.preprocessLowBlasts();
+        }
     }
-    Cortex.prototype.preprocessBlasts = function () {
+    Cortex.prototype.preprocessLowBlasts = function () {
         var _this = this;
         var mediumSynapces = this.collectMediumSynapces();
         var progenySynapces = this.collectProgenySynapces();
@@ -29,6 +31,8 @@ var Cortex = (function () {
         });
         this.resolveSignalInheritanse();
         this.spaceCallback(this.blastsArray.length);
+    };
+    Cortex.prototype.preprocessHighBlasts = function () {
     };
     Cortex.prototype.resolveSignalInheritanse = function () {
         for (var i = 0; i < this.blastsArray.length; i++) {
@@ -92,11 +96,23 @@ var Cortex = (function () {
         for (var i = 0; i < this.cortexState.dendritsAmount; i++) {
             this.neurons.push(new Neuron(this, NeuronType.Progeny));
         }
+        var halfScale = this.cortexState.scale / 2;
+        var waveStartingPoint = new BABYLON.Vector3(halfScale, halfScale, halfScale);
+        this.revealDormantSignalNeurons(waveStartingPoint);
+    };
+    Cortex.prototype.revealDormantSignalNeurons = function (basePosition) {
+        var _this = this;
+        this.dormantSignalNeurons = new Array();
+        _.each(this.neurons, function (n) {
+            if (checkDistanceFromPointToPoint(n.mesh.center, basePosition, SCALE_THRESHOLD)) {
+                _this.dormantSignalNeurons.push(n);
+            }
+        });
     };
     Cortex.prototype.initSignal = function (wavePower) {
         this.dropSignal();
         for (var i = 0; i < wavePower; i++) {
-            var progenyNeurons = _.filter(this.neurons, function (neuron) {
+            var progenyNeurons = _.filter(this.dormantSignalNeurons, function (neuron) {
                 return !isMedium(neuron.type);
             });
             if (progenyNeurons.length > 0) {
@@ -107,7 +123,9 @@ var Cortex = (function () {
                 break;
             }
         }
-        this.preprocessBlasts();
+        if (isLowResolution(cortexState.resolution)) {
+            this.preprocessLowBlasts();
+        }
     };
     Cortex.prototype.resetSynapces = function () {
         this.neurons.forEach(function (neuron) {
@@ -126,7 +144,12 @@ var Cortex = (function () {
         });
     };
     Cortex.prototype.computeBlasts = function () {
-        this.preprocessBlasts();
+        if (isLowResolution(cortexState.resolution)) {
+            this.preprocessLowBlasts();
+        }
+        else {
+            this.preprocessHighBlasts();
+        }
     };
     Cortex.prototype.chargeTense = function (time) {
         _.each(this.neurons, function (n) {

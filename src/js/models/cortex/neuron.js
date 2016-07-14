@@ -6,21 +6,27 @@ var Neuron = (function () {
         this.code = getRandomSixMap();
         this.mesh = new NeuronMesh(this.synapces, this.type, this.cortex.scene, this.cortex.cortexState);
         this.toDefaultState();
-        this.createSynapces();
+        if (isLowResolution(this.cortex.cortexState.resolution)) {
+            this.createSynapces();
+        }
     }
     Neuron.prototype.includeInSignal = function () {
         this.type = NeuronType.Medium;
         this.mesh.resetMaterials(this.type);
-        this.synapces.forEach(function (synapce) {
-            synapce.reset();
-        });
+        if (isLowResolution(this.cortex.cortexState.resolution) && this.synapces) {
+            this.synapces.forEach(function (synapce) {
+                synapce.reset();
+            });
+        }
     };
     Neuron.prototype.dropToInitialState = function (type) {
         this.type = type;
         this.mesh.resetMaterials(this.type);
-        this.synapces.forEach(function (synapce) {
-            synapce.reset();
-        });
+        if (isLowResolution(this.cortex.cortexState.resolution) && this.synapces) {
+            this.synapces.forEach(function (synapce) {
+                synapce.reset();
+            });
+        }
         this.preventSpikes();
     };
     Neuron.prototype.allowSpikes = function () {

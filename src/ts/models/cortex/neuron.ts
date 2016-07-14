@@ -15,23 +15,29 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   ) {
     this.mesh = new NeuronMesh(this.synapces, this.type, this.cortex.scene, this.cortex.cortexState);
     this.toDefaultState();
-    this.createSynapces();
+    if(isLowResolution(this.cortex.cortexState.resolution)) {
+      this.createSynapces();
+    }
   }
 
   public includeInSignal(): void {
     this.type = NeuronType.Medium;
     this.mesh.resetMaterials(this.type);
-    this.synapces.forEach((synapce) => {
-      synapce.reset();
-    });
+    if(isLowResolution(this.cortex.cortexState.resolution) && this.synapces) {
+      this.synapces.forEach((synapce) => {
+        synapce.reset();
+      });
+    }
   }
 
   public dropToInitialState(type: NeuronType): void {
     this.type = type;
     this.mesh.resetMaterials(this.type);
-    this.synapces.forEach((synapce) => {
-      synapce.reset();
-    });
+    if(isLowResolution(this.cortex.cortexState.resolution) && this.synapces) {
+      this.synapces.forEach((synapce) => {
+        synapce.reset();
+      });
+    }
     this.preventSpikes();
   }
 

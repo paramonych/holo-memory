@@ -1,5 +1,6 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
+  private dormantSignalNeurons: Neuron[];
   private blastsArray: NeuroBlast[];
   public blasts: Map<NeuroBlast>;
 
@@ -10,11 +11,14 @@ class Cortex implements Disposable {
     public cortexState: CortexConfiguration,
     private spaceCallback: (blastsAmount: number, density ?: number) => void) {
     this.createNeurons();
-    this.spaceCallback(null, this.checkSynapcesAmountInBox());
-    this.preprocessBlasts();
+
+    if(isLowResolution(cortexState.resolution)) {
+      this.spaceCallback(null, this.checkSynapcesAmountInBox());
+      this.preprocessLowBlasts();
+    }
   }
 
-  private preprocessBlasts(): void {
+  private preprocessLowBlasts(): void {
     let mediumSynapces = this.collectMediumSynapces();
     let progenySynapces = this.collectProgenySynapces();
     this.blasts = newMap<NeuroBlast>();
@@ -33,6 +37,10 @@ class Cortex implements Disposable {
     });
     this.resolveSignalInheritanse();
     this.spaceCallback(this.blastsArray.length);
+  }
+
+  private preprocessHighBlasts(): void {
+    //TODO: develip new compute model
   }
 
   private resolveSignalInheritanse(): void {
@@ -108,13 +116,28 @@ class Cortex implements Disposable {
     for(let i=0; i< this.cortexState.dendritsAmount; i++) {
       this.neurons.push(new Neuron(this, NeuronType.Progeny));
     }
+
+    let halfScale = this.cortexState.scale/2;
+    let waveStartingPoint = new BABYLON.Vector3(halfScale,halfScale,halfScale);
+    this.revealDormantSignalNeurons(waveStartingPoint);
+  }
+
+  private revealDormantSignalNeurons(basePosition: BABYLON.Vector3): void {
+    this.dormantSignalNeurons = new Array<Neuron>();
+
+    _.each(this.neurons, (n) => {
+      if(checkDistanceFromPointToPoint(n.mesh.center, basePosition, SCALE_THRESHOLD)) {
+
+        this.dormantSignalNeurons.push(n);
+      }
+    });
   }
 
   public initSignal(wavePower: number): void {
     this.dropSignal();
 
     for(let i=0; i< wavePower; i++) {
-      let progenyNeurons = _.filter(this.neurons, (neuron) => {
+      let progenyNeurons = _.filter(this.dormantSignalNeurons, (neuron) => {
         return !isMedium(neuron.type);
       });
       if(progenyNeurons.length > 0) {
@@ -124,8 +147,9 @@ class Cortex implements Disposable {
         break;
       }
     }
-
-    this.preprocessBlasts();
+    if(isLowResolution(cortexState.resolution)) {
+      this.preprocessLowBlasts();
+    }
   }
 
   public resetSynapces(): void {
@@ -148,7 +172,11 @@ class Cortex implements Disposable {
   }
 
   public computeBlasts(): void {
-    this.preprocessBlasts();
+    if(isLowResolution(cortexState.resolution)) {
+      this.preprocessLowBlasts();
+    } else {
+      this.preprocessHighBlasts();
+    }
   }
 
   public chargeTense(time: Time): void {

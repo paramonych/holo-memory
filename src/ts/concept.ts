@@ -13,7 +13,7 @@ var light: BABYLON.PointLight;
 
 function plantConcept(): void {
   knobs = getUIControls();
-  cortexState = cortexConfigurationFrom(knobs, 5, 3, 0.5, 0.5, 2, Resolution.Low);
+  cortexState = cortexConfigurationFrom(knobs, SCALE_LOWER_LIMIT, 3, 0.5, 0.5, 2, Resolution.Low);
 
   uiCallback = (blastsAmount: number, synapcesAmountInBox?: number): void => {
     if(blastsAmount != null && blastsAmount === 0) {
@@ -112,7 +112,7 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
   knobs.setDendritsButton.off('click').on('click', function() {
     cortexState.scale = +knobs.scale.val();
-    let resolution = (cortexState.scale < 15) ? Resolution.Low : Resolution.High;
+    let resolution = (cortexState.scale < SCALE_THRESHOLD) ? Resolution.Low : Resolution.High;
 
     if(cortexState.resolution !== resolution) {
       cortexState.resolution = switchResolution(knobs.resolution);
@@ -143,10 +143,10 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     if(isSameResolution(knobs.resolution, $(e.target))) {return;}
     cortexState.resolution = switchResolution(knobs.resolution);
 
-    if(cortexState.resolution == Resolution.Low) {
-       knobs.scale.val(5); //mkm
+    if(isLowResolution(cortexState.resolution)) {
+       knobs.scale.val(SCALE_LOWER_LIMIT); //mkm
     } else {
-      knobs.scale.val(15); // mkm
+      knobs.scale.val(SCALE_THRESHOLD); // mkm
     }
 
     cortexState.scale = +knobs.scale.val();
