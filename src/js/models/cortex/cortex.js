@@ -10,6 +10,9 @@ var Cortex = (function () {
             this.spaceCallback(null, this.checkSynapcesAmountInBox());
             this.preprocessLowBlasts();
         }
+        else {
+            this.fillDeltaAchievableMap();
+        }
     }
     Cortex.prototype.preprocessLowBlasts = function () {
         var _this = this;
@@ -32,7 +35,28 @@ var Cortex = (function () {
         this.resolveSignalInheritanse();
         this.spaceCallback(this.blastsArray.length);
     };
-    Cortex.prototype.preprocessHighBlasts = function () {
+    Cortex.prototype.fillDeltaAchievableMap = function () {
+        var _this = this;
+        this.firstLineDeltaAchievableNeuronsIdsMap = newMap();
+        this.secondLineDeltaAchievableNeuronsIdsMap = newMap();
+        var d1 = new Date();
+        _.each(this.neurons, function (neuronOne) {
+            var firstLineAchievableIds = new Array();
+            var secondLineAchievableIds = new Array();
+            _.each(_this.neurons, function (neuronTwo) {
+                if (checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD)) {
+                    firstLineAchievableIds.push(neuronTwo);
+                    if (checkDistanceFromVectorToVector(neuronOne, neuronTwo, _this.cortexState.blastRadius)) {
+                        secondLineAchievableIds.push(neuronTwo);
+                    }
+                }
+            });
+            mapAdd(_this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableIds);
+            mapAdd(_this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableIds);
+        });
+        var d2 = new Date();
+        console.log((d2.getTime() - d1.getTime()) / 1000);
+        debugger;
     };
     Cortex.prototype.resolveSignalInheritanse = function () {
         for (var i = 0; i < this.blastsArray.length; i++) {
@@ -148,7 +172,7 @@ var Cortex = (function () {
             this.preprocessLowBlasts();
         }
         else {
-            this.preprocessHighBlasts();
+            this.fillDeltaAchievableMap();
         }
     };
     Cortex.prototype.chargeTense = function (time) {

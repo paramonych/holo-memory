@@ -4,6 +4,10 @@ class Cortex implements Disposable {
   private blastsArray: NeuroBlast[];
   public blasts: Map<NeuroBlast>;
 
+  public tiredNeuronsIdsMap: Map<number>;
+  public firstLineDeltaAchievableNeuronsIdsMap: Map<Neuron[]>;
+  public secondLineDeltaAchievableNeuronsIdsMap: Map<Neuron[]>;
+
   constructor(
     public scene: BABYLON.Scene,
     public scale: number,
@@ -15,6 +19,8 @@ class Cortex implements Disposable {
     if(isLowResolution(cortexState.resolution)) {
       this.spaceCallback(null, this.checkSynapcesAmountInBox());
       this.preprocessLowBlasts();
+    } else {
+      this.fillDeltaAchievableMap();
     }
   }
 
@@ -39,8 +45,32 @@ class Cortex implements Disposable {
     this.spaceCallback(this.blastsArray.length);
   }
 
-  private preprocessHighBlasts(): void {
-    //TODO: develip new compute model
+  private fillDeltaAchievableMap(): void {
+    this.firstLineDeltaAchievableNeuronsIdsMap = newMap<Neuron[]>();
+    this.secondLineDeltaAchievableNeuronsIdsMap = newMap<Neuron[]>();
+
+    var d1 = new Date();
+
+    _.each(this.neurons, (neuronOne) => {
+      let firstLineAchievableIds = new Array<Neuron>();
+      let secondLineAchievableIds = new Array<Neuron>();
+      _.each(this.neurons, (neuronTwo) => {
+        if(checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD)) {
+          firstLineAchievableIds.push(neuronTwo);
+          if(checkDistanceFromVectorToVector(neuronOne, neuronTwo, this.cortexState.blastRadius)) {
+            secondLineAchievableIds.push(neuronTwo);
+          }
+        }
+      });
+      mapAdd(this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableIds);
+      mapAdd(this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableIds);
+    });
+
+    var d2 = new Date();
+
+    console.log((d2.getTime() - d1.getTime()) / 1000);
+
+    debugger;
   }
 
   private resolveSignalInheritanse(): void {
@@ -175,7 +205,7 @@ class Cortex implements Disposable {
     if(isLowResolution(cortexState.resolution)) {
       this.preprocessLowBlasts();
     } else {
-      this.preprocessHighBlasts();
+      this.fillDeltaAchievableMap();
     }
   }
 
