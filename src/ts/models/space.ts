@@ -34,7 +34,9 @@ class Space {
   public blow(): void {
     this.cortex.processNextLayer();
   }
-  public wave(): void {}
+  public wave(): void {
+    this.cortex.processNextLayer();
+  }
   public wait(): void {}
 
   public dispose(): void {

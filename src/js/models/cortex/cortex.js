@@ -37,11 +37,10 @@ var Cortex = (function () {
         var _this = this;
         this.firstLineDeltaAchievableNeuronsIdsMap = newMap();
         this.secondLineDeltaAchievableNeuronsIdsMap = newMap();
-        var d1 = new Date();
         _.each(this.neurons, function (neuronOne) {
             var firstLineAchievableNeurons = new Array();
             _.each(_this.neurons, function (neuronTwo) {
-                if (checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD / 14)) {
+                if (checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD_DEVIDED)) {
                     firstLineAchievableNeurons.push(neuronTwo);
                 }
             });
@@ -84,7 +83,7 @@ var Cortex = (function () {
     Cortex.prototype.resolveNextLayer = function () {
         var _this = this;
         _.each(this.signalNeurons, function (nextSignalNeuron) {
-            var achievableNeurons = getByKey(_this.firstLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
+            var achievableNeurons = getByKey(_this.secondLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
             _.each(achievableNeurons, function (nextLegateeNeuron) {
                 if (!mapHasKey(_this.signalNeuronsIdsMap, nextLegateeNeuron.id)) {
                     nextLegateeNeuron.mesh.setLegatee(true);
@@ -150,15 +149,15 @@ var Cortex = (function () {
     };
     Cortex.prototype.initSignal = function (wavePower) {
         this.dropSignal();
+        this.signalNeurons = new Array();
         this.signalNeuronsIdsMap = newMap();
         for (var i = 0; i < wavePower; i++) {
-            this.signalNeurons = _.filter(this.dormantSignalNeurons, function (neuron) {
-                return !isMedium(neuron.type);
-            });
-            if (this.signalNeurons.length > 0) {
-                var index = Math.floor((this.signalNeurons.length - 1) * random());
-                this.signalNeurons[index].includeInSignal();
-                mapAdd(this.signalNeuronsIdsMap, this.signalNeurons[index].id, this.signalNeurons[index]);
+            if (this.dormantSignalNeurons && this.dormantSignalNeurons.length > 0) {
+                var index = Math.floor((this.dormantSignalNeurons.length - 1) * random());
+                var nextSignalNeuron = this.dormantSignalNeurons[index];
+                nextSignalNeuron.includeInSignal();
+                mapAdd(this.signalNeuronsIdsMap, nextSignalNeuron.id, nextSignalNeuron);
+                this.signalNeurons.push(nextSignalNeuron);
             }
             else {
                 break;

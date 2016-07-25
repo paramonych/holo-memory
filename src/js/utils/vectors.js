@@ -50,6 +50,9 @@ function randomPath(scale, segmentsAmount) {
 function vectorFrom(x, y, z) {
     return new BABYLON.Vector3(x, y, z);
 }
+function vectorFromTwoPoints(one, two) {
+    return new BABYLON.Vector3((two.x - one.x), (two.y - one.y), (two.z - one.z));
+}
 function compareVectors(one, two) {
     var sum = one.add(two.negate());
     return sum.x === 0 && sum.y === 0 && sum.z === 0;

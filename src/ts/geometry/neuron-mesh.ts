@@ -14,9 +14,6 @@ class NeuronMesh implements ActivatableMesh {
     let segmentsAmount = isLowResolution(this.cortexState.resolution) ? (this.cortexState.synapcesAmount+1)*2 : 1;
     this.curve = randomPath(this.cortexState.scale, segmentsAmount);
     this.center = vectorMiddlePoint(this.curve[0], this.curve[this.curve.length-1]);
-    let centerMesh = BABYLON.Mesh.CreateSphere('s', 8, this.cortexState.scale/45, this.scene, false);
-    centerMesh.material = forSpikeActive(this.scene);
-    centerMesh.position = this.center.clone();
     this.draw();
     this.setMaterial();
   }

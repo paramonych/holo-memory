@@ -25,7 +25,9 @@ var Space = (function () {
     Space.prototype.blow = function () {
         this.cortex.processNextLayer();
     };
-    Space.prototype.wave = function () { };
+    Space.prototype.wave = function () {
+        this.cortex.processNextLayer();
+    };
     Space.prototype.wait = function () { };
     Space.prototype.dispose = function () {
         this.cortex.dispose();

@@ -82,6 +82,10 @@ function vectorFrom(x: number, y: number, z: number): BABYLON.Vector3 {
   return new BABYLON.Vector3(x,y,z);
 }
 
+function vectorFromTwoPoints(one: BABYLON.Vector3, two: BABYLON.Vector3): BABYLON.Vector3 {
+  return new BABYLON.Vector3((two.x-one.x),(two.y-one.y),(two.z-one.z));
+}
+
 function compareVectors(one: BABYLON.Vector3, two: BABYLON.Vector3): boolean {
   var sum = one.add(two.negate());
   return sum.x === 0 && sum.y === 0 && sum.z === 0;

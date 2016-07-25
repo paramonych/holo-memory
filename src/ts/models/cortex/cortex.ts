@@ -49,12 +49,10 @@ class Cortex implements Disposable {
     this.firstLineDeltaAchievableNeuronsIdsMap = newMap<Neuron[]>();
     this.secondLineDeltaAchievableNeuronsIdsMap = newMap<Neuron[]>();
 
-    var d1 = new Date();
-
     _.each(this.neurons, (neuronOne) => {
       let firstLineAchievableNeurons = new Array<Neuron>();
       _.each(this.neurons, (neuronTwo) => {
-        if(checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD/14)) {
+        if(checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD_DEVIDED)) {
           firstLineAchievableNeurons.push(neuronTwo);
         }
       });
@@ -101,7 +99,7 @@ class Cortex implements Disposable {
 
   private resolveNextLayer(): void {
     _.each(this.signalNeurons, (nextSignalNeuron) => {
-      let achievableNeurons = getByKey(this.firstLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
+      let achievableNeurons = getByKey(this.secondLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
       _.each(achievableNeurons, (nextLegateeNeuron) => {
 
         if(!mapHasKey(this.signalNeuronsIdsMap,nextLegateeNeuron.id)) {
@@ -185,18 +183,18 @@ class Cortex implements Disposable {
   public initSignal(wavePower: number): void {
     this.dropSignal();
 
+    this.signalNeurons = new Array<Neuron>();
     this.signalNeuronsIdsMap = newMap<Neuron>();
 
     for(let i=0; i< wavePower; i++) {
+      if(this.dormantSignalNeurons && this.dormantSignalNeurons.length > 0) {
+        let index = Math.floor((this.dormantSignalNeurons.length-1)*random());
+        let nextSignalNeuron = this.dormantSignalNeurons[index]; // random neuron from dormant (localized in the specific initial area)
 
-      this.signalNeurons = _.filter(this.dormantSignalNeurons, (neuron) => {
-        return !isMedium(neuron.type);
-      });
+        nextSignalNeuron.includeInSignal();
+        mapAdd(this.signalNeuronsIdsMap, nextSignalNeuron.id, nextSignalNeuron);
 
-      if(this.signalNeurons.length > 0) {
-        let index = Math.floor((this.signalNeurons.length-1)*random());
-        this.signalNeurons[index].includeInSignal();
-        mapAdd(this.signalNeuronsIdsMap, this.signalNeurons[index].id, this.signalNeurons[index]);
+        this.signalNeurons.push(nextSignalNeuron);
       } else {
         break;
       }

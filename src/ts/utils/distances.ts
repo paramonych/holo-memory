@@ -1,5 +1,6 @@
 function checkDistanceFromPointToPoint(one: BABYLON.Vector3, two: BABYLON.Vector3, delta: number): boolean {
   let calculatedDistance = getDistanceBetweenTwoPoints(one, two);
+  //let calculatedDistance = vectorFromTwoPoints(one, two).length();
 
   return (calculatedDistance ? (calculatedDistance < delta) : false);
 }
@@ -65,6 +66,7 @@ function getDistanceTwo(directionVectorOne: BABYLON.Vector3, directionVectorTwo:
 }
 
 function getDistanceBetweenTwoPoints(one: BABYLON.Vector3, two: BABYLON.Vector3): number {
+
   return Math.sqrt(Math.pow((one.x - two.x),2) + Math.pow((one.y - two.y),2) + Math.pow((one.z - two.z),2));
 }
 
