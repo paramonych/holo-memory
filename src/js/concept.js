@@ -71,14 +71,23 @@ function wireUI(engine, scene, scale, canvas) {
         knobs.launch.html(next);
         if (next === void 0) {
             knobs.launch.html('PAUSE');
-            time.flow();
+            outOfResolution(cortexState.resolution, {
+                Low: function () { return time.flow(); },
+                High: function () { return space.blow(); }
+            });
         }
         else if (next === 'PAUSE') {
-            time.resume(space);
+            outOfResolution(cortexState.resolution, {
+                Low: function () { return time.resume(space); },
+                High: function () { return space.wave(); }
+            });
         }
         else if (next === 'PLAY') {
             knobs.launch.html(next);
-            time.pause(space);
+            outOfResolution(cortexState.resolution, {
+                Low: function () { return time.pause(space); },
+                High: function () { return space.wait(); }
+            });
         }
     });
     knobs.setDendritsButton.off('click').on('click', function () {

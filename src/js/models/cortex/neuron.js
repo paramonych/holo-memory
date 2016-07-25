@@ -21,6 +21,7 @@ var Neuron = (function () {
     };
     Neuron.prototype.dropToInitialState = function (type) {
         this.type = type;
+        this.mesh.setLegatee(false);
         this.mesh.resetMaterials(this.type);
         if (isLowResolution(this.cortex.cortexState.resolution) && this.synapces) {
             this.synapces.forEach(function (synapce) {

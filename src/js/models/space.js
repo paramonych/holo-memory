@@ -22,6 +22,11 @@ var Space = (function () {
     Space.prototype.shift = function (time, progress) {
         this.cortex.shiftTense(time, progress);
     };
+    Space.prototype.blow = function () {
+        this.cortex.processNextLayer();
+    };
+    Space.prototype.wave = function () { };
+    Space.prototype.wait = function () { };
     Space.prototype.dispose = function () {
         this.cortex.dispose();
         this.cortex = null;

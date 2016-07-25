@@ -101,12 +101,31 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
     if(next === void 0) {
       knobs.launch.html('PAUSE');
-      time.flow();
+      outOfResolution(
+        cortexState.resolution,
+        {
+            Low: () => time.flow(),
+            High: () => space.blow()
+        }
+      );
     } else if(next === 'PAUSE') {
-      time.resume(space);
+      outOfResolution(
+        cortexState.resolution,
+        {
+            Low: () => time.resume(space),
+            High: () => space.wave()
+        }
+      );
     } else if(next === 'PLAY') {
       knobs.launch.html(next);
-      time.pause(space);
+
+      outOfResolution(
+        cortexState.resolution,
+        {
+            Low: () => time.pause(space),
+            High: () => space.wait()
+        }
+      );
     }
   });
 

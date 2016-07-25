@@ -1,6 +1,8 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   private dormantSignalNeurons: Neuron[];
+  private signalNeurons: Neuron[];
+  private signalNeuronsIdsMap: Map<Neuron>;
   private blastsArray: NeuroBlast[];
   public blasts: Map<NeuroBlast>;
 
@@ -41,8 +43,6 @@ class Cortex implements Disposable {
         newBlast = null;
       }
     });
-    this.resolveSignalInheritanse();
-    this.spaceCallback(this.blastsArray.length);
   }
 
   private fillDeltaAchievableMap(): void {
@@ -52,25 +52,27 @@ class Cortex implements Disposable {
     var d1 = new Date();
 
     _.each(this.neurons, (neuronOne) => {
-      let firstLineAchievableIds = new Array<Neuron>();
-      let secondLineAchievableIds = new Array<Neuron>();
+      let firstLineAchievableNeurons = new Array<Neuron>();
       _.each(this.neurons, (neuronTwo) => {
-        if(checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD)) {
-          firstLineAchievableIds.push(neuronTwo);
-          if(checkDistanceFromVectorToVector(neuronOne, neuronTwo, this.cortexState.blastRadius)) {
-            secondLineAchievableIds.push(neuronTwo);
-          }
+        if(checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD/14)) {
+          firstLineAchievableNeurons.push(neuronTwo);
         }
       });
-      mapAdd(this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableIds);
-      mapAdd(this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableIds);
+      mapAdd(this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableNeurons);
     });
 
-    var d2 = new Date();
+    _.each(this.neurons, (neuronOne) => {
+      let firstLineAchievableNeurons = getByKey(this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id);
+      let secondLineAchievableNeurons = new Array<Neuron>();
 
-    console.log((d2.getTime() - d1.getTime()) / 1000);
+      _.each(firstLineAchievableNeurons, (neuronTwo) => {
+          if(checkDistanceFromVectorToVector(neuronOne, neuronTwo, this.cortexState.blastRadius)) {
+            secondLineAchievableNeurons.push(neuronTwo);
+          }
+      });
 
-    debugger;
+      mapAdd(this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableNeurons);
+    });
   }
 
   private resolveSignalInheritanse(): void {
@@ -95,6 +97,23 @@ class Cortex implements Disposable {
         }
       }
     };
+  }
+
+  private resolveNextLayer(): void {
+    _.each(this.signalNeurons, (nextSignalNeuron) => {
+      let achievableNeurons = getByKey(this.firstLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
+      _.each(achievableNeurons, (nextLegateeNeuron) => {
+
+        if(!mapHasKey(this.signalNeuronsIdsMap,nextLegateeNeuron.id)) {
+          nextLegateeNeuron.mesh.setLegatee(true);
+          nextLegateeNeuron.mesh.select();
+        }
+      });
+    });
+  }
+
+  public processNextLayer(): void {
+      this.resolveNextLayer();
   }
 
   private collectMediumSynapces(): Synapce[] {
@@ -166,19 +185,28 @@ class Cortex implements Disposable {
   public initSignal(wavePower: number): void {
     this.dropSignal();
 
+    this.signalNeuronsIdsMap = newMap<Neuron>();
+
     for(let i=0; i< wavePower; i++) {
-      let progenyNeurons = _.filter(this.dormantSignalNeurons, (neuron) => {
+
+      this.signalNeurons = _.filter(this.dormantSignalNeurons, (neuron) => {
         return !isMedium(neuron.type);
       });
-      if(progenyNeurons.length > 0) {
-        let index = Math.floor((progenyNeurons.length-1)*random());
-        progenyNeurons[index].includeInSignal();
+
+      if(this.signalNeurons.length > 0) {
+        let index = Math.floor((this.signalNeurons.length-1)*random());
+        this.signalNeurons[index].includeInSignal();
+        mapAdd(this.signalNeuronsIdsMap, this.signalNeurons[index].id, this.signalNeurons[index]);
       } else {
         break;
       }
     }
     if(isLowResolution(cortexState.resolution)) {
       this.preprocessLowBlasts();
+      this.resolveSignalInheritanse();
+      this.spaceCallback(this.blastsArray.length);
+    } else {
+      this.spaceCallback(1);
     }
   }
 
