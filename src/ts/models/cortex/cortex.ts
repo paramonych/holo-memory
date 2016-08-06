@@ -2,9 +2,12 @@ class Cortex implements Disposable {
   private neurons: Neuron[];
   private dormantSignalNeurons: Neuron[];
   private signalNeurons: Neuron[];
+  public waveFrontNeurons: Neuron[];
   private signalNeuronsIdsMap: Map<Neuron>;
   private blastsArray: NeuroBlast[];
   public blasts: Map<NeuroBlast>;
+  private timer: any;
+  private firstLaunch = true;
 
   public tiredNeuronsIdsMap: Map<number>;
   public firstLineDeltaAchievableNeuronsIdsMap: Map<Neuron[]>;
@@ -98,20 +101,56 @@ class Cortex implements Disposable {
   }
 
   private resolveNextLayer(): void {
+    this.waveFrontNeurons = new Array<Neuron>();
+
     _.each(this.signalNeurons, (nextSignalNeuron) => {
       let achievableNeurons = getByKey(this.secondLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
       _.each(achievableNeurons, (nextLegateeNeuron) => {
 
-        if(!mapHasKey(this.signalNeuronsIdsMap,nextLegateeNeuron.id)) {
+        if(!mapHasKey(this.signalNeuronsIdsMap, nextLegateeNeuron.id) && !nextLegateeNeuron.isDroppedOff) {
           nextLegateeNeuron.mesh.setLegatee(true);
           nextLegateeNeuron.mesh.select();
+          this.waveFrontNeurons.push(nextLegateeNeuron);
         }
       });
     });
   }
 
-  public processNextLayer(): void {
+  public processWaveFromStart(): void {
+
+      if(this.timer) {
+        clearInterval(this.timer);
+      }
+
       this.resolveNextLayer();
+
+      this.timer = setInterval(() => {
+        this.processNextLayer();
+      }, 1000);
+  }
+
+  public processNextLayer(): void {
+    if(this.waveFrontNeurons.length > 0) {
+      this.prepareNextLayer();
+      this.resolveNextLayer();
+    } else {
+      clearInterval(this.timer)
+    }
+  }
+
+  private prepareNextLayer() {
+    _.each(this.signalNeurons, (n) => {
+      resetMaterial(n.mesh.mesh.material, mediumMaterial, 0.1);
+    })
+
+    this.signalNeurons = new Array<Neuron>();
+    this.signalNeuronsIdsMap = newMap<Neuron>();
+
+    _.each(this.waveFrontNeurons, (nextFronNeuron) => {
+      nextFronNeuron.includeInSignal();
+      mapAdd(this.signalNeuronsIdsMap, nextFronNeuron.id, nextFronNeuron);
+      this.signalNeurons.push(nextFronNeuron);
+    });
   }
 
   private collectMediumSynapces(): Synapce[] {
@@ -199,6 +238,7 @@ class Cortex implements Disposable {
         break;
       }
     }
+
     if(isLowResolution(cortexState.resolution)) {
       this.preprocessLowBlasts();
       this.resolveSignalInheritanse();

@@ -32,7 +32,7 @@ class Space {
   }
 
   public blow(): void {
-    this.cortex.processNextLayer();
+    this.cortex.processWaveFromStart();
   }
   public wave(): void {
     this.cortex.processNextLayer();

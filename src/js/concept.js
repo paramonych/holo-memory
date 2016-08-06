@@ -73,13 +73,25 @@ function wireUI(engine, scene, scale, canvas) {
             knobs.launch.html('PAUSE');
             outOfResolution(cortexState.resolution, {
                 Low: function () { return time.flow(); },
-                High: function () { return space.blow(); }
+                High: function () {
+                    space.blow();
+                    var next = knobs.launch.data('type');
+                    var html = knobs.launch.html();
+                    knobs.launch.data('type', html);
+                    knobs.launch.html(next);
+                }
             });
         }
         else if (next === 'PAUSE') {
             outOfResolution(cortexState.resolution, {
                 Low: function () { return time.resume(space); },
-                High: function () { return space.wave(); }
+                High: function () {
+                    space.wave();
+                    var next = knobs.launch.data('type');
+                    var html = knobs.launch.html();
+                    knobs.launch.data('type', html);
+                    knobs.launch.html(next);
+                }
             });
         }
         else if (next === 'PLAY') {

@@ -105,7 +105,13 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
         cortexState.resolution,
         {
             Low: () => time.flow(),
-            High: () => space.blow()
+            High: () => {
+              space.blow();
+              let next = knobs.launch.data('type');
+              let html = knobs.launch.html();
+              knobs.launch.data('type', html);
+              knobs.launch.html(next);
+            }
         }
       );
     } else if(next === 'PAUSE') {
@@ -113,7 +119,13 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
         cortexState.resolution,
         {
             Low: () => time.resume(space),
-            High: () => space.wave()
+            High: () => {
+              space.wave();
+              let next = knobs.launch.data('type');
+              let html = knobs.launch.html();
+              knobs.launch.data('type', html);
+              knobs.launch.html(next);
+            }
         }
       );
     } else if(next === 'PLAY') {

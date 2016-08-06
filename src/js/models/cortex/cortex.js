@@ -5,6 +5,7 @@ var Cortex = (function () {
         this.lifetime = lifetime;
         this.cortexState = cortexState;
         this.spaceCallback = spaceCallback;
+        this.firstLaunch = true;
         this.createNeurons();
         if (isLowResolution(cortexState.resolution)) {
             this.spaceCallback(null, this.checkSynapcesAmountInBox());
@@ -82,18 +83,49 @@ var Cortex = (function () {
     };
     Cortex.prototype.resolveNextLayer = function () {
         var _this = this;
+        this.waveFrontNeurons = new Array();
         _.each(this.signalNeurons, function (nextSignalNeuron) {
             var achievableNeurons = getByKey(_this.secondLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
             _.each(achievableNeurons, function (nextLegateeNeuron) {
-                if (!mapHasKey(_this.signalNeuronsIdsMap, nextLegateeNeuron.id)) {
+                if (!mapHasKey(_this.signalNeuronsIdsMap, nextLegateeNeuron.id) && !nextLegateeNeuron.isDroppedOff) {
                     nextLegateeNeuron.mesh.setLegatee(true);
                     nextLegateeNeuron.mesh.select();
+                    _this.waveFrontNeurons.push(nextLegateeNeuron);
                 }
             });
         });
     };
-    Cortex.prototype.processNextLayer = function () {
+    Cortex.prototype.processWaveFromStart = function () {
+        var _this = this;
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
         this.resolveNextLayer();
+        this.timer = setInterval(function () {
+            _this.processNextLayer();
+        }, 1000);
+    };
+    Cortex.prototype.processNextLayer = function () {
+        if (this.waveFrontNeurons.length > 0) {
+            this.prepareNextLayer();
+            this.resolveNextLayer();
+        }
+        else {
+            clearInterval(this.timer);
+        }
+    };
+    Cortex.prototype.prepareNextLayer = function () {
+        var _this = this;
+        _.each(this.signalNeurons, function (n) {
+            resetMaterial(n.mesh.mesh.material, mediumMaterial, 0.1);
+        });
+        this.signalNeurons = new Array();
+        this.signalNeuronsIdsMap = newMap();
+        _.each(this.waveFrontNeurons, function (nextFronNeuron) {
+            nextFronNeuron.includeInSignal();
+            mapAdd(_this.signalNeuronsIdsMap, nextFronNeuron.id, nextFronNeuron);
+            _this.signalNeurons.push(nextFronNeuron);
+        });
     };
     Cortex.prototype.collectMediumSynapces = function () {
         var allSynapces = new Array();

@@ -4,6 +4,7 @@ var Neuron = (function () {
         this.type = type;
         this.id = getUniqueId();
         this.code = getRandomSixMap();
+        this.isDroppedOff = false;
         this.mesh = new NeuronMesh(this.synapces, this.type, this.cortex.scene, this.cortex.cortexState);
         this.toDefaultState();
         if (isLowResolution(this.cortex.cortexState.resolution)) {
@@ -17,6 +18,9 @@ var Neuron = (function () {
             this.synapces.forEach(function (synapce) {
                 synapce.reset();
             });
+        }
+        else {
+            this.isDroppedOff = true;
         }
     };
     Neuron.prototype.dropToInitialState = function (type) {

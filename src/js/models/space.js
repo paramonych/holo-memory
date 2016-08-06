@@ -23,7 +23,7 @@ var Space = (function () {
         this.cortex.shiftTense(time, progress);
     };
     Space.prototype.blow = function () {
-        this.cortex.processNextLayer();
+        this.cortex.processWaveFromStart();
     };
     Space.prototype.wave = function () {
         this.cortex.processNextLayer();

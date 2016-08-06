@@ -1,5 +1,4 @@
 
-
 class Neuron implements Disposable, Dualistic  { // This is the single dendrite of a single neuron in fact
   public id = getUniqueId();
   public code = getRandomSixMap();
@@ -8,6 +7,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public state: KnockoutObservable<StateType>;
   public synapces: Synapce[];
   public mesh: NeuronMesh;
+  public isDroppedOff: boolean = false;
 
   constructor(
     public cortex: Cortex,
@@ -28,6 +28,8 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       this.synapces.forEach((synapce) => {
         synapce.reset();
       });
+    } else {
+      this.isDroppedOff = true;
     }
   }
 
