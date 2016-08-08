@@ -105,6 +105,15 @@ var Cortex = (function () {
             _this.processNextLayer();
         }, 1000);
     };
+    Cortex.prototype.resumeNextLayer = function () {
+        var _this = this;
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+        this.timer = setInterval(function () {
+            _this.processNextLayer();
+        }, 1000);
+    };
     Cortex.prototype.processNextLayer = function () {
         if (this.waveFrontNeurons.length > 0) {
             this.prepareNextLayer();
@@ -113,6 +122,9 @@ var Cortex = (function () {
         else {
             clearInterval(this.timer);
         }
+    };
+    Cortex.prototype.freezeLayer = function () {
+        clearInterval(this.timer);
     };
     Cortex.prototype.prepareNextLayer = function () {
         var _this = this;
@@ -183,6 +195,14 @@ var Cortex = (function () {
         this.dropSignal();
         this.signalNeurons = new Array();
         this.signalNeuronsIdsMap = newMap();
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+        _.each(this.neurons, function (n) {
+            if (n.isDroppedOff) {
+                n.isDroppedOff = false;
+            }
+        });
         for (var i = 0; i < wavePower; i++) {
             if (this.dormantSignalNeurons && this.dormantSignalNeurons.length > 0) {
                 var index = Math.floor((this.dormantSignalNeurons.length - 1) * random());

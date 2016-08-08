@@ -35,9 +35,11 @@ class Space {
     this.cortex.processWaveFromStart();
   }
   public wave(): void {
-    this.cortex.processNextLayer();
+    this.cortex.resumeNextLayer();
   }
-  public wait(): void {}
+  public wait(): void {
+    this.cortex.freezeLayer();
+  }
 
   public dispose(): void {
     this.cortex.dispose();

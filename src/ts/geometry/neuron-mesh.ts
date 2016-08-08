@@ -24,9 +24,9 @@ class NeuronMesh implements ActivatableMesh {
       't', this.curve, this.cortexState.scale/400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
     this.mesh.material = defaultMaterial(this.scene);
     this.deactivate();
-  //  if(isLowResolution(this.cortexState.resolution)) {
+    if(isLowResolution(this.cortexState.resolution)) {
       this.registerActions();
-  //  }
+    }
   }
 
   public setSynapces(synapces: Synapce[]): void {

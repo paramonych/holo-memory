@@ -13,7 +13,7 @@ var light: BABYLON.PointLight;
 
 function plantConcept(): void {
   knobs = getUIControls();
-  cortexState = cortexConfigurationFrom(knobs, SCALE_LOWER_LIMIT, 3, 0.5, 0.5, 2, Resolution.Low);
+  cortexState = cortexConfigurationFrom(knobs, SCALE_UPPER_LIMIT, 3, 0.5, 0.5, 2, Resolution.High);
 
   uiCallback = (blastsAmount: number, synapcesAmountInBox?: number): void => {
     if(blastsAmount != null && blastsAmount === 0) {
@@ -79,6 +79,28 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     outOfKnobsResolution(knobs.resolution)
   );
 
+  outOfResolution(
+    cortexState.resolution,
+    {
+        Low: () => {
+          knobs.pinMaxLength.removeAttr('disabled');
+          knobs.blastRadius.removeAttr('disabled');
+          knobs.blastPower.removeAttr('disabled');
+          knobs.measure.find('.actual-density').show();
+        },
+        High: () => {
+          knobs.pinMaxLength.attr('disabled', 'disabled');
+          knobs.blastRadius.attr('disabled', 'disabled');
+          knobs.blastPower.attr('disabled', 'disabled');
+          knobs.processWaveButton.attr('disabled', 'disabled');
+          knobs.launch.attr('disabled', 'disabled');
+          knobs.measure.find('.actual-density').hide();
+          doScale(cortexState, knobs);
+          knobs.measure.find('.measure-value span').html(cortexState.scale);
+        }
+    }
+  );
+
   let space = new Space(scene, scale, lifetime, cortexState, uiCallback);
   let time = new Time(lifetime);
 
@@ -99,7 +121,7 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     knobs.launch.data('type', html);
     knobs.launch.html(next);
 
-    if(next === void 0) {
+    if(!next) {
       knobs.launch.html('PAUSE');
       outOfResolution(
         cortexState.resolution,
@@ -107,10 +129,6 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
             Low: () => time.flow(),
             High: () => {
               space.blow();
-              let next = knobs.launch.data('type');
-              let html = knobs.launch.html();
-              knobs.launch.data('type', html);
-              knobs.launch.html(next);
             }
         }
       );
@@ -121,10 +139,6 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
             Low: () => time.resume(space),
             High: () => {
               space.wave();
-              let next = knobs.launch.data('type');
-              let html = knobs.launch.html();
-              knobs.launch.data('type', html);
-              knobs.launch.html(next);
             }
         }
       );
@@ -145,6 +159,8 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     cortexState.scale = +knobs.scale.val();
     let resolution = (cortexState.scale < SCALE_THRESHOLD) ? Resolution.Low : Resolution.High;
 
+    knobs.launch.data('type', '');
+
     if(cortexState.resolution !== resolution) {
       cortexState.resolution = switchResolution(knobs.resolution);
     }
@@ -158,8 +174,19 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
     refillConfiguration();
 
+    outOfResolution(
+      cortexState.resolution,
+      {
+          Low: () => {knobs.processWaveButton.removeAttr('disabled');},
+          High: () => {
+            knobs.launch.removeAttr('disabled');
+            knobs.launch.data('type', '');
+            knobs.launch.html('PLAY');
+        }
+      }
+    );
+
     space.cortex.initSignal(cortexState.wavePower);
-    knobs.processWaveButton.removeAttr('disabled');
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
@@ -176,6 +203,7 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
     if(isLowResolution(cortexState.resolution)) {
        knobs.scale.val(SCALE_LOWER_LIMIT); //mkm
+       space.wait();
     } else {
       knobs.scale.val(SCALE_THRESHOLD); // mkm
     }
@@ -196,14 +224,14 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     (<BABYLON.StandardMaterial>box.material).emissiveColor = new BABYLON.Color3(0, 0, 0);
   });
 
-  time.tense.eventCallback("onUpdate", function() {
+  /*time.tense.eventCallback("onUpdate", function() {
     let pg = time.tense.progress();
     let progress = pg * 100;
 
     if(progress) {
       //knobs.slider.slider("value", progress);
     }
-  });
+  });*/
 
   time.tense.eventCallback("onComplete", function() {
     time.restart(space);

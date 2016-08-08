@@ -117,7 +117,6 @@ class Cortex implements Disposable {
   }
 
   public processWaveFromStart(): void {
-
       if(this.timer) {
         clearInterval(this.timer);
       }
@@ -129,13 +128,27 @@ class Cortex implements Disposable {
       }, 1000);
   }
 
+  public resumeNextLayer(): void {
+      if(this.timer) {
+        clearInterval(this.timer);
+      }
+
+      this.timer = setInterval(() => {
+        this.processNextLayer();
+      }, 1000);
+  }
+
   public processNextLayer(): void {
     if(this.waveFrontNeurons.length > 0) {
       this.prepareNextLayer();
       this.resolveNextLayer();
     } else {
-      clearInterval(this.timer)
+      clearInterval(this.timer);
     }
+  }
+
+  public freezeLayer(): void {
+    clearInterval(this.timer);
   }
 
   private prepareNextLayer() {
@@ -224,6 +237,16 @@ class Cortex implements Disposable {
 
     this.signalNeurons = new Array<Neuron>();
     this.signalNeuronsIdsMap = newMap<Neuron>();
+
+    if(this.timer) {
+      clearInterval(this.timer);
+    }
+
+    _.each(this.neurons, (n) => {
+      if(n.isDroppedOff) {
+        n.isDroppedOff = false;
+      }
+    });
 
     for(let i=0; i< wavePower; i++) {
       if(this.dormantSignalNeurons && this.dormantSignalNeurons.length > 0) {

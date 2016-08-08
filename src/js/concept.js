@@ -9,7 +9,7 @@ var camera;
 var light;
 function plantConcept() {
     knobs = getUIControls();
-    cortexState = cortexConfigurationFrom(knobs, SCALE_LOWER_LIMIT, 3, 0.5, 0.5, 2, Resolution.Low);
+    cortexState = cortexConfigurationFrom(knobs, SCALE_UPPER_LIMIT, 3, 0.5, 0.5, 2, Resolution.High);
     uiCallback = function (blastsAmount, synapcesAmountInBox) {
         if (blastsAmount != null && blastsAmount === 0) {
             knobs.launch.attr('disabled', 'disabled');
@@ -53,6 +53,24 @@ function showBlocker() {
 function wireUI(engine, scene, scale, canvas) {
     setTimeout(function () { blockerOverlay.addClass('hidden'); }, 1300);
     cortexState = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val(), outOfKnobsResolution(knobs.resolution));
+    outOfResolution(cortexState.resolution, {
+        Low: function () {
+            knobs.pinMaxLength.removeAttr('disabled');
+            knobs.blastRadius.removeAttr('disabled');
+            knobs.blastPower.removeAttr('disabled');
+            knobs.measure.find('.actual-density').show();
+        },
+        High: function () {
+            knobs.pinMaxLength.attr('disabled', 'disabled');
+            knobs.blastRadius.attr('disabled', 'disabled');
+            knobs.blastPower.attr('disabled', 'disabled');
+            knobs.processWaveButton.attr('disabled', 'disabled');
+            knobs.launch.attr('disabled', 'disabled');
+            knobs.measure.find('.actual-density').hide();
+            doScale(cortexState, knobs);
+            knobs.measure.find('.measure-value span').html(cortexState.scale);
+        }
+    });
     var space = new Space(scene, scale, lifetime, cortexState, uiCallback);
     var time = new Time(lifetime);
     var refillConfiguration = function () {
@@ -69,16 +87,12 @@ function wireUI(engine, scene, scale, canvas) {
         var html = knobs.launch.html();
         knobs.launch.data('type', html);
         knobs.launch.html(next);
-        if (next === void 0) {
+        if (!next) {
             knobs.launch.html('PAUSE');
             outOfResolution(cortexState.resolution, {
                 Low: function () { return time.flow(); },
                 High: function () {
                     space.blow();
-                    var next = knobs.launch.data('type');
-                    var html = knobs.launch.html();
-                    knobs.launch.data('type', html);
-                    knobs.launch.html(next);
                 }
             });
         }
@@ -87,10 +101,6 @@ function wireUI(engine, scene, scale, canvas) {
                 Low: function () { return time.resume(space); },
                 High: function () {
                     space.wave();
-                    var next = knobs.launch.data('type');
-                    var html = knobs.launch.html();
-                    knobs.launch.data('type', html);
-                    knobs.launch.html(next);
                 }
             });
         }
@@ -105,6 +115,7 @@ function wireUI(engine, scene, scale, canvas) {
     knobs.setDendritsButton.off('click').on('click', function () {
         cortexState.scale = +knobs.scale.val();
         var resolution = (cortexState.scale < SCALE_THRESHOLD) ? Resolution.Low : Resolution.High;
+        knobs.launch.data('type', '');
         if (cortexState.resolution !== resolution) {
             cortexState.resolution = switchResolution(knobs.resolution);
         }
@@ -114,8 +125,15 @@ function wireUI(engine, scene, scale, canvas) {
         var newValue = +knobs.wavePower.val();
         cortexState.wavePower = newValue;
         refillConfiguration();
+        outOfResolution(cortexState.resolution, {
+            Low: function () { knobs.processWaveButton.removeAttr('disabled'); },
+            High: function () {
+                knobs.launch.removeAttr('disabled');
+                knobs.launch.data('type', '');
+                knobs.launch.html('PLAY');
+            }
+        });
         space.cortex.initSignal(cortexState.wavePower);
-        knobs.processWaveButton.removeAttr('disabled');
     });
     knobs.processWaveButton.off('click').on('click', function () {
         refillConfiguration();
@@ -130,6 +148,7 @@ function wireUI(engine, scene, scale, canvas) {
         cortexState.resolution = switchResolution(knobs.resolution);
         if (isLowResolution(cortexState.resolution)) {
             knobs.scale.val(SCALE_LOWER_LIMIT);
+            space.wait();
         }
         else {
             knobs.scale.val(SCALE_THRESHOLD);
@@ -145,12 +164,6 @@ function wireUI(engine, scene, scale, canvas) {
     });
     knobs.measure.off('mouseleave').on('mouseleave', function () {
         box.material.emissiveColor = new BABYLON.Color3(0, 0, 0);
-    });
-    time.tense.eventCallback("onUpdate", function () {
-        var pg = time.tense.progress();
-        var progress = pg * 100;
-        if (progress) {
-        }
     });
     time.tense.eventCallback("onComplete", function () {
         time.restart(space);

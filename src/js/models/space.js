@@ -26,9 +26,11 @@ var Space = (function () {
         this.cortex.processWaveFromStart();
     };
     Space.prototype.wave = function () {
-        this.cortex.processNextLayer();
+        this.cortex.resumeNextLayer();
     };
-    Space.prototype.wait = function () { };
+    Space.prototype.wait = function () {
+        this.cortex.freezeLayer();
+    };
     Space.prototype.dispose = function () {
         this.cortex.dispose();
         this.cortex = null;

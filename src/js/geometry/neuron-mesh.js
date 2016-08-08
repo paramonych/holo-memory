@@ -18,7 +18,9 @@ var NeuronMesh = (function () {
         this.mesh = BABYLON.Mesh.CreateTube('t', this.curve, this.cortexState.scale / 400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
         this.mesh.material = defaultMaterial(this.scene);
         this.deactivate();
-        this.registerActions();
+        if (isLowResolution(this.cortexState.resolution)) {
+            this.registerActions();
+        }
     };
     NeuronMesh.prototype.setSynapces = function (synapces) {
         this.synapces = synapces;
