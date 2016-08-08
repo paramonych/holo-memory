@@ -2,6 +2,7 @@ class NeuronMesh implements ActivatableMesh {
   public mesh: BABYLON.Mesh;
   public isHighlighted = false;
   public curve: BABYLON.Vector3[];
+  public center: BABYLON.Vector3;
   private alpha = 1;
   public isLegatee = false;
 
@@ -10,7 +11,9 @@ class NeuronMesh implements ActivatableMesh {
     private type: NeuronType,
     private scene: BABYLON.Scene,
     public cortexState: CortexConfiguration) {
-    this.curve = randomPath(this.cortexState.scale, (this.cortexState.synapcesAmount+1)*2);
+    let segmentsAmount = isLowResolution(this.cortexState.resolution) ? (this.cortexState.synapcesAmount+1)*2 : 1;
+    this.curve = randomPath(this.cortexState.scale, segmentsAmount);
+    this.center = vectorMiddlePoint(this.curve[0], this.curve[this.curve.length-1]);
     this.draw();
     this.setMaterial();
   }
@@ -21,7 +24,9 @@ class NeuronMesh implements ActivatableMesh {
       't', this.curve, this.cortexState.scale/400, 60, null, 0, this.scene, false, BABYLON.Mesh.FRONTSIDE);
     this.mesh.material = defaultMaterial(this.scene);
     this.deactivate();
-    this.registerActions();
+    if(isLowResolution(this.cortexState.resolution)) {
+      this.registerActions();
+    }
   }
 
   public setSynapces(synapces: Synapce[]): void {
@@ -73,22 +78,26 @@ class NeuronMesh implements ActivatableMesh {
       this.isHighlighted = !this.isHighlighted;
     }
     resetMaterial(this.mesh.material, newMaterialConfig, alpha);
-    this.synapces.forEach(function(synapce) {
-      resetMaterial(synapce.mesh.mesh.material, newMaterialConfig, alpha);
-      resetMaterial(synapce.mesh.synapceLegMesh.material, newMaterialConfig, alpha);
-    });
+    if(isLowResolution(this.cortexState.resolution) && this.synapces) {
+      this.synapces.forEach(function(synapce) {
+        resetMaterial(synapce.mesh.mesh.material, newMaterialConfig, alpha);
+        resetMaterial(synapce.mesh.synapceLegMesh.material, newMaterialConfig, alpha);
+      });
+    }
   }
 
   public setAlpha(value: number): void {
     this.alpha = value;
     setAlpha(this.mesh.material, value);
-    this.synapces.forEach(function(synapce) {
-      setAlpha(synapce.mesh.mesh.material, Math.floor(value));
-      setAlpha(synapce.mesh.synapceLegMesh.material, Math.floor(value));
-      if(synapce.codeMesh) {
-        setAlpha(synapce.codeMesh.mesh.material, Math.floor(value));
-      }
-    });
+    if(isLowResolution(this.cortexState.resolution) && this.synapces) {
+      this.synapces.forEach(function(synapce) {
+        setAlpha(synapce.mesh.mesh.material, Math.floor(value));
+        setAlpha(synapce.mesh.synapceLegMesh.material, Math.floor(value));
+        if(synapce.codeMesh) {
+          setAlpha(synapce.codeMesh.mesh.material, Math.floor(value));
+        }
+      });
+    }
   }
 
   setMaterial(): void {
@@ -105,8 +114,8 @@ class NeuronMesh implements ActivatableMesh {
 
   public resetMaterials(type: NeuronType): void {
     this.type = type;
-    this.setMaterial();
     this.isHighlighted = void 0;
+    this.deactivate();
   }
 
   public activate(): void {
@@ -117,8 +126,10 @@ class NeuronMesh implements ActivatableMesh {
   }
 
   public dispose(): void {
-    this.mesh.actionManager.dispose();
-    this.mesh.actionManager = null;
+  //  if(isLowResolution(this.cortexState.resolution) && this.mesh.actionManager) {
+      this.mesh.actionManager.dispose();
+      this.mesh.actionManager = null;
+  //  }
     this.scene.removeMesh(this.mesh);
     this.mesh.dispose();
     this.mesh = null;

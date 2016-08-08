@@ -31,6 +31,16 @@ class Space {
     this.cortex.shiftTense(time, progress);
   }
 
+  public blow(): void {
+    this.cortex.processWaveFromStart();
+  }
+  public wave(): void {
+    this.cortex.resumeNextLayer();
+  }
+  public wait(): void {
+    this.cortex.freezeLayer();
+  }
+
   public dispose(): void {
     this.cortex.dispose();
     this.cortex = null;

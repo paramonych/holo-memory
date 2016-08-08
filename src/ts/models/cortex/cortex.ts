@@ -1,7 +1,17 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
+  private dormantSignalNeurons: Neuron[];
+  private signalNeurons: Neuron[];
+  public waveFrontNeurons: Neuron[];
+  private signalNeuronsIdsMap: Map<Neuron>;
   private blastsArray: NeuroBlast[];
   public blasts: Map<NeuroBlast>;
+  private timer: any;
+  private firstLaunch = true;
+
+  public tiredNeuronsIdsMap: Map<number>;
+  public firstLineDeltaAchievableNeuronsIdsMap: Map<Neuron[]>;
+  public secondLineDeltaAchievableNeuronsIdsMap: Map<Neuron[]>;
 
   constructor(
     public scene: BABYLON.Scene,
@@ -10,11 +20,16 @@ class Cortex implements Disposable {
     public cortexState: CortexConfiguration,
     private spaceCallback: (blastsAmount: number, density ?: number) => void) {
     this.createNeurons();
-    this.spaceCallback(null, this.checkSynapcesAmountInBox());
-    this.preprocessBlasts();
+
+    if(isLowResolution(cortexState.resolution)) {
+      this.spaceCallback(null, this.checkSynapcesAmountInBox());
+      this.preprocessLowBlasts();
+    } else {
+      this.fillDeltaAchievableMap();
+    }
   }
 
-  private preprocessBlasts(): void {
+  private preprocessLowBlasts(): void {
     let mediumSynapces = this.collectMediumSynapces();
     let progenySynapces = this.collectProgenySynapces();
     this.blasts = newMap<NeuroBlast>();
@@ -31,8 +46,34 @@ class Cortex implements Disposable {
         newBlast = null;
       }
     });
-    this.resolveSignalInheritanse();
-    this.spaceCallback(this.blastsArray.length);
+  }
+
+  private fillDeltaAchievableMap(): void {
+    this.firstLineDeltaAchievableNeuronsIdsMap = newMap<Neuron[]>();
+    this.secondLineDeltaAchievableNeuronsIdsMap = newMap<Neuron[]>();
+
+    _.each(this.neurons, (neuronOne) => {
+      let firstLineAchievableNeurons = new Array<Neuron>();
+      _.each(this.neurons, (neuronTwo) => {
+        if(checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD_DEVIDED)) {
+          firstLineAchievableNeurons.push(neuronTwo);
+        }
+      });
+      mapAdd(this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableNeurons);
+    });
+
+    _.each(this.neurons, (neuronOne) => {
+      let firstLineAchievableNeurons = getByKey(this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id);
+      let secondLineAchievableNeurons = new Array<Neuron>();
+
+      _.each(firstLineAchievableNeurons, (neuronTwo) => {
+          if(checkDistanceFromVectorToVector(neuronOne, neuronTwo, this.cortexState.blastRadius)) {
+            secondLineAchievableNeurons.push(neuronTwo);
+          }
+      });
+
+      mapAdd(this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableNeurons);
+    });
   }
 
   private resolveSignalInheritanse(): void {
@@ -57,6 +98,72 @@ class Cortex implements Disposable {
         }
       }
     };
+  }
+
+  private resolveNextLayer(): void {
+    this.waveFrontNeurons = new Array<Neuron>();
+
+    _.each(this.signalNeurons, (nextSignalNeuron) => {
+      let achievableNeurons = getByKey(this.secondLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
+      _.each(achievableNeurons, (nextLegateeNeuron) => {
+
+        if(!mapHasKey(this.signalNeuronsIdsMap, nextLegateeNeuron.id) && !nextLegateeNeuron.isDroppedOff) {
+          nextLegateeNeuron.mesh.setLegatee(true);
+          nextLegateeNeuron.mesh.select();
+          this.waveFrontNeurons.push(nextLegateeNeuron);
+        }
+      });
+    });
+  }
+
+  public processWaveFromStart(): void {
+      if(this.timer) {
+        clearInterval(this.timer);
+      }
+
+      this.resolveNextLayer();
+
+      this.timer = setInterval(() => {
+        this.processNextLayer();
+      }, 1000);
+  }
+
+  public resumeNextLayer(): void {
+      if(this.timer) {
+        clearInterval(this.timer);
+      }
+
+      this.timer = setInterval(() => {
+        this.processNextLayer();
+      }, 1000);
+  }
+
+  public processNextLayer(): void {
+    if(this.waveFrontNeurons.length > 0) {
+      this.prepareNextLayer();
+      this.resolveNextLayer();
+    } else {
+      clearInterval(this.timer);
+    }
+  }
+
+  public freezeLayer(): void {
+    clearInterval(this.timer);
+  }
+
+  private prepareNextLayer() {
+    _.each(this.signalNeurons, (n) => {
+      resetMaterial(n.mesh.mesh.material, mediumMaterial, 0.1);
+    })
+
+    this.signalNeurons = new Array<Neuron>();
+    this.signalNeuronsIdsMap = newMap<Neuron>();
+
+    _.each(this.waveFrontNeurons, (nextFronNeuron) => {
+      nextFronNeuron.includeInSignal();
+      mapAdd(this.signalNeuronsIdsMap, nextFronNeuron.id, nextFronNeuron);
+      this.signalNeurons.push(nextFronNeuron);
+    });
   }
 
   private collectMediumSynapces(): Synapce[] {
@@ -86,7 +193,7 @@ class Cortex implements Disposable {
   private checkSynapcesAmountInBox(): number {
     let amount = 0;
     let checkBounds = (val: number): boolean => {
-      let bound = cortexSate.scale/1.25;
+      let bound = cortexState.scale/1.25;
       return (val < bound) && (val > -bound);
     }
 
@@ -108,24 +215,60 @@ class Cortex implements Disposable {
     for(let i=0; i< this.cortexState.dendritsAmount; i++) {
       this.neurons.push(new Neuron(this, NeuronType.Progeny));
     }
+
+    let halfScale = this.cortexState.scale/2;
+    let waveStartingPoint = new BABYLON.Vector3(halfScale,halfScale,halfScale);
+    this.revealDormantSignalNeurons(waveStartingPoint);
+  }
+
+  private revealDormantSignalNeurons(basePosition: BABYLON.Vector3): void {
+    this.dormantSignalNeurons = new Array<Neuron>();
+
+    _.each(this.neurons, (n) => {
+      if(checkDistanceFromPointToPoint(n.mesh.center, basePosition, SCALE_THRESHOLD)) {
+
+        this.dormantSignalNeurons.push(n);
+      }
+    });
   }
 
   public initSignal(wavePower: number): void {
     this.dropSignal();
 
+    this.signalNeurons = new Array<Neuron>();
+    this.signalNeuronsIdsMap = newMap<Neuron>();
+
+    if(this.timer) {
+      clearInterval(this.timer);
+    }
+
+    _.each(this.neurons, (n) => {
+      if(n.isDroppedOff) {
+        n.isDroppedOff = false;
+      }
+    });
+
     for(let i=0; i< wavePower; i++) {
-      let progenyNeurons = _.filter(this.neurons, (neuron) => {
-        return !isMedium(neuron.type);
-      });
-      if(progenyNeurons.length > 0) {
-        let index = Math.floor((progenyNeurons.length-1)*random());
-        progenyNeurons[index].includeInSignal();
+      if(this.dormantSignalNeurons && this.dormantSignalNeurons.length > 0) {
+        let index = Math.floor((this.dormantSignalNeurons.length-1)*random());
+        let nextSignalNeuron = this.dormantSignalNeurons[index]; // random neuron from dormant (localized in the specific initial area)
+
+        nextSignalNeuron.includeInSignal();
+        mapAdd(this.signalNeuronsIdsMap, nextSignalNeuron.id, nextSignalNeuron);
+
+        this.signalNeurons.push(nextSignalNeuron);
       } else {
         break;
       }
     }
 
-    this.preprocessBlasts();
+    if(isLowResolution(cortexState.resolution)) {
+      this.preprocessLowBlasts();
+      this.resolveSignalInheritanse();
+      this.spaceCallback(this.blastsArray.length);
+    } else {
+      this.spaceCallback(1);
+    }
   }
 
   public resetSynapces(): void {
@@ -148,7 +291,11 @@ class Cortex implements Disposable {
   }
 
   public computeBlasts(): void {
-    this.preprocessBlasts();
+    if(isLowResolution(cortexState.resolution)) {
+      this.preprocessLowBlasts();
+    } else {
+      this.fillDeltaAchievableMap();
+    }
   }
 
   public chargeTense(time: Time): void {

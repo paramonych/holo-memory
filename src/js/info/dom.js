@@ -1,4 +1,4 @@
-function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale) {
+function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution) {
     return {
         launch: launch,
         slider: slider,
@@ -13,7 +13,8 @@ function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius,
         processWaveButton: processWaveButton,
         keepSelected: keepSelected.find('input'),
         measure: measure,
-        scale: scale.find('input')
+        scale: scale.find('input'),
+        resolution: resolution.find('label')
     };
 }
 function getUIControls() {
@@ -28,8 +29,29 @@ function getUIControls() {
     var keepSelected = jQuery(ids.keepSelected);
     var measure = jQuery(ids.measure);
     var scale = jQuery(ids.sceneScale);
+    var resolution = jQuery(ids.resolution);
     var setDendritsButton = jQuery(ids.setDendritsButton);
     var setSignalButton = jQuery(ids.setSignalButton);
     var processWaveButton = jQuery(ids.processWaveButton);
-    return knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale);
+    return knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution);
+}
+function outOfKnobsResolution(resolution) {
+    var isHigh = resolution.filter('.active').hasClass('high');
+    return isHigh ? Resolution.High : Resolution.Low;
+}
+function switchResolution(resolution) {
+    var active = resolution.filter('.active');
+    var inactive = resolution.filter(':not(.active)');
+    active.removeClass('active');
+    inactive.addClass('active');
+    return outOfKnobsResolution(resolution);
+}
+function isSameResolution(resolution, selectedResolution) {
+    return outOfResolution(outOfKnobsResolution(resolution), {
+        Low: function () { return selectedResolution.hasClass('low'); },
+        High: function () { return selectedResolution.hasClass('high'); }
+    });
+}
+function isLowResolution(resolution) {
+    return (resolution == Resolution.Low);
 }

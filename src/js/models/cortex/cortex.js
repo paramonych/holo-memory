@@ -5,11 +5,17 @@ var Cortex = (function () {
         this.lifetime = lifetime;
         this.cortexState = cortexState;
         this.spaceCallback = spaceCallback;
+        this.firstLaunch = true;
         this.createNeurons();
-        this.spaceCallback(null, this.checkSynapcesAmountInBox());
-        this.preprocessBlasts();
+        if (isLowResolution(cortexState.resolution)) {
+            this.spaceCallback(null, this.checkSynapcesAmountInBox());
+            this.preprocessLowBlasts();
+        }
+        else {
+            this.fillDeltaAchievableMap();
+        }
     }
-    Cortex.prototype.preprocessBlasts = function () {
+    Cortex.prototype.preprocessLowBlasts = function () {
         var _this = this;
         var mediumSynapces = this.collectMediumSynapces();
         var progenySynapces = this.collectProgenySynapces();
@@ -27,8 +33,30 @@ var Cortex = (function () {
                 newBlast = null;
             }
         });
-        this.resolveSignalInheritanse();
-        this.spaceCallback(this.blastsArray.length);
+    };
+    Cortex.prototype.fillDeltaAchievableMap = function () {
+        var _this = this;
+        this.firstLineDeltaAchievableNeuronsIdsMap = newMap();
+        this.secondLineDeltaAchievableNeuronsIdsMap = newMap();
+        _.each(this.neurons, function (neuronOne) {
+            var firstLineAchievableNeurons = new Array();
+            _.each(_this.neurons, function (neuronTwo) {
+                if (checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD_DEVIDED)) {
+                    firstLineAchievableNeurons.push(neuronTwo);
+                }
+            });
+            mapAdd(_this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableNeurons);
+        });
+        _.each(this.neurons, function (neuronOne) {
+            var firstLineAchievableNeurons = getByKey(_this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id);
+            var secondLineAchievableNeurons = new Array();
+            _.each(firstLineAchievableNeurons, function (neuronTwo) {
+                if (checkDistanceFromVectorToVector(neuronOne, neuronTwo, _this.cortexState.blastRadius)) {
+                    secondLineAchievableNeurons.push(neuronTwo);
+                }
+            });
+            mapAdd(_this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableNeurons);
+        });
     };
     Cortex.prototype.resolveSignalInheritanse = function () {
         for (var i = 0; i < this.blastsArray.length; i++) {
@@ -53,6 +81,64 @@ var Cortex = (function () {
         }
         ;
     };
+    Cortex.prototype.resolveNextLayer = function () {
+        var _this = this;
+        this.waveFrontNeurons = new Array();
+        _.each(this.signalNeurons, function (nextSignalNeuron) {
+            var achievableNeurons = getByKey(_this.secondLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
+            _.each(achievableNeurons, function (nextLegateeNeuron) {
+                if (!mapHasKey(_this.signalNeuronsIdsMap, nextLegateeNeuron.id) && !nextLegateeNeuron.isDroppedOff) {
+                    nextLegateeNeuron.mesh.setLegatee(true);
+                    nextLegateeNeuron.mesh.select();
+                    _this.waveFrontNeurons.push(nextLegateeNeuron);
+                }
+            });
+        });
+    };
+    Cortex.prototype.processWaveFromStart = function () {
+        var _this = this;
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+        this.resolveNextLayer();
+        this.timer = setInterval(function () {
+            _this.processNextLayer();
+        }, 1000);
+    };
+    Cortex.prototype.resumeNextLayer = function () {
+        var _this = this;
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+        this.timer = setInterval(function () {
+            _this.processNextLayer();
+        }, 1000);
+    };
+    Cortex.prototype.processNextLayer = function () {
+        if (this.waveFrontNeurons.length > 0) {
+            this.prepareNextLayer();
+            this.resolveNextLayer();
+        }
+        else {
+            clearInterval(this.timer);
+        }
+    };
+    Cortex.prototype.freezeLayer = function () {
+        clearInterval(this.timer);
+    };
+    Cortex.prototype.prepareNextLayer = function () {
+        var _this = this;
+        _.each(this.signalNeurons, function (n) {
+            resetMaterial(n.mesh.mesh.material, mediumMaterial, 0.1);
+        });
+        this.signalNeurons = new Array();
+        this.signalNeuronsIdsMap = newMap();
+        _.each(this.waveFrontNeurons, function (nextFronNeuron) {
+            nextFronNeuron.includeInSignal();
+            mapAdd(_this.signalNeuronsIdsMap, nextFronNeuron.id, nextFronNeuron);
+            _this.signalNeurons.push(nextFronNeuron);
+        });
+    };
     Cortex.prototype.collectMediumSynapces = function () {
         var allSynapces = new Array();
         this.neurons.forEach(function (neuron) {
@@ -74,7 +160,7 @@ var Cortex = (function () {
     Cortex.prototype.checkSynapcesAmountInBox = function () {
         var amount = 0;
         var checkBounds = function (val) {
-            var bound = cortexSate.scale / 1.25;
+            var bound = cortexState.scale / 1.25;
             return (val < bound) && (val > -bound);
         };
         this.neurons.forEach(function (neuron) {
@@ -92,22 +178,51 @@ var Cortex = (function () {
         for (var i = 0; i < this.cortexState.dendritsAmount; i++) {
             this.neurons.push(new Neuron(this, NeuronType.Progeny));
         }
+        var halfScale = this.cortexState.scale / 2;
+        var waveStartingPoint = new BABYLON.Vector3(halfScale, halfScale, halfScale);
+        this.revealDormantSignalNeurons(waveStartingPoint);
+    };
+    Cortex.prototype.revealDormantSignalNeurons = function (basePosition) {
+        var _this = this;
+        this.dormantSignalNeurons = new Array();
+        _.each(this.neurons, function (n) {
+            if (checkDistanceFromPointToPoint(n.mesh.center, basePosition, SCALE_THRESHOLD)) {
+                _this.dormantSignalNeurons.push(n);
+            }
+        });
     };
     Cortex.prototype.initSignal = function (wavePower) {
         this.dropSignal();
+        this.signalNeurons = new Array();
+        this.signalNeuronsIdsMap = newMap();
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+        _.each(this.neurons, function (n) {
+            if (n.isDroppedOff) {
+                n.isDroppedOff = false;
+            }
+        });
         for (var i = 0; i < wavePower; i++) {
-            var progenyNeurons = _.filter(this.neurons, function (neuron) {
-                return !isMedium(neuron.type);
-            });
-            if (progenyNeurons.length > 0) {
-                var index = Math.floor((progenyNeurons.length - 1) * random());
-                progenyNeurons[index].includeInSignal();
+            if (this.dormantSignalNeurons && this.dormantSignalNeurons.length > 0) {
+                var index = Math.floor((this.dormantSignalNeurons.length - 1) * random());
+                var nextSignalNeuron = this.dormantSignalNeurons[index];
+                nextSignalNeuron.includeInSignal();
+                mapAdd(this.signalNeuronsIdsMap, nextSignalNeuron.id, nextSignalNeuron);
+                this.signalNeurons.push(nextSignalNeuron);
             }
             else {
                 break;
             }
         }
-        this.preprocessBlasts();
+        if (isLowResolution(cortexState.resolution)) {
+            this.preprocessLowBlasts();
+            this.resolveSignalInheritanse();
+            this.spaceCallback(this.blastsArray.length);
+        }
+        else {
+            this.spaceCallback(1);
+        }
     };
     Cortex.prototype.resetSynapces = function () {
         this.neurons.forEach(function (neuron) {
@@ -126,7 +241,12 @@ var Cortex = (function () {
         });
     };
     Cortex.prototype.computeBlasts = function () {
-        this.preprocessBlasts();
+        if (isLowResolution(cortexState.resolution)) {
+            this.preprocessLowBlasts();
+        }
+        else {
+            this.fillDeltaAchievableMap();
+        }
     };
     Cortex.prototype.chargeTense = function (time) {
         _.each(this.neurons, function (n) {
