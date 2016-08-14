@@ -127,9 +127,10 @@ class NeuronMesh implements ActivatableMesh {
 
   public dispose(): void {
   //  if(isLowResolution(this.cortexState.resolution) && this.mesh.actionManager) {
+    if(this.mesh.actionManager) {
       this.mesh.actionManager.dispose();
       this.mesh.actionManager = null;
-  //  }
+    }
     this.scene.removeMesh(this.mesh);
     this.mesh.dispose();
     this.mesh = null;

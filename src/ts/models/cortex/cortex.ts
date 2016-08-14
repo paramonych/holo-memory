@@ -226,7 +226,6 @@ class Cortex implements Disposable {
 
     _.each(this.neurons, (n) => {
       if(checkDistanceFromPointToPoint(n.mesh.center, basePosition, SCALE_THRESHOLD)) {
-
         this.dormantSignalNeurons.push(n);
       }
     });
@@ -293,6 +292,8 @@ class Cortex implements Disposable {
   public computeBlasts(): void {
     if(isLowResolution(cortexState.resolution)) {
       this.preprocessLowBlasts();
+      this.resolveSignalInheritanse();
+      this.spaceCallback(this.blastsArray.length);
     } else {
       this.fillDeltaAchievableMap();
     }

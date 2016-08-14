@@ -243,6 +243,8 @@ var Cortex = (function () {
     Cortex.prototype.computeBlasts = function () {
         if (isLowResolution(cortexState.resolution)) {
             this.preprocessLowBlasts();
+            this.resolveSignalInheritanse();
+            this.spaceCallback(this.blastsArray.length);
         }
         else {
             this.fillDeltaAchievableMap();
