@@ -13,9 +13,9 @@ var light: BABYLON.PointLight;
 
 function plantConcept(): void {
   knobs = getUIControls();
-  cortexState = cortexConfigurationFrom(knobs, SCALE_UPPER_LIMIT, 3, 0.5, 0.5, 2, Resolution.High);
+  cortexState = cortexConfigurationFrom(knobs, SCALE_UPPER_LIMIT, 3, 0.5, 0.5, 2, Resolution.High, SCALE_LOWER_LIMIT, SCALE_THRESHOLD);
 
-  uiCallback = (blastsAmount: number, synapcesAmountInBox?: number): void => {
+  uiCallback = (blastsAmount: number, synapcesAmountInBox?: number, restoreLaunch?: boolean): void => {
     if(blastsAmount != null && blastsAmount === 0) {
       knobs.launch.attr('disabled', 'disabled');
     } else {
@@ -24,6 +24,12 @@ function plantConcept(): void {
     if(synapcesAmountInBox) {
       let actualDensity = (10*synapcesAmountInBox/Math.pow(cortexState.scale,3)).toFixed(1);
       knobs.measure.find('.actual-density span').html(actualDensity);
+    }
+    if(restoreLaunch) {
+      let next = knobs.launch.data('type');
+      let html = knobs.launch.html();
+      knobs.launch.data('type', html);
+      knobs.launch.html(next);
     }
   };
 
@@ -39,6 +45,8 @@ function plantConcept(): void {
   jQuery(ids.pinMaxLength).find('input').val(''+cortexState.pinMaxLength);
   jQuery(ids.blastRadius).find('input').val(''+cortexState.blastRadius);
   jQuery(ids.blastPower).find('input').val(''+cortexState.blastPower);
+  jQuery(ids.minDistance).find('input').val(''+cortexState.minDistance);
+  jQuery(ids.maxDistance).find('input').val(''+cortexState.maxDistance);
 
   camera = attachCamera(canvas, scene, cortexState.scale);
   light = setLight(scene);
@@ -76,7 +84,9 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     +knobs.pinMaxLength.val(),
     +knobs.blastRadius.val(),
     +knobs.blastPower.val(),
-    outOfKnobsResolution(knobs.resolution)
+    outOfKnobsResolution(knobs.resolution),
+    +knobs.minDistance.val(),
+    +knobs.maxDistance.val()
   );
 
   outOfResolution(
@@ -87,6 +97,9 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
           knobs.blastRadius.removeAttr('disabled');
           knobs.blastPower.removeAttr('disabled');
           knobs.measure.find('.actual-density').show();
+          knobs.setSignalButton.removeClass('shifted');
+          jQuery('.low-w').show();
+          jQuery('.high-w').hide();
         },
         High: () => {
           knobs.pinMaxLength.attr('disabled', 'disabled');
@@ -96,7 +109,10 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
           knobs.launch.attr('disabled', 'disabled');
           knobs.measure.find('.actual-density').hide();
           doScale(cortexState, knobs);
+          knobs.setSignalButton.addClass('shifted');
           knobs.measure.find('.measure-value span').html(cortexState.scale);
+          jQuery('.low-w').hide();
+          jQuery('.high-w').show();
         }
     }
   );
@@ -170,7 +186,12 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
   knobs.setSignalButton.off('click').on('click', function() {
     let newValue = +knobs.wavePower.val();
+    let minDistance = +knobs.minDistance.val();
+    let maxDistance = +knobs.maxDistance.val();
+
     cortexState.wavePower = newValue;
+    cortexState.minDistance = minDistance;
+    cortexState.maxDistance = maxDistance;
 
     refillConfiguration();
 
@@ -186,7 +207,7 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
       }
     );
 
-    space.cortex.initSignal(cortexState.wavePower);
+    space.cortex.initSignal(cortexState.wavePower, cortexState.minDistance, cortexState.maxDistance);
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
@@ -291,6 +312,8 @@ interface CortexConfiguration {
   blastPower: number;
   realSynapcesDistance: number;
   resolution: Resolution;
+  minDistance: number;
+  maxDistance: number;
 }
 
 function cortexConfigurationFrom(
@@ -300,7 +323,9 @@ function cortexConfigurationFrom(
   realSynapcesDistance: number,
   blastRadius: number,
   blastPower: number,
-  resolution: Resolution): CortexConfiguration {
+  resolution: Resolution,
+  minDistance: number,
+  maxDistance: number): CortexConfiguration {
 
   let configuration = {
     scale: scale,
@@ -311,7 +336,9 @@ function cortexConfigurationFrom(
     blastRadius: blastRadius,
     blastPower: blastPower,
     realSynapcesDistance: realSynapcesDistance,
-    resolution: resolution
+    resolution: resolution,
+    minDistance: minDistance,
+    maxDistance: maxDistance
   };
 
   doScale(configuration, knobs);

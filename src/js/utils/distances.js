@@ -1,6 +1,10 @@
-function checkDistanceFromPointToPoint(one, two, delta) {
+function checkUpperDistanceLimitFromPointToPoint(one, two, delta) {
     var calculatedDistance = getDistanceBetweenTwoPoints(one, two);
     return (calculatedDistance ? (calculatedDistance < delta) : false);
+}
+function checkLowerDistanceLimitFromPointToPoint(one, two, delta) {
+    var calculatedDistance = getDistanceBetweenTwoPoints(one, two);
+    return (calculatedDistance ? (calculatedDistance > delta) : false);
 }
 function checkDistanceFromVectorToPoint(one, point, delta) {
     var directionVector = getSegmentVector(one.mesh.curve[0], one.mesh.curve[1]);
@@ -8,12 +12,19 @@ function checkDistanceFromVectorToPoint(one, point, delta) {
     var calculatedDistance = getDistanceOne(directionVector, connectingVector);
     return (calculatedDistance ? (calculatedDistance < delta) : false);
 }
-function checkDistanceFromVectorToVector(one, two, delta) {
+function checkUpperDistanceLimitFromVectorToVector(one, two, delta) {
     var directionVectorOne = getSegmentVector(one.mesh.curve[0], one.mesh.curve[1]);
     var directionVectorTwo = getSegmentVector(two.mesh.curve[0], two.mesh.curve[1]);
     var connectingVector = getSegmentVector(one.mesh.curve[0], two.mesh.curve[0]);
     var calculatedDistance = getDistanceTwo(directionVectorOne, directionVectorTwo, connectingVector);
     return (calculatedDistance ? (calculatedDistance < delta) : false);
+}
+function checkLowerDistanceLimitFromVectorToVector(one, two, delta) {
+    var directionVectorOne = getSegmentVector(one.mesh.curve[0], one.mesh.curve[1]);
+    var directionVectorTwo = getSegmentVector(two.mesh.curve[0], two.mesh.curve[1]);
+    var connectingVector = getSegmentVector(one.mesh.curve[0], two.mesh.curve[0]);
+    var calculatedDistance = getDistanceTwo(directionVectorOne, directionVectorTwo, connectingVector);
+    return (calculatedDistance ? (calculatedDistance > delta) : false);
 }
 function getDistanceOne(directionVector, connectingVector) {
     var distance = 0;

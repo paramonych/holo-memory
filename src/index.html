@@ -39,21 +39,29 @@
        <label>Active dendrits:</label>
        <input type="number" size="3" min="1" step="1"/>
      </div>
+     <div id="minDistance" class="config-detail high-w">
+       <label>Min distance (&mu;m):</label>
+       <input type="number" size="3" min="0" step="1"/>
+     </div>
+     <div id="maxDistance" class="config-detail high-w">
+       <label>Max distance (&mu;m):</label>
+       <input type="number" size="3" min="1" step="1"/>
+     </div>
      <button id="setSignal">INIT SIGNAL</button>
 
-     <div id="pinMaxLength" class="config-detail">
+     <div id="pinMaxLength" class="config-detail low-w">
        <label>Spine length (&mu;m):</label>
        <input type="number" size="3" min="0" step="0.1"/>
      </div>
-     <div id="blastRadius" class="config-detail">
+     <div id="blastRadius" class="config-detail low-w">
        <label>Spread radius (&mu;m):</label>
        <input type="number" size="3" min="0" step="0.1"/>
      </div>
-     <div id="blastPower" class="config-detail">
+     <div id="blastPower" class="config-detail low-w">
        <label>Caught synapces:</label>
        <input type="number" size="3" min="1" step="1"/>
      </div>
-     <button id="processWave" disabled="disabled">CONFIGURE</button>
+     <button id="processWave" disabled="disabled" class="low-w">CONFIGURE</button>
      <div id="keepSelected" class="config-detail">
        <label>Keep selected:</label>
        <input type="checkbox"/>

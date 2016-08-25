@@ -18,7 +18,7 @@ class Cortex implements Disposable {
     public scale: number,
     public lifetime: number,
     public cortexState: CortexConfiguration,
-    private spaceCallback: (blastsAmount: number, density ?: number) => void) {
+    private spaceCallback: (blastsAmount: number, density ?: number, restoreLaunch?: boolean) => void) {
     this.createNeurons();
 
     if(isLowResolution(cortexState.resolution)) {
@@ -55,8 +55,10 @@ class Cortex implements Disposable {
     _.each(this.neurons, (neuronOne) => {
       let firstLineAchievableNeurons = new Array<Neuron>();
       _.each(this.neurons, (neuronTwo) => {
-        if(checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD_DEVIDED)) {
-          firstLineAchievableNeurons.push(neuronTwo);
+        if(checkLowerDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, this.cortexState.minDistance)) {
+          if(checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, this.cortexState.maxDistance)) {
+            firstLineAchievableNeurons.push(neuronTwo);
+          }
         }
       });
       mapAdd(this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableNeurons);
@@ -67,8 +69,10 @@ class Cortex implements Disposable {
       let secondLineAchievableNeurons = new Array<Neuron>();
 
       _.each(firstLineAchievableNeurons, (neuronTwo) => {
-          if(checkDistanceFromVectorToVector(neuronOne, neuronTwo, this.cortexState.blastRadius)) {
-            secondLineAchievableNeurons.push(neuronTwo);
+          if(checkLowerDistanceLimitFromVectorToVector(neuronOne, neuronTwo, this.cortexState.minDistance)) {
+            if(checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, this.cortexState.maxDistance)) {
+              secondLineAchievableNeurons.push(neuronTwo);
+            }
           }
       });
 
@@ -144,6 +148,7 @@ class Cortex implements Disposable {
       this.resolveNextLayer();
     } else {
       clearInterval(this.timer);
+      this.spaceCallback(1, null, true);
     }
   }
 
@@ -225,13 +230,15 @@ class Cortex implements Disposable {
     this.dormantSignalNeurons = new Array<Neuron>();
 
     _.each(this.neurons, (n) => {
-      if(checkDistanceFromPointToPoint(n.mesh.center, basePosition, SCALE_THRESHOLD)) {
-        this.dormantSignalNeurons.push(n);
+      if(checkLowerDistanceLimitFromPointToPoint(n.mesh.center, basePosition, this.cortexState.minDistance)) {
+        if(checkUpperDistanceLimitFromPointToPoint(n.mesh.center, basePosition, this.cortexState.maxDistance)) {
+          this.dormantSignalNeurons.push(n);
+        }
       }
     });
   }
 
-  public initSignal(wavePower: number): void {
+  public initSignal(wavePower: number, minDistance: number, maxDistance: number): void {
     this.dropSignal();
 
     this.signalNeurons = new Array<Neuron>();
@@ -266,6 +273,9 @@ class Cortex implements Disposable {
       this.resolveSignalInheritanse();
       this.spaceCallback(this.blastsArray.length);
     } else {
+      this.cortexState.minDistance = minDistance;
+      this.cortexState.maxDistance = maxDistance;
+      this.fillDeltaAchievableMap();
       this.spaceCallback(1);
     }
   }

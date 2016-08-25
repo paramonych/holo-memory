@@ -18,5 +18,7 @@ var ids = {
   keepSelected: '#keepSelected',
   measure: '#measure',
   sceneScale: '#boxSize',
-  resolution: '#resolution'
+  resolution: '#resolution',
+  minDistance: '#minDistance',
+  maxDistance: '#maxDistance'
 }

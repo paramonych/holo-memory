@@ -1,8 +1,15 @@
-function checkDistanceFromPointToPoint(one: BABYLON.Vector3, two: BABYLON.Vector3, delta: number): boolean {
+function checkUpperDistanceLimitFromPointToPoint(one: BABYLON.Vector3, two: BABYLON.Vector3, delta: number): boolean {
   let calculatedDistance = getDistanceBetweenTwoPoints(one, two);
   //let calculatedDistance = vectorFromTwoPoints(one, two).length();
 
   return (calculatedDistance ? (calculatedDistance < delta) : false);
+}
+
+function checkLowerDistanceLimitFromPointToPoint(one: BABYLON.Vector3, two: BABYLON.Vector3, delta: number): boolean {
+  let calculatedDistance = getDistanceBetweenTwoPoints(one, two);
+  //let calculatedDistance = vectorFromTwoPoints(one, two).length();
+
+  return (calculatedDistance ? (calculatedDistance > delta) : false);
 }
 
 function checkDistanceFromVectorToPoint(one: Neuron, point: BABYLON.Vector3, delta: number): boolean {
@@ -14,7 +21,7 @@ function checkDistanceFromVectorToPoint(one: Neuron, point: BABYLON.Vector3, del
   return (calculatedDistance ? (calculatedDistance < delta) : false);
 }
 
-function checkDistanceFromVectorToVector(one: Neuron, two: Neuron, delta: number): boolean {
+function checkUpperDistanceLimitFromVectorToVector(one: Neuron, two: Neuron, delta: number): boolean {
   let directionVectorOne = getSegmentVector(one.mesh.curve[0], one.mesh.curve[1]);
   let directionVectorTwo = getSegmentVector(two.mesh.curve[0], two.mesh.curve[1]);
   let connectingVector = getSegmentVector(one.mesh.curve[0], two.mesh.curve[0]);
@@ -22,6 +29,16 @@ function checkDistanceFromVectorToVector(one: Neuron, two: Neuron, delta: number
   let calculatedDistance = getDistanceTwo(directionVectorOne, directionVectorTwo, connectingVector);
 
   return (calculatedDistance ? (calculatedDistance < delta) : false);
+}
+
+function checkLowerDistanceLimitFromVectorToVector(one: Neuron, two: Neuron, delta: number): boolean {
+  let directionVectorOne = getSegmentVector(one.mesh.curve[0], one.mesh.curve[1]);
+  let directionVectorTwo = getSegmentVector(two.mesh.curve[0], two.mesh.curve[1]);
+  let connectingVector = getSegmentVector(one.mesh.curve[0], two.mesh.curve[0]);
+
+  let calculatedDistance = getDistanceTwo(directionVectorOne, directionVectorTwo, connectingVector);
+
+  return (calculatedDistance ? (calculatedDistance > delta) : false);
 }
 
 function getDistanceOne(directionVector: BABYLON.Vector3, connectingVector: BABYLON.Vector3) : number {

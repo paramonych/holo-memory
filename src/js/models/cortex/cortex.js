@@ -41,8 +41,10 @@ var Cortex = (function () {
         _.each(this.neurons, function (neuronOne) {
             var firstLineAchievableNeurons = new Array();
             _.each(_this.neurons, function (neuronTwo) {
-                if (checkDistanceFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, SCALE_THRESHOLD_DEVIDED)) {
-                    firstLineAchievableNeurons.push(neuronTwo);
+                if (checkLowerDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, _this.cortexState.minDistance)) {
+                    if (checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, _this.cortexState.maxDistance)) {
+                        firstLineAchievableNeurons.push(neuronTwo);
+                    }
                 }
             });
             mapAdd(_this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableNeurons);
@@ -51,8 +53,10 @@ var Cortex = (function () {
             var firstLineAchievableNeurons = getByKey(_this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id);
             var secondLineAchievableNeurons = new Array();
             _.each(firstLineAchievableNeurons, function (neuronTwo) {
-                if (checkDistanceFromVectorToVector(neuronOne, neuronTwo, _this.cortexState.blastRadius)) {
-                    secondLineAchievableNeurons.push(neuronTwo);
+                if (checkLowerDistanceLimitFromVectorToVector(neuronOne, neuronTwo, _this.cortexState.minDistance)) {
+                    if (checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, _this.cortexState.maxDistance)) {
+                        secondLineAchievableNeurons.push(neuronTwo);
+                    }
                 }
             });
             mapAdd(_this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableNeurons);
@@ -121,6 +125,7 @@ var Cortex = (function () {
         }
         else {
             clearInterval(this.timer);
+            this.spaceCallback(1, null, true);
         }
     };
     Cortex.prototype.freezeLayer = function () {
@@ -186,12 +191,14 @@ var Cortex = (function () {
         var _this = this;
         this.dormantSignalNeurons = new Array();
         _.each(this.neurons, function (n) {
-            if (checkDistanceFromPointToPoint(n.mesh.center, basePosition, SCALE_THRESHOLD)) {
-                _this.dormantSignalNeurons.push(n);
+            if (checkLowerDistanceLimitFromPointToPoint(n.mesh.center, basePosition, _this.cortexState.minDistance)) {
+                if (checkUpperDistanceLimitFromPointToPoint(n.mesh.center, basePosition, _this.cortexState.maxDistance)) {
+                    _this.dormantSignalNeurons.push(n);
+                }
             }
         });
     };
-    Cortex.prototype.initSignal = function (wavePower) {
+    Cortex.prototype.initSignal = function (wavePower, minDistance, maxDistance) {
         this.dropSignal();
         this.signalNeurons = new Array();
         this.signalNeuronsIdsMap = newMap();
@@ -221,6 +228,9 @@ var Cortex = (function () {
             this.spaceCallback(this.blastsArray.length);
         }
         else {
+            this.cortexState.minDistance = minDistance;
+            this.cortexState.maxDistance = maxDistance;
+            this.fillDeltaAchievableMap();
             this.spaceCallback(1);
         }
     };

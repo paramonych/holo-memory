@@ -61,6 +61,8 @@ button {
 #setDendrits,
 
 #wavePower,
+#minDistance,
+#maxDistance,
 #setSignal,
 
 #pinMaxLength,
@@ -202,8 +204,17 @@ button {
 #wavePower {
   top: @top+@vert-step*3;
 }
+#minDistance {
+  top: @top+@vert-step*4;
+}
+#maxDistance {
+  top: @top+@vert-step*5;
+}
 #setSignal {
   top: @top+@vert-step*4;
+}
+.shifted {
+  margin-top: @vert-step*2;
 }
 
 #pinMaxLength {
