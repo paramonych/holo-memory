@@ -1,4 +1,4 @@
-function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, minDistance, maxDistance) {
+function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance) {
     return {
         launch: launch,
         slider: slider,
@@ -15,8 +15,8 @@ function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius,
         measure: measure,
         scale: scale.find('input'),
         resolution: resolution.find('label'),
-        minDistance: minDistance.find('input'),
-        maxDistance: maxDistance.find('input')
+        distressDistance: distressDistance.find('input'),
+        transportDistance: transportDistance.find('input')
     };
 }
 function getUIControls() {
@@ -35,9 +35,9 @@ function getUIControls() {
     var setDendritsButton = jQuery(ids.setDendritsButton);
     var setSignalButton = jQuery(ids.setSignalButton);
     var processWaveButton = jQuery(ids.processWaveButton);
-    var minDistance = jQuery(ids.minDistance);
-    var maxDistance = jQuery(ids.maxDistance);
-    return knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, minDistance, maxDistance);
+    var distressDistance = jQuery(ids.distressDistance);
+    var transportDistance = jQuery(ids.transportDistance);
+    return knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance);
 }
 function outOfKnobsResolution(resolution) {
     var isHigh = resolution.filter('.active').hasClass('high');

@@ -40,8 +40,8 @@ function plantConcept() {
     jQuery(ids.pinMaxLength).find('input').val('' + cortexState.pinMaxLength);
     jQuery(ids.blastRadius).find('input').val('' + cortexState.blastRadius);
     jQuery(ids.blastPower).find('input').val('' + cortexState.blastPower);
-    jQuery(ids.minDistance).find('input').val('' + cortexState.minDistance);
-    jQuery(ids.maxDistance).find('input').val('' + cortexState.maxDistance);
+    jQuery(ids.distressDistance).find('input').val('' + cortexState.distressDistance);
+    jQuery(ids.transportDistance).find('input').val('' + cortexState.transportDistance);
     camera = attachCamera(canvas, scene, cortexState.scale);
     light = setLight(scene);
     box = createPatternSpaceBox(scene, cortexState.scale);
@@ -60,7 +60,7 @@ function showBlocker() {
 }
 function wireUI(engine, scene, scale, canvas) {
     setTimeout(function () { blockerOverlay.addClass('hidden'); }, 1300);
-    cortexState = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val(), outOfKnobsResolution(knobs.resolution), +knobs.minDistance.val(), +knobs.maxDistance.val());
+    cortexState = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val(), outOfKnobsResolution(knobs.resolution), +knobs.distressDistance.val(), +knobs.transportDistance.val());
     outOfResolution(cortexState.resolution, {
         Low: function () {
             knobs.pinMaxLength.removeAttr('disabled');
@@ -137,11 +137,11 @@ function wireUI(engine, scene, scale, canvas) {
     });
     knobs.setSignalButton.off('click').on('click', function () {
         var newValue = +knobs.wavePower.val();
-        var minDistance = +knobs.minDistance.val();
-        var maxDistance = +knobs.maxDistance.val();
+        var distressDistance = +knobs.distressDistance.val();
+        var transportDistance = +knobs.transportDistance.val();
         cortexState.wavePower = newValue;
-        cortexState.minDistance = minDistance;
-        cortexState.maxDistance = maxDistance;
+        cortexState.distressDistance = distressDistance;
+        cortexState.transportDistance = transportDistance;
         refillConfiguration();
         outOfResolution(cortexState.resolution, {
             Low: function () { knobs.processWaveButton.removeAttr('disabled'); },
@@ -151,7 +151,7 @@ function wireUI(engine, scene, scale, canvas) {
                 knobs.launch.html('PLAY');
             }
         });
-        space.cortex.initSignal(cortexState.wavePower, cortexState.minDistance, cortexState.maxDistance);
+        space.cortex.initSignal(cortexState.wavePower, cortexState.distressDistance, cortexState.transportDistance);
     });
     knobs.processWaveButton.off('click').on('click', function () {
         refillConfiguration();
@@ -212,7 +212,7 @@ function wireUI(engine, scene, scale, canvas) {
         wireUI(engine, newScene, cortexState.scale, canvas);
     }
 }
-function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, blastRadius, blastPower, resolution, minDistance, maxDistance) {
+function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, blastRadius, blastPower, resolution, distressDistance, transportDistance) {
     var configuration = {
         scale: scale,
         dendritsAmount: 0,
@@ -223,8 +223,8 @@ function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, 
         blastPower: blastPower,
         realSynapcesDistance: realSynapcesDistance,
         resolution: resolution,
-        minDistance: minDistance,
-        maxDistance: maxDistance
+        distressDistance: distressDistance,
+        transportDistance: transportDistance
     };
     doScale(configuration, knobs);
     return configuration;

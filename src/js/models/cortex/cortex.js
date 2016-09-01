@@ -36,30 +36,36 @@ var Cortex = (function () {
     };
     Cortex.prototype.fillDeltaAchievableMap = function () {
         var _this = this;
-        this.firstLineDeltaAchievableNeuronsIdsMap = newMap();
-        this.secondLineDeltaAchievableNeuronsIdsMap = newMap();
+        this.firstLineDeltaAchievableNeuronsMap = newMap();
+        this.secondLineDeltaAchievableNeuronsMap = newMap();
+        this.distressDeltaAchievableNeuronsIdsMap = newMap();
         _.each(this.neurons, function (neuronOne) {
             var firstLineAchievableNeurons = new Array();
             _.each(_this.neurons, function (neuronTwo) {
-                if (checkLowerDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, _this.cortexState.minDistance)) {
-                    if (checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, _this.cortexState.maxDistance)) {
-                        firstLineAchievableNeurons.push(neuronTwo);
-                    }
+                if (checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, _this.cortexState.transportDistance)) {
+                    firstLineAchievableNeurons.push(neuronTwo);
                 }
             });
-            mapAdd(_this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableNeurons);
+            mapAdd(_this.firstLineDeltaAchievableNeuronsMap, neuronOne.id, firstLineAchievableNeurons);
         });
         _.each(this.neurons, function (neuronOne) {
-            var firstLineAchievableNeurons = getByKey(_this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id);
+            var firstLineAchievableNeurons = getByKey(_this.firstLineDeltaAchievableNeuronsMap, neuronOne.id);
             var secondLineAchievableNeurons = new Array();
             _.each(firstLineAchievableNeurons, function (neuronTwo) {
-                if (checkLowerDistanceLimitFromVectorToVector(neuronOne, neuronTwo, _this.cortexState.minDistance)) {
-                    if (checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, _this.cortexState.maxDistance)) {
-                        secondLineAchievableNeurons.push(neuronTwo);
-                    }
+                if (checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, _this.cortexState.transportDistance)) {
+                    secondLineAchievableNeurons.push(neuronTwo);
                 }
             });
-            mapAdd(_this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableNeurons);
+            mapAdd(_this.secondLineDeltaAchievableNeuronsMap, neuronOne.id, secondLineAchievableNeurons);
+        });
+        _.each(this.neurons, function (neuronOne) {
+            var distresNeuronsIds = new Array();
+            _.each(_this.neurons, function (neuronTwo) {
+                if (checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, _this.cortexState.distressDistance)) {
+                    distresNeuronsIds.push(neuronTwo.id);
+                }
+            });
+            mapAdd(_this.distressDeltaAchievableNeuronsIdsMap, neuronOne.id, distresNeuronsIds);
         });
     };
     Cortex.prototype.resolveSignalInheritanse = function () {
@@ -89,18 +95,25 @@ var Cortex = (function () {
         var _this = this;
         this.waveFrontNeurons = new Array();
         _.each(this.signalNeurons, function (nextSignalNeuron) {
-            var achievableNeurons = getByKey(_this.secondLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
-            _.each(achievableNeurons, function (nextLegateeNeuron) {
-                if (!mapHasKey(_this.signalNeuronsIdsMap, nextLegateeNeuron.id) && !nextLegateeNeuron.isDroppedOff) {
+            var achievableTransportNeurons = getByKey(_this.secondLineDeltaAchievableNeuronsMap, nextSignalNeuron.id);
+            var achievableDistressNeuronsIds = getByKey(_this.distressDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
+            _.each(achievableTransportNeurons, function (nextLegateeNeuron) {
+                if (!mapHasKey(_this.signalNeuronsIdsMap, nextLegateeNeuron.id)
+                    && !nextLegateeNeuron.isDroppedOff
+                    && !mapHasKey(_this.distressedNeuronsIdsMap, nextLegateeNeuron.id)) {
                     nextLegateeNeuron.mesh.setLegatee(true);
                     nextLegateeNeuron.mesh.select();
                     _this.waveFrontNeurons.push(nextLegateeNeuron);
                 }
             });
+            _.each(achievableDistressNeuronsIds, function (nextDistressedNeuronId) {
+                mapAdd(_this.distressedNeuronsIdsMap, nextDistressedNeuronId, nextDistressedNeuronId);
+            });
         });
     };
     Cortex.prototype.processWaveFromStart = function () {
         var _this = this;
+        this.distressedNeuronsIdsMap = newMap();
         if (this.timer) {
             clearInterval(this.timer);
         }
@@ -191,14 +204,14 @@ var Cortex = (function () {
         var _this = this;
         this.dormantSignalNeurons = new Array();
         _.each(this.neurons, function (n) {
-            if (checkLowerDistanceLimitFromPointToPoint(n.mesh.center, basePosition, _this.cortexState.minDistance)) {
-                if (checkUpperDistanceLimitFromPointToPoint(n.mesh.center, basePosition, _this.cortexState.maxDistance)) {
+            if (checkLowerDistanceLimitFromPointToPoint(n.mesh.center, basePosition, _this.cortexState.distressDistance)) {
+                if (checkUpperDistanceLimitFromPointToPoint(n.mesh.center, basePosition, _this.cortexState.transportDistance)) {
                     _this.dormantSignalNeurons.push(n);
                 }
             }
         });
     };
-    Cortex.prototype.initSignal = function (wavePower, minDistance, maxDistance) {
+    Cortex.prototype.initSignal = function (wavePower, distressDistance, transportDistance) {
         this.dropSignal();
         this.signalNeurons = new Array();
         this.signalNeuronsIdsMap = newMap();
@@ -228,8 +241,8 @@ var Cortex = (function () {
             this.spaceCallback(this.blastsArray.length);
         }
         else {
-            this.cortexState.minDistance = minDistance;
-            this.cortexState.maxDistance = maxDistance;
+            this.cortexState.distressDistance = distressDistance;
+            this.cortexState.transportDistance = transportDistance;
             this.fillDeltaAchievableMap();
             this.spaceCallback(1);
         }

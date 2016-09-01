@@ -45,8 +45,8 @@ function plantConcept(): void {
   jQuery(ids.pinMaxLength).find('input').val(''+cortexState.pinMaxLength);
   jQuery(ids.blastRadius).find('input').val(''+cortexState.blastRadius);
   jQuery(ids.blastPower).find('input').val(''+cortexState.blastPower);
-  jQuery(ids.minDistance).find('input').val(''+cortexState.minDistance);
-  jQuery(ids.maxDistance).find('input').val(''+cortexState.maxDistance);
+  jQuery(ids.distressDistance).find('input').val(''+cortexState.distressDistance);
+  jQuery(ids.transportDistance).find('input').val(''+cortexState.transportDistance);
 
   camera = attachCamera(canvas, scene, cortexState.scale);
   light = setLight(scene);
@@ -85,8 +85,8 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     +knobs.blastRadius.val(),
     +knobs.blastPower.val(),
     outOfKnobsResolution(knobs.resolution),
-    +knobs.minDistance.val(),
-    +knobs.maxDistance.val()
+    +knobs.distressDistance.val(),
+    +knobs.transportDistance.val()
   );
 
   outOfResolution(
@@ -186,12 +186,12 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
 
   knobs.setSignalButton.off('click').on('click', function() {
     let newValue = +knobs.wavePower.val();
-    let minDistance = +knobs.minDistance.val();
-    let maxDistance = +knobs.maxDistance.val();
+    let distressDistance = +knobs.distressDistance.val();
+    let transportDistance = +knobs.transportDistance.val();
 
     cortexState.wavePower = newValue;
-    cortexState.minDistance = minDistance;
-    cortexState.maxDistance = maxDistance;
+    cortexState.distressDistance = distressDistance;
+    cortexState.transportDistance = transportDistance;
 
     refillConfiguration();
 
@@ -207,7 +207,7 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
       }
     );
 
-    space.cortex.initSignal(cortexState.wavePower, cortexState.minDistance, cortexState.maxDistance);
+    space.cortex.initSignal(cortexState.wavePower, cortexState.distressDistance, cortexState.transportDistance);
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
@@ -312,8 +312,8 @@ interface CortexConfiguration {
   blastPower: number;
   realSynapcesDistance: number;
   resolution: Resolution;
-  minDistance: number;
-  maxDistance: number;
+  distressDistance: number;
+  transportDistance: number;
 }
 
 function cortexConfigurationFrom(
@@ -324,8 +324,8 @@ function cortexConfigurationFrom(
   blastRadius: number,
   blastPower: number,
   resolution: Resolution,
-  minDistance: number,
-  maxDistance: number): CortexConfiguration {
+  distressDistance: number,
+  transportDistance: number): CortexConfiguration {
 
   let configuration = {
     scale: scale,
@@ -337,8 +337,8 @@ function cortexConfigurationFrom(
     blastPower: blastPower,
     realSynapcesDistance: realSynapcesDistance,
     resolution: resolution,
-    minDistance: minDistance,
-    maxDistance: maxDistance
+    distressDistance: distressDistance,
+    transportDistance: transportDistance
   };
 
   doScale(configuration, knobs);

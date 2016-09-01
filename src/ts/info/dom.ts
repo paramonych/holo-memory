@@ -14,8 +14,8 @@ interface Knobs {
   measure: JQuery;
   scale: JQuery;
   resolution: JQuery;
-  minDistance: JQuery;
-  maxDistance: JQuery;
+  distressDistance: JQuery;
+  transportDistance: JQuery;
 }
 
 function knobsFrom(
@@ -34,8 +34,8 @@ function knobsFrom(
   measure: JQuery,
   scale: JQuery,
   resolution: JQuery,
-  minDistance: JQuery,
-  maxDistance: JQuery
+  distressDistance: JQuery,
+  transportDistance: JQuery
 ): Knobs {
   return {
     launch: launch,
@@ -53,8 +53,8 @@ function knobsFrom(
     measure: measure,
     scale: scale.find('input'),
     resolution: resolution.find('label'),
-    minDistance: minDistance.find('input'),
-    maxDistance: maxDistance.find('input')
+    distressDistance: distressDistance.find('input'),
+    transportDistance: transportDistance.find('input')
   }
 }
 
@@ -75,8 +75,8 @@ function getUIControls(): Knobs {
   let setDendritsButton = jQuery(ids.setDendritsButton);
   let setSignalButton = jQuery(ids.setSignalButton);
   let processWaveButton = jQuery(ids.processWaveButton);
-  let minDistance = jQuery(ids.minDistance);
-  let maxDistance = jQuery(ids.maxDistance);
+  let distressDistance = jQuery(ids.distressDistance);
+  let transportDistance = jQuery(ids.transportDistance);
 
   return knobsFrom(
     launch, slider, actualDendritsAmount,
@@ -85,7 +85,7 @@ function getUIControls(): Knobs {
     setDendritsButton, setSignalButton,
     processWaveButton, keepSelected,
     measure, scale, resolution,
-    minDistance, maxDistance
+    distressDistance, transportDistance
   );
 }
 

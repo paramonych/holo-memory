@@ -19,6 +19,6 @@ var ids = {
   measure: '#measure',
   sceneScale: '#boxSize',
   resolution: '#resolution',
-  minDistance: '#minDistance',
-  maxDistance: '#maxDistance'
+  distressDistance: '#distressDistance',
+  transportDistance: '#transportDistance'
 }

@@ -9,9 +9,10 @@ class Cortex implements Disposable {
   private timer: any;
   private firstLaunch = true;
 
-  public tiredNeuronsIdsMap: Map<number>;
-  public firstLineDeltaAchievableNeuronsIdsMap: Map<Neuron[]>;
-  public secondLineDeltaAchievableNeuronsIdsMap: Map<Neuron[]>;
+  public firstLineDeltaAchievableNeuronsMap: Map<Neuron[]>;
+  public secondLineDeltaAchievableNeuronsMap: Map<Neuron[]>;
+  public distressDeltaAchievableNeuronsIdsMap: Map<number[]>;
+  public distressedNeuronsIdsMap: Map<number>;
 
   constructor(
     public scene: BABYLON.Scene,
@@ -49,34 +50,40 @@ class Cortex implements Disposable {
   }
 
   private fillDeltaAchievableMap(): void {
-    this.firstLineDeltaAchievableNeuronsIdsMap = newMap<Neuron[]>();
-    this.secondLineDeltaAchievableNeuronsIdsMap = newMap<Neuron[]>();
+    this.firstLineDeltaAchievableNeuronsMap = newMap<Neuron[]>();
+    this.secondLineDeltaAchievableNeuronsMap = newMap<Neuron[]>();
+    this.distressDeltaAchievableNeuronsIdsMap = newMap<number[]>();
 
     _.each(this.neurons, (neuronOne) => {
       let firstLineAchievableNeurons = new Array<Neuron>();
       _.each(this.neurons, (neuronTwo) => {
-        if(checkLowerDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, this.cortexState.minDistance)) {
-          if(checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, this.cortexState.maxDistance)) {
+          if(checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, this.cortexState.transportDistance)) {
             firstLineAchievableNeurons.push(neuronTwo);
           }
-        }
       });
-      mapAdd(this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id, firstLineAchievableNeurons);
+      mapAdd(this.firstLineDeltaAchievableNeuronsMap, neuronOne.id, firstLineAchievableNeurons);
     });
 
     _.each(this.neurons, (neuronOne) => {
-      let firstLineAchievableNeurons = getByKey(this.firstLineDeltaAchievableNeuronsIdsMap, neuronOne.id);
+      let firstLineAchievableNeurons = getByKey(this.firstLineDeltaAchievableNeuronsMap, neuronOne.id);
       let secondLineAchievableNeurons = new Array<Neuron>();
 
       _.each(firstLineAchievableNeurons, (neuronTwo) => {
-          if(checkLowerDistanceLimitFromVectorToVector(neuronOne, neuronTwo, this.cortexState.minDistance)) {
-            if(checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, this.cortexState.maxDistance)) {
-              secondLineAchievableNeurons.push(neuronTwo);
-            }
+          if(checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, this.cortexState.transportDistance)) {
+            secondLineAchievableNeurons.push(neuronTwo);
           }
       });
+      mapAdd(this.secondLineDeltaAchievableNeuronsMap, neuronOne.id, secondLineAchievableNeurons);
+    });
 
-      mapAdd(this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableNeurons);
+    _.each(this.neurons, (neuronOne) => {
+      let distresNeuronsIds = new Array<number>();
+      _.each(this.neurons, (neuronTwo) => {
+          if(checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, this.cortexState.distressDistance)) {
+            distresNeuronsIds.push(neuronTwo.id);
+          }
+      });
+      mapAdd(this.distressDeltaAchievableNeuronsIdsMap, neuronOne.id, distresNeuronsIds);
     });
   }
 
@@ -108,19 +115,30 @@ class Cortex implements Disposable {
     this.waveFrontNeurons = new Array<Neuron>();
 
     _.each(this.signalNeurons, (nextSignalNeuron) => {
-      let achievableNeurons = getByKey(this.secondLineDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
-      _.each(achievableNeurons, (nextLegateeNeuron) => {
+      let achievableTransportNeurons = getByKey(this.secondLineDeltaAchievableNeuronsMap, nextSignalNeuron.id);
+      let achievableDistressNeuronsIds = getByKey(this.distressDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
 
-        if(!mapHasKey(this.signalNeuronsIdsMap, nextLegateeNeuron.id) && !nextLegateeNeuron.isDroppedOff) {
+      _.each(achievableTransportNeurons, (nextLegateeNeuron) => {
+
+        if(!mapHasKey(this.signalNeuronsIdsMap, nextLegateeNeuron.id)
+           && !nextLegateeNeuron.isDroppedOff
+           && !mapHasKey(this.distressedNeuronsIdsMap, nextLegateeNeuron.id)
+        ) {
           nextLegateeNeuron.mesh.setLegatee(true);
           nextLegateeNeuron.mesh.select();
           this.waveFrontNeurons.push(nextLegateeNeuron);
         }
       });
+
+      _.each(achievableDistressNeuronsIds, (nextDistressedNeuronId) => {
+        mapAdd(this.distressedNeuronsIdsMap, nextDistressedNeuronId, nextDistressedNeuronId);
+      });
     });
   }
 
   public processWaveFromStart(): void {
+      this.distressedNeuronsIdsMap = newMap<number>();
+
       if(this.timer) {
         clearInterval(this.timer);
       }
@@ -230,15 +248,15 @@ class Cortex implements Disposable {
     this.dormantSignalNeurons = new Array<Neuron>();
 
     _.each(this.neurons, (n) => {
-      if(checkLowerDistanceLimitFromPointToPoint(n.mesh.center, basePosition, this.cortexState.minDistance)) {
-        if(checkUpperDistanceLimitFromPointToPoint(n.mesh.center, basePosition, this.cortexState.maxDistance)) {
+      if(checkLowerDistanceLimitFromPointToPoint(n.mesh.center, basePosition, this.cortexState.distressDistance)) {
+        if(checkUpperDistanceLimitFromPointToPoint(n.mesh.center, basePosition, this.cortexState.transportDistance)) {
           this.dormantSignalNeurons.push(n);
         }
       }
     });
   }
 
-  public initSignal(wavePower: number, minDistance: number, maxDistance: number): void {
+  public initSignal(wavePower: number, distressDistance: number, transportDistance: number): void {
     this.dropSignal();
 
     this.signalNeurons = new Array<Neuron>();
@@ -273,8 +291,8 @@ class Cortex implements Disposable {
       this.resolveSignalInheritanse();
       this.spaceCallback(this.blastsArray.length);
     } else {
-      this.cortexState.minDistance = minDistance;
-      this.cortexState.maxDistance = maxDistance;
+      this.cortexState.distressDistance = distressDistance;
+      this.cortexState.transportDistance = transportDistance;
       this.fillDeltaAchievableMap();
       this.spaceCallback(1);
     }
