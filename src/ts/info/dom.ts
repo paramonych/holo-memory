@@ -16,6 +16,7 @@ interface Knobs {
   resolution: JQuery;
   distressDistance: JQuery;
   transportDistance: JQuery;
+  patternLimit: JQuery;
 }
 
 function knobsFrom(
@@ -35,7 +36,8 @@ function knobsFrom(
   scale: JQuery,
   resolution: JQuery,
   distressDistance: JQuery,
-  transportDistance: JQuery
+  transportDistance: JQuery,
+  patternLimit: JQuery
 ): Knobs {
   return {
     launch: launch,
@@ -54,7 +56,8 @@ function knobsFrom(
     scale: scale.find('input'),
     resolution: resolution.find('label'),
     distressDistance: distressDistance.find('input'),
-    transportDistance: transportDistance.find('input')
+    transportDistance: transportDistance.find('input'),
+    patternLimit: patternLimit.find('input')
   }
 }
 
@@ -77,6 +80,7 @@ function getUIControls(): Knobs {
   let processWaveButton = jQuery(ids.processWaveButton);
   let distressDistance = jQuery(ids.distressDistance);
   let transportDistance = jQuery(ids.transportDistance);
+  let patternLimit = jQuery(ids.patternLimit);
 
   return knobsFrom(
     launch, slider, actualDendritsAmount,
@@ -85,7 +89,8 @@ function getUIControls(): Knobs {
     setDendritsButton, setSignalButton,
     processWaveButton, keepSelected,
     measure, scale, resolution,
-    distressDistance, transportDistance
+    distressDistance, transportDistance,
+    patternLimit
   );
 }
 

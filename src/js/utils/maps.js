@@ -7,8 +7,14 @@ function getByKey(map, key) {
 function mapHasKey(map, key) {
     return map[keyToString(key)] !== void 0;
 }
+function mapHasKeyFast(map, key) {
+    return map[key] !== void 0;
+}
 function mapAdd(map, key, value) {
     map[keyToString(key)] = value;
+}
+function mapAddFast(map, key, value) {
+    map[key] = value;
 }
 function mapRemoveByKey(map, key) {
     map[keyToString(key)] = void 0;

@@ -20,5 +20,6 @@ var ids = {
     sceneScale: '#boxSize',
     resolution: '#resolution',
     distressDistance: '#distressDistance',
-    transportDistance: '#transportDistance'
+    transportDistance: '#transportDistance',
+    patternLimit: '#patternLimit'
 };

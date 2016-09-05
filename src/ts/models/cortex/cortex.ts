@@ -1,18 +1,22 @@
 class Cortex implements Disposable {
   private neurons: Neuron[];
   private dormantSignalNeurons: Neuron[];
-  private signalNeurons: Neuron[];
-  public waveFrontNeurons: Neuron[];
-  private signalNeuronsIdsMap: Map<Neuron>;
+  private actualSignalNeurons: Neuron[];
+  private usedSignalNeuronsIdsMap: Map<Neuron>;
+
+  public waveFrontNeurons: Map<Neuron>;
+  public firstLineDeltaAchievableNeuronsMap: Map<Neuron[]>;
+  public secondLineDeltaAchievableNeuronsMap: Map<Neuron[]>;
+  public secondLineDeltaAchievableNeuronsIdsMap: Map<Map<number>>;
+  public distressDeltaAchievableNeuronsIdsMap: Map<number[]>;
+  public distressedNeuronsIdsMap: Map<number>;
+
   private blastsArray: NeuroBlast[];
   public blasts: Map<NeuroBlast>;
   private timer: any;
   private firstLaunch = true;
 
-  public firstLineDeltaAchievableNeuronsMap: Map<Neuron[]>;
-  public secondLineDeltaAchievableNeuronsMap: Map<Neuron[]>;
-  public distressDeltaAchievableNeuronsIdsMap: Map<number[]>;
-  public distressedNeuronsIdsMap: Map<number>;
+
 
   constructor(
     public scene: BABYLON.Scene,
@@ -53,6 +57,7 @@ class Cortex implements Disposable {
     this.firstLineDeltaAchievableNeuronsMap = newMap<Neuron[]>();
     this.secondLineDeltaAchievableNeuronsMap = newMap<Neuron[]>();
     this.distressDeltaAchievableNeuronsIdsMap = newMap<number[]>();
+    this.secondLineDeltaAchievableNeuronsIdsMap = newMap<Map<number>>();
 
     _.each(this.neurons, (neuronOne) => {
       let firstLineAchievableNeurons = new Array<Neuron>();
@@ -67,13 +72,16 @@ class Cortex implements Disposable {
     _.each(this.neurons, (neuronOne) => {
       let firstLineAchievableNeurons = getByKey(this.firstLineDeltaAchievableNeuronsMap, neuronOne.id);
       let secondLineAchievableNeurons = new Array<Neuron>();
+      let secondLineAchievableNeuronsMap = newMap<number>();
 
       _.each(firstLineAchievableNeurons, (neuronTwo) => {
           if(checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, this.cortexState.transportDistance)) {
             secondLineAchievableNeurons.push(neuronTwo);
+            mapAdd(secondLineAchievableNeuronsMap, neuronTwo.id, neuronTwo.id);
           }
       });
       mapAdd(this.secondLineDeltaAchievableNeuronsMap, neuronOne.id, secondLineAchievableNeurons);
+      mapAdd(this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableNeuronsMap);
     });
 
     _.each(this.neurons, (neuronOne) => {
@@ -112,21 +120,28 @@ class Cortex implements Disposable {
   }
 
   private resolveNextLayer(): void {
-    this.waveFrontNeurons = new Array<Neuron>();
-
-    _.each(this.signalNeurons, (nextSignalNeuron) => {
+    _.each(this.actualSignalNeurons, (nextSignalNeuron) => {
       let achievableTransportNeurons = getByKey(this.secondLineDeltaAchievableNeuronsMap, nextSignalNeuron.id);
       let achievableDistressNeuronsIds = getByKey(this.distressDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
 
-      _.each(achievableTransportNeurons, (nextLegateeNeuron) => {
-
-        if(!mapHasKey(this.signalNeuronsIdsMap, nextLegateeNeuron.id)
-           && !nextLegateeNeuron.isDroppedOff
-           && !mapHasKey(this.distressedNeuronsIdsMap, nextLegateeNeuron.id)
+      _.each(achievableTransportNeurons, (nextTransportNeuron) => {
+        let backwardAchievableSignalNeuronsIdsMap = getByKey(this.secondLineDeltaAchievableNeuronsIdsMap, nextTransportNeuron.id);
+        let backwardAchievableSignalNeuronsAmount = 0;
+        _.each(this.actualSignalNeurons, (signalNeuron) => {
+          if(mapHasKeyFast(backwardAchievableSignalNeuronsIdsMap, signalNeuron.stringId)) {
+            backwardAchievableSignalNeuronsAmount += 1;
+          }
+        });
+        
+        if(!mapHasKeyFast(this.usedSignalNeuronsIdsMap, nextTransportNeuron.stringId)
+           && !mapHasKeyFast(this.waveFrontNeurons, nextTransportNeuron.stringId)
+           && !mapHasKeyFast(this.distressedNeuronsIdsMap, nextTransportNeuron.stringId)
+           && !nextTransportNeuron.isDroppedOff
+           && (backwardAchievableSignalNeuronsAmount >= this.cortexState.patternLimit)
         ) {
-          nextLegateeNeuron.mesh.setLegatee(true);
-          nextLegateeNeuron.mesh.select();
-          this.waveFrontNeurons.push(nextLegateeNeuron);
+          nextTransportNeuron.mesh.setLegatee(true);
+          nextTransportNeuron.mesh.select();
+          mapAddFast(this.waveFrontNeurons, nextTransportNeuron.stringId, nextTransportNeuron);
         }
       });
 
@@ -161,7 +176,7 @@ class Cortex implements Disposable {
   }
 
   public processNextLayer(): void {
-    if(this.waveFrontNeurons.length > 0) {
+    if(mapSize(this.waveFrontNeurons) > 0) {
       this.prepareNextLayer();
       this.resolveNextLayer();
     } else {
@@ -175,18 +190,19 @@ class Cortex implements Disposable {
   }
 
   private prepareNextLayer() {
-    _.each(this.signalNeurons, (n) => {
+    _.each(this.actualSignalNeurons, (n) => {
       resetMaterial(n.mesh.mesh.material, mediumMaterial, 0.1);
     })
 
-    this.signalNeurons = new Array<Neuron>();
-    this.signalNeuronsIdsMap = newMap<Neuron>();
+    this.actualSignalNeurons = new Array<Neuron>();
 
-    _.each(this.waveFrontNeurons, (nextFronNeuron) => {
-      nextFronNeuron.includeInSignal();
-      mapAdd(this.signalNeuronsIdsMap, nextFronNeuron.id, nextFronNeuron);
-      this.signalNeurons.push(nextFronNeuron);
+    _.each(toValues(this.waveFrontNeurons), (nextFrontNeuron) => {
+      nextFrontNeuron.includeInSignal();
+      mapAdd(this.usedSignalNeuronsIdsMap, nextFrontNeuron.id, nextFrontNeuron);
+      this.actualSignalNeurons.push(nextFrontNeuron);
     });
+
+    this.waveFrontNeurons = newMap<Neuron>();
   }
 
   private collectMediumSynapces(): Synapce[] {
@@ -256,11 +272,17 @@ class Cortex implements Disposable {
     });
   }
 
-  public initSignal(wavePower: number, distressDistance: number, transportDistance: number): void {
+  public initSignal(
+    wavePower: number, distressDistance: number,
+    transportDistance: number, patternLimit: number
+  ): void {
     this.dropSignal();
 
-    this.signalNeurons = new Array<Neuron>();
-    this.signalNeuronsIdsMap = newMap<Neuron>();
+    this.cortexState.patternLimit = patternLimit;
+
+    this.actualSignalNeurons = new Array<Neuron>();
+    this.waveFrontNeurons = newMap<Neuron>();
+    this.usedSignalNeuronsIdsMap = newMap<Neuron>();
 
     if(this.timer) {
       clearInterval(this.timer);
@@ -278,9 +300,9 @@ class Cortex implements Disposable {
         let nextSignalNeuron = this.dormantSignalNeurons[index]; // random neuron from dormant (localized in the specific initial area)
 
         nextSignalNeuron.includeInSignal();
-        mapAdd(this.signalNeuronsIdsMap, nextSignalNeuron.id, nextSignalNeuron);
+        mapAdd(this.usedSignalNeuronsIdsMap, nextSignalNeuron.id, nextSignalNeuron);
 
-        this.signalNeurons.push(nextSignalNeuron);
+        this.actualSignalNeurons.push(nextSignalNeuron);
       } else {
         break;
       }

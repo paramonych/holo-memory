@@ -14,8 +14,16 @@ function mapHasKey<r>(map: Map<r>, key: any): boolean {
   return map[keyToString(key)] !== void 0;
 }
 
+function mapHasKeyFast<r>(map: Map<r>, key: any): boolean {
+  return map[key] !== void 0;
+}
+
 function mapAdd<r>(map: Map<r>, key: any, value: r): void {
   map[keyToString(key)] = value;
+}
+
+function mapAddFast<r>(map: Map<r>, key: any, value: r): void {
+  map[key] = value;
 }
 
 function mapRemoveByKey<r>(map: Map<r>, key: any): void {

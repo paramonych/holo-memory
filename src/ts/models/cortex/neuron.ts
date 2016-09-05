@@ -1,6 +1,7 @@
 
 class Neuron implements Disposable, Dualistic  { // This is the single dendrite of a single neuron in fact
   public id = getUniqueId();
+  public stringId: String;
   public code = getRandomSixMap();
   public codeMesh: Code;
   public spike: Spike;
@@ -18,6 +19,7 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
     if(isLowResolution(this.cortex.cortexState.resolution)) {
       this.createSynapces();
     }
+    this.stringId = this.id.toString();
   }
 
   public includeInSignal(): void {

@@ -63,6 +63,7 @@ button {
 #wavePower,
 #distressDistance,
 #transportDistance,
+#patternLimit,
 #setSignal,
 
 #pinMaxLength,
@@ -204,17 +205,20 @@ button {
 #wavePower {
   top: @top+@vert-step*3;
 }
-#transportDistance {
+#patternLimit {
   top: @top+@vert-step*4;
 }
-#distressDistance {
+#transportDistance {
   top: @top+@vert-step*5;
+}
+#distressDistance {
+  top: @top+@vert-step*6;
 }
 #setSignal {
   top: @top+@vert-step*4;
 }
 .shifted {
-  margin-top: @vert-step*2;
+  margin-top: @vert-step*3;
 }
 
 #pinMaxLength {

@@ -10,6 +10,7 @@ var Neuron = (function () {
         if (isLowResolution(this.cortex.cortexState.resolution)) {
             this.createSynapces();
         }
+        this.stringId = this.id.toString();
     }
     Neuron.prototype.includeInSignal = function () {
         this.type = NeuronType.Medium;

@@ -1,4 +1,4 @@
-function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance) {
+function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance, patternLimit) {
     return {
         launch: launch,
         slider: slider,
@@ -16,7 +16,8 @@ function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius,
         scale: scale.find('input'),
         resolution: resolution.find('label'),
         distressDistance: distressDistance.find('input'),
-        transportDistance: transportDistance.find('input')
+        transportDistance: transportDistance.find('input'),
+        patternLimit: patternLimit.find('input')
     };
 }
 function getUIControls() {
@@ -37,7 +38,8 @@ function getUIControls() {
     var processWaveButton = jQuery(ids.processWaveButton);
     var distressDistance = jQuery(ids.distressDistance);
     var transportDistance = jQuery(ids.transportDistance);
-    return knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance);
+    var patternLimit = jQuery(ids.patternLimit);
+    return knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance, patternLimit);
 }
 function outOfKnobsResolution(resolution) {
     var isHigh = resolution.filter('.active').hasClass('high');

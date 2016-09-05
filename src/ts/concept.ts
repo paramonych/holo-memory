@@ -13,7 +13,7 @@ var light: BABYLON.PointLight;
 
 function plantConcept(): void {
   knobs = getUIControls();
-  cortexState = cortexConfigurationFrom(knobs, SCALE_UPPER_LIMIT, 3, 0.5, 0.5, 2, Resolution.High, SCALE_LOWER_LIMIT, SCALE_THRESHOLD);
+  cortexState = cortexConfigurationFrom(knobs, SCALE_UPPER_LIMIT, 3, 0.5, 0.5, 2, Resolution.High, SCALE_LOWER_LIMIT, SCALE_THRESHOLD, 1);
 
   uiCallback = (blastsAmount: number, synapcesAmountInBox?: number, restoreLaunch?: boolean): void => {
     if(blastsAmount != null && blastsAmount === 0) {
@@ -47,8 +47,13 @@ function plantConcept(): void {
   jQuery(ids.blastPower).find('input').val(''+cortexState.blastPower);
   jQuery(ids.distressDistance).find('input').val(''+cortexState.distressDistance);
   jQuery(ids.transportDistance).find('input').val(''+cortexState.transportDistance);
+  jQuery(ids.patternLimit).find('input').val(''+cortexState.patternLimit).attr('max', ''+cortexState.wavePower);
 
   camera = attachCamera(canvas, scene, cortexState.scale);
+
+  jQuery(document).off('wheel,mousewheel').on('wheel,mousewheel', function() {
+    console.log(camera.radius);
+  });
   light = setLight(scene);
   box = createPatternSpaceBox(scene, cortexState.scale);
   engine.runRenderLoop(() => {
@@ -86,7 +91,8 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     +knobs.blastPower.val(),
     outOfKnobsResolution(knobs.resolution),
     +knobs.distressDistance.val(),
-    +knobs.transportDistance.val()
+    +knobs.transportDistance.val(),
+    +knobs.patternLimit.val()
   );
 
   outOfResolution(
@@ -184,14 +190,25 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     rebuildConcept();
   });
 
+  knobs.wavePower.off('blur').on('blur', function() {
+    let activeDendrits = +knobs.wavePower.val();
+    let patternLimit = +knobs.patternLimit.val();
+
+    if(patternLimit > activeDendrits) {
+      knobs.patternLimit.val(activeDendrits).attr('max', activeDendrits);
+    }
+  });
+
   knobs.setSignalButton.off('click').on('click', function() {
-    let newValue = +knobs.wavePower.val();
+    let activeDendrits = +knobs.wavePower.val();
     let distressDistance = +knobs.distressDistance.val();
     let transportDistance = +knobs.transportDistance.val();
+    let patternLimit = +knobs.patternLimit.val();
 
-    cortexState.wavePower = newValue;
+    cortexState.wavePower = activeDendrits;
     cortexState.distressDistance = distressDistance;
     cortexState.transportDistance = transportDistance;
+    cortexState.patternLimit = patternLimit;
 
     refillConfiguration();
 
@@ -207,7 +224,7 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
       }
     );
 
-    space.cortex.initSignal(cortexState.wavePower, cortexState.distressDistance, cortexState.transportDistance);
+    space.cortex.initSignal(cortexState.wavePower, cortexState.distressDistance, cortexState.transportDistance, cortexState.patternLimit);
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
@@ -314,6 +331,7 @@ interface CortexConfiguration {
   resolution: Resolution;
   distressDistance: number;
   transportDistance: number;
+  patternLimit: number;
 }
 
 function cortexConfigurationFrom(
@@ -325,7 +343,9 @@ function cortexConfigurationFrom(
   blastPower: number,
   resolution: Resolution,
   distressDistance: number,
-  transportDistance: number): CortexConfiguration {
+  transportDistance: number,
+  patternLimit: number
+): CortexConfiguration {
 
   let configuration = {
     scale: scale,
@@ -338,7 +358,8 @@ function cortexConfigurationFrom(
     realSynapcesDistance: realSynapcesDistance,
     resolution: resolution,
     distressDistance: distressDistance,
-    transportDistance: transportDistance
+    transportDistance: transportDistance,
+    patternLimit: patternLimit
   };
 
   doScale(configuration, knobs);

@@ -39,6 +39,7 @@ var Cortex = (function () {
         this.firstLineDeltaAchievableNeuronsMap = newMap();
         this.secondLineDeltaAchievableNeuronsMap = newMap();
         this.distressDeltaAchievableNeuronsIdsMap = newMap();
+        this.secondLineDeltaAchievableNeuronsIdsMap = newMap();
         _.each(this.neurons, function (neuronOne) {
             var firstLineAchievableNeurons = new Array();
             _.each(_this.neurons, function (neuronTwo) {
@@ -51,12 +52,15 @@ var Cortex = (function () {
         _.each(this.neurons, function (neuronOne) {
             var firstLineAchievableNeurons = getByKey(_this.firstLineDeltaAchievableNeuronsMap, neuronOne.id);
             var secondLineAchievableNeurons = new Array();
+            var secondLineAchievableNeuronsMap = newMap();
             _.each(firstLineAchievableNeurons, function (neuronTwo) {
                 if (checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, _this.cortexState.transportDistance)) {
                     secondLineAchievableNeurons.push(neuronTwo);
+                    mapAdd(secondLineAchievableNeuronsMap, neuronTwo.id, neuronTwo.id);
                 }
             });
             mapAdd(_this.secondLineDeltaAchievableNeuronsMap, neuronOne.id, secondLineAchievableNeurons);
+            mapAdd(_this.secondLineDeltaAchievableNeuronsIdsMap, neuronOne.id, secondLineAchievableNeuronsMap);
         });
         _.each(this.neurons, function (neuronOne) {
             var distresNeuronsIds = new Array();
@@ -93,17 +97,25 @@ var Cortex = (function () {
     };
     Cortex.prototype.resolveNextLayer = function () {
         var _this = this;
-        this.waveFrontNeurons = new Array();
-        _.each(this.signalNeurons, function (nextSignalNeuron) {
+        _.each(this.actualSignalNeurons, function (nextSignalNeuron) {
             var achievableTransportNeurons = getByKey(_this.secondLineDeltaAchievableNeuronsMap, nextSignalNeuron.id);
             var achievableDistressNeuronsIds = getByKey(_this.distressDeltaAchievableNeuronsIdsMap, nextSignalNeuron.id);
-            _.each(achievableTransportNeurons, function (nextLegateeNeuron) {
-                if (!mapHasKey(_this.signalNeuronsIdsMap, nextLegateeNeuron.id)
-                    && !nextLegateeNeuron.isDroppedOff
-                    && !mapHasKey(_this.distressedNeuronsIdsMap, nextLegateeNeuron.id)) {
-                    nextLegateeNeuron.mesh.setLegatee(true);
-                    nextLegateeNeuron.mesh.select();
-                    _this.waveFrontNeurons.push(nextLegateeNeuron);
+            _.each(achievableTransportNeurons, function (nextTransportNeuron) {
+                var backwardAchievableSignalNeuronsIdsMap = getByKey(_this.secondLineDeltaAchievableNeuronsIdsMap, nextTransportNeuron.id);
+                var backwardAchievableSignalNeuronsAmount = 0;
+                _.each(_this.actualSignalNeurons, function (signalNeuron) {
+                    if (mapHasKeyFast(backwardAchievableSignalNeuronsIdsMap, signalNeuron.stringId)) {
+                        backwardAchievableSignalNeuronsAmount += 1;
+                    }
+                });
+                if (!mapHasKeyFast(_this.usedSignalNeuronsIdsMap, nextTransportNeuron.stringId)
+                    && !mapHasKeyFast(_this.waveFrontNeurons, nextTransportNeuron.stringId)
+                    && !mapHasKeyFast(_this.distressedNeuronsIdsMap, nextTransportNeuron.stringId)
+                    && !nextTransportNeuron.isDroppedOff
+                    && (backwardAchievableSignalNeuronsAmount >= _this.cortexState.patternLimit)) {
+                    nextTransportNeuron.mesh.setLegatee(true);
+                    nextTransportNeuron.mesh.select();
+                    mapAddFast(_this.waveFrontNeurons, nextTransportNeuron.stringId, nextTransportNeuron);
                 }
             });
             _.each(achievableDistressNeuronsIds, function (nextDistressedNeuronId) {
@@ -132,7 +144,7 @@ var Cortex = (function () {
         }, 1000);
     };
     Cortex.prototype.processNextLayer = function () {
-        if (this.waveFrontNeurons.length > 0) {
+        if (mapSize(this.waveFrontNeurons) > 0) {
             this.prepareNextLayer();
             this.resolveNextLayer();
         }
@@ -146,16 +158,16 @@ var Cortex = (function () {
     };
     Cortex.prototype.prepareNextLayer = function () {
         var _this = this;
-        _.each(this.signalNeurons, function (n) {
+        _.each(this.actualSignalNeurons, function (n) {
             resetMaterial(n.mesh.mesh.material, mediumMaterial, 0.1);
         });
-        this.signalNeurons = new Array();
-        this.signalNeuronsIdsMap = newMap();
-        _.each(this.waveFrontNeurons, function (nextFronNeuron) {
-            nextFronNeuron.includeInSignal();
-            mapAdd(_this.signalNeuronsIdsMap, nextFronNeuron.id, nextFronNeuron);
-            _this.signalNeurons.push(nextFronNeuron);
+        this.actualSignalNeurons = new Array();
+        _.each(toValues(this.waveFrontNeurons), function (nextFrontNeuron) {
+            nextFrontNeuron.includeInSignal();
+            mapAdd(_this.usedSignalNeuronsIdsMap, nextFrontNeuron.id, nextFrontNeuron);
+            _this.actualSignalNeurons.push(nextFrontNeuron);
         });
+        this.waveFrontNeurons = newMap();
     };
     Cortex.prototype.collectMediumSynapces = function () {
         var allSynapces = new Array();
@@ -211,10 +223,12 @@ var Cortex = (function () {
             }
         });
     };
-    Cortex.prototype.initSignal = function (wavePower, distressDistance, transportDistance) {
+    Cortex.prototype.initSignal = function (wavePower, distressDistance, transportDistance, patternLimit) {
         this.dropSignal();
-        this.signalNeurons = new Array();
-        this.signalNeuronsIdsMap = newMap();
+        this.cortexState.patternLimit = patternLimit;
+        this.actualSignalNeurons = new Array();
+        this.waveFrontNeurons = newMap();
+        this.usedSignalNeuronsIdsMap = newMap();
         if (this.timer) {
             clearInterval(this.timer);
         }
@@ -228,8 +242,8 @@ var Cortex = (function () {
                 var index = Math.floor((this.dormantSignalNeurons.length - 1) * random());
                 var nextSignalNeuron = this.dormantSignalNeurons[index];
                 nextSignalNeuron.includeInSignal();
-                mapAdd(this.signalNeuronsIdsMap, nextSignalNeuron.id, nextSignalNeuron);
-                this.signalNeurons.push(nextSignalNeuron);
+                mapAdd(this.usedSignalNeuronsIdsMap, nextSignalNeuron.id, nextSignalNeuron);
+                this.actualSignalNeurons.push(nextSignalNeuron);
             }
             else {
                 break;
