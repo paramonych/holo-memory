@@ -1,4 +1,3 @@
-var codes = ['A','B','C','D','E','F','G'];//,'H','I','J','K','L','M','N','O','P','R','S','T'];
 
 function getRandomFourArray(): Array<String> {
   var codeFour = new Array<String>();
@@ -9,11 +8,11 @@ function getRandomFourArray(): Array<String> {
 }
 
 function addRandomOneToArray(result: Array<String>): void {
-  result.push(codes[Math.floor(Math.random()*codes.length)]);
+  result.push(CODES[Math.floor(Math.random()*CODES.length)]);
 }
 function addRandomOneToMap(result: Map<String>): void {
-  var letter = codes[Math.floor(Math.random()*codes.length)];
-  mapAdd(result, Math.random()*Math.random(), letter);
+  var letter = CODES[Math.floor(Math.random()*CODES.length)];
+  mapAdd(result, letter, letter);
 }
 
 function getRandomSixMap(): Map<String> {
@@ -22,4 +21,23 @@ function getRandomSixMap(): Map<String> {
     addRandomOneToMap(codeSix);
   }
   return codeSix;
+}
+
+function getRandomWordsMap(wordLength: number, vocabLength: number): Map<String> {
+  var vocab = newMap<String>();
+  var wordLettersArray;
+  var word;
+
+  for(let i=0; i< vocabLength; i++) {
+    wordLettersArray = new Array<String>();
+
+    for(let i=0; i< wordLength; i++) {
+      wordLettersArray.push(CODES[Math.floor(Math.random()*CODES.length)]);
+    }
+
+    word = wordLettersArray.join('');
+
+    mapAdd(vocab, word, word);
+  }
+  return vocab;
 }

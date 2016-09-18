@@ -12,6 +12,18 @@ var Neuron = (function () {
         }
         this.stringId = this.id.toString();
     }
+    Neuron.prototype.isForwardCompatibleByCodes = function (neuron) {
+        var isCompatible = !toKeys(neuron.inputVocab).length;
+        var outputCodes = toKeys(this.outputVocab);
+        for (var i = 0; i < outputCodes.length; i++) {
+            if (mapHasKeyFast(neuron.inputVocab, outputCodes[i])) {
+                isCompatible = true;
+                break;
+            }
+        }
+        ;
+        return isCompatible;
+    };
     Neuron.prototype.includeInSignal = function () {
         this.type = NeuronType.Medium;
         this.mesh.resetMaterials(this.type);
@@ -34,6 +46,10 @@ var Neuron = (function () {
             });
         }
         this.preventSpikes();
+    };
+    Neuron.prototype.setCodes = function (wordLength, vocabLength) {
+        this.inputVocab = getRandomWordsMap(wordLength, vocabLength);
+        this.outputVocab = getRandomWordsMap(wordLength, vocabLength);
     };
     Neuron.prototype.allowSpikes = function () {
         this.createSpike();

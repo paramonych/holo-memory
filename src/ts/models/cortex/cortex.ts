@@ -16,15 +16,15 @@ class Cortex implements Disposable {
   private timer: any;
   private firstLaunch = true;
 
-
-
   constructor(
     public scene: BABYLON.Scene,
     public scale: number,
     public lifetime: number,
     public cortexState: CortexConfiguration,
-    private spaceCallback: (blastsAmount: number, density ?: number, restoreLaunch?: boolean) => void) {
+    private spaceCallback: (blastsAmount: number, density ?: number, restoreLaunch?: boolean) => void
+  ) {
     this.createNeurons();
+    this.resetNeuronsCodes();
 
     if(isLowResolution(cortexState.resolution)) {
       this.spaceCallback(null, this.checkSynapcesAmountInBox());
@@ -53,6 +53,12 @@ class Cortex implements Disposable {
     });
   }
 
+  private resetNeuronsCodes(): void {
+    _.each(this.neurons, (neuron) => {
+      neuron.setCodes(this.cortexState.wordLength, this.cortexState.vocabLength);
+    });
+  }
+
   private fillDeltaAchievableMap(): void {
     this.firstLineDeltaAchievableNeuronsMap = newMap<Neuron[]>();
     this.secondLineDeltaAchievableNeuronsMap = newMap<Neuron[]>();
@@ -63,7 +69,9 @@ class Cortex implements Disposable {
       let firstLineAchievableNeurons = new Array<Neuron>();
       _.each(this.neurons, (neuronTwo) => {
           if(checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, this.cortexState.transportDistance)) {
-            firstLineAchievableNeurons.push(neuronTwo);
+            if(neuronOne.isForwardCompatibleByCodes(neuronOne)) {
+                firstLineAchievableNeurons.push(neuronTwo);
+            }
           }
       });
       mapAdd(this.firstLineDeltaAchievableNeuronsMap, neuronOne.id, firstLineAchievableNeurons);
@@ -75,7 +83,7 @@ class Cortex implements Disposable {
       let secondLineAchievableNeuronsMap = newMap<number>();
 
       _.each(firstLineAchievableNeurons, (neuronTwo) => {
-          if(checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, this.cortexState.transportDistance)) {
+          if(checkUpperDistanceLimitFromVectorToVector(neuronOne, neuronTwo, this.cortexState.transportDistance /*should use more strict constraint here*/)) {
             secondLineAchievableNeurons.push(neuronTwo);
             mapAdd(secondLineAchievableNeuronsMap, neuronTwo.id, neuronTwo.id);
           }
@@ -132,7 +140,7 @@ class Cortex implements Disposable {
             backwardAchievableSignalNeuronsAmount += 1;
           }
         });
-        
+
         if(!mapHasKeyFast(this.usedSignalNeuronsIdsMap, nextTransportNeuron.stringId)
            && !mapHasKeyFast(this.waveFrontNeurons, nextTransportNeuron.stringId)
            && !mapHasKeyFast(this.distressedNeuronsIdsMap, nextTransportNeuron.stringId)
@@ -274,11 +282,16 @@ class Cortex implements Disposable {
 
   public initSignal(
     wavePower: number, distressDistance: number,
-    transportDistance: number, patternLimit: number
+    transportDistance: number, patternLimit: number,
+    wordLength: number, vocabLength: number
   ): void {
     this.dropSignal();
 
     this.cortexState.patternLimit = patternLimit;
+    this.cortexState.wordLength = wordLength;
+    this.cortexState.vocabLength = vocabLength;
+
+    this.resetNeuronsCodes();
 
     this.actualSignalNeurons = new Array<Neuron>();
     this.waveFrontNeurons = newMap<Neuron>();

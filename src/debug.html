@@ -33,7 +33,7 @@
        <input type="number" size="3" min="1" step="1"/>
      </div>
      <div id="patternLimit" class="config-detail high-w">
-       <label>Pattern limit:</label>
+       <label>Pattern minimum:</label>
        <input type="number" size="3" min="1" step="1"/>
      </div>
      <div id="transportDistance" class="config-detail high-w">
@@ -42,6 +42,14 @@
      </div>
      <div id="distressDistance" class="config-detail high-w">
        <label>Distress dist (&mu;m):</label>
+       <input type="number" size="3" min="0" step="1"/>
+     </div>
+     <div id="wordLength" class="config-detail high-w">
+       <label>Word length:</label>
+       <input type="number" size="3" min="0" step="1"/>
+     </div>
+     <div id="vocabLength" class="config-detail high-w">
+       <label>Vocab length:</label>
        <input type="number" size="3" min="0" step="1"/>
      </div>
      <button id="setSignal">INIT SIGNAL</button>

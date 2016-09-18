@@ -1,4 +1,4 @@
-function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance, patternLimit) {
+function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance, patternLimit, wordLength, vocabLength) {
     return {
         launch: launch,
         slider: slider,
@@ -17,7 +17,9 @@ function knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius,
         resolution: resolution.find('label'),
         distressDistance: distressDistance.find('input'),
         transportDistance: transportDistance.find('input'),
-        patternLimit: patternLimit.find('input')
+        patternLimit: patternLimit.find('input'),
+        wordLength: wordLength.find('input'),
+        vocabLength: vocabLength.find('input')
     };
 }
 function getUIControls() {
@@ -39,7 +41,9 @@ function getUIControls() {
     var distressDistance = jQuery(ids.distressDistance);
     var transportDistance = jQuery(ids.transportDistance);
     var patternLimit = jQuery(ids.patternLimit);
-    return knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance, patternLimit);
+    var wordLength = jQuery(ids.wordLength);
+    var vocabLength = jQuery(ids.vocabLength);
+    return knobsFrom(launch, slider, actualDendritsAmount, wavePower, blastRadius, blastPower, actualSynapcesAmount, pinMaxLength, setDendritsButton, setSignalButton, processWaveButton, keepSelected, measure, scale, resolution, distressDistance, transportDistance, patternLimit, wordLength, vocabLength);
 }
 function outOfKnobsResolution(resolution) {
     var isHigh = resolution.filter('.active').hasClass('high');

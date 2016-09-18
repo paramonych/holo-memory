@@ -10,6 +10,9 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
   public mesh: NeuronMesh;
   public isDroppedOff: boolean = false;
 
+  public inputVocab: Map<String>;
+  public outputVocab: Map<String>;
+
   constructor(
     public cortex: Cortex,
     public type: NeuronType
@@ -20,6 +23,20 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       this.createSynapces();
     }
     this.stringId = this.id.toString();
+  }
+
+  public isForwardCompatibleByCodes(neuron: Neuron): boolean {
+    let isCompatible = !toKeys(neuron.inputVocab).length;
+    let outputCodes = toKeys(this.outputVocab);
+
+    for(let i=0; i< outputCodes.length; i++) {
+      if(mapHasKeyFast(neuron.inputVocab, outputCodes[i])) {
+        isCompatible = true;
+        break;
+      }
+    };
+
+    return isCompatible;
   }
 
   public includeInSignal(): void {
@@ -46,6 +63,11 @@ class Neuron implements Disposable, Dualistic  { // This is the single dendrite 
       });
     }
     this.preventSpikes();
+  }
+
+  public setCodes(wordLength: number, vocabLength: number): void {
+    this.inputVocab = getRandomWordsMap(wordLength, vocabLength);
+    this.outputVocab = getRandomWordsMap(wordLength, vocabLength);
   }
 
   public allowSpikes(): void {

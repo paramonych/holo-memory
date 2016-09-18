@@ -9,7 +9,7 @@ var camera;
 var light;
 function plantConcept() {
     knobs = getUIControls();
-    cortexState = cortexConfigurationFrom(knobs, SCALE_UPPER_LIMIT, 3, 0.5, 0.5, 2, Resolution.High, SCALE_LOWER_LIMIT, SCALE_THRESHOLD, 1);
+    cortexState = cortexConfigurationFrom(knobs, SCALE_UPPER_LIMIT, 15, 0.5, 0.5, 2, Resolution.High, 0, SCALE_THRESHOLD, 1, 2, 12);
     uiCallback = function (blastsAmount, synapcesAmountInBox, restoreLaunch) {
         if (blastsAmount != null && blastsAmount === 0) {
             knobs.launch.attr('disabled', 'disabled');
@@ -43,6 +43,8 @@ function plantConcept() {
     jQuery(ids.distressDistance).find('input').val('' + cortexState.distressDistance);
     jQuery(ids.transportDistance).find('input').val('' + cortexState.transportDistance);
     jQuery(ids.patternLimit).find('input').val('' + cortexState.patternLimit).attr('max', '' + cortexState.wavePower);
+    jQuery(ids.wordLength).find('input').val('' + cortexState.wordLength);
+    jQuery(ids.vocabLength).find('input').val('' + cortexState.vocabLength);
     camera = attachCamera(canvas, scene, cortexState.scale);
     jQuery(document).off('wheel,mousewheel').on('wheel,mousewheel', function () {
         console.log(camera.radius);
@@ -64,7 +66,7 @@ function showBlocker() {
 }
 function wireUI(engine, scene, scale, canvas) {
     setTimeout(function () { blockerOverlay.addClass('hidden'); }, 1300);
-    cortexState = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val(), outOfKnobsResolution(knobs.resolution), +knobs.distressDistance.val(), +knobs.transportDistance.val(), +knobs.patternLimit.val());
+    cortexState = cortexConfigurationFrom(knobs, +knobs.scale.val(), +knobs.wavePower.val(), +knobs.pinMaxLength.val(), +knobs.blastRadius.val(), +knobs.blastPower.val(), outOfKnobsResolution(knobs.resolution), +knobs.distressDistance.val(), +knobs.transportDistance.val(), +knobs.patternLimit.val(), +knobs.wordLength.val(), +knobs.vocabLength.val());
     outOfResolution(cortexState.resolution, {
         Low: function () {
             knobs.pinMaxLength.removeAttr('disabled');
@@ -151,10 +153,14 @@ function wireUI(engine, scene, scale, canvas) {
         var distressDistance = +knobs.distressDistance.val();
         var transportDistance = +knobs.transportDistance.val();
         var patternLimit = +knobs.patternLimit.val();
+        var wordLength = +knobs.wordLength.val();
+        var vocabLength = +knobs.vocabLength.val();
         cortexState.wavePower = activeDendrits;
         cortexState.distressDistance = distressDistance;
         cortexState.transportDistance = transportDistance;
         cortexState.patternLimit = patternLimit;
+        cortexState.wordLength = wordLength;
+        cortexState.vocabLength = vocabLength;
         refillConfiguration();
         outOfResolution(cortexState.resolution, {
             Low: function () { knobs.processWaveButton.removeAttr('disabled'); },
@@ -164,7 +170,7 @@ function wireUI(engine, scene, scale, canvas) {
                 knobs.launch.html('PLAY');
             }
         });
-        space.cortex.initSignal(cortexState.wavePower, cortexState.distressDistance, cortexState.transportDistance, cortexState.patternLimit);
+        space.cortex.initSignal(cortexState.wavePower, cortexState.distressDistance, cortexState.transportDistance, cortexState.patternLimit, cortexState.wordLength, cortexState.vocabLength);
     });
     knobs.processWaveButton.off('click').on('click', function () {
         refillConfiguration();
@@ -225,7 +231,7 @@ function wireUI(engine, scene, scale, canvas) {
         wireUI(engine, newScene, cortexState.scale, canvas);
     }
 }
-function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, blastRadius, blastPower, resolution, distressDistance, transportDistance, patternLimit) {
+function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, blastRadius, blastPower, resolution, distressDistance, transportDistance, patternLimit, wordLength, vocabLength) {
     var configuration = {
         scale: scale,
         dendritsAmount: 0,
@@ -238,7 +244,9 @@ function cortexConfigurationFrom(knobs, scale, wavePower, realSynapcesDistance, 
         resolution: resolution,
         distressDistance: distressDistance,
         transportDistance: transportDistance,
-        patternLimit: patternLimit
+        patternLimit: patternLimit,
+        wordLength: wordLength,
+        vocabLength: vocabLength
     };
     doScale(configuration, knobs);
     return configuration;

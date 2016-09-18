@@ -7,6 +7,7 @@ var Cortex = (function () {
         this.spaceCallback = spaceCallback;
         this.firstLaunch = true;
         this.createNeurons();
+        this.resetNeuronsCodes();
         if (isLowResolution(cortexState.resolution)) {
             this.spaceCallback(null, this.checkSynapcesAmountInBox());
             this.preprocessLowBlasts();
@@ -34,6 +35,12 @@ var Cortex = (function () {
             }
         });
     };
+    Cortex.prototype.resetNeuronsCodes = function () {
+        var _this = this;
+        _.each(this.neurons, function (neuron) {
+            neuron.setCodes(_this.cortexState.wordLength, _this.cortexState.vocabLength);
+        });
+    };
     Cortex.prototype.fillDeltaAchievableMap = function () {
         var _this = this;
         this.firstLineDeltaAchievableNeuronsMap = newMap();
@@ -44,7 +51,9 @@ var Cortex = (function () {
             var firstLineAchievableNeurons = new Array();
             _.each(_this.neurons, function (neuronTwo) {
                 if (checkUpperDistanceLimitFromPointToPoint(neuronOne.mesh.center, neuronTwo.mesh.center, _this.cortexState.transportDistance)) {
-                    firstLineAchievableNeurons.push(neuronTwo);
+                    if (neuronOne.isForwardCompatibleByCodes(neuronOne)) {
+                        firstLineAchievableNeurons.push(neuronTwo);
+                    }
                 }
             });
             mapAdd(_this.firstLineDeltaAchievableNeuronsMap, neuronOne.id, firstLineAchievableNeurons);
@@ -223,9 +232,12 @@ var Cortex = (function () {
             }
         });
     };
-    Cortex.prototype.initSignal = function (wavePower, distressDistance, transportDistance, patternLimit) {
+    Cortex.prototype.initSignal = function (wavePower, distressDistance, transportDistance, patternLimit, wordLength, vocabLength) {
         this.dropSignal();
         this.cortexState.patternLimit = patternLimit;
+        this.cortexState.wordLength = wordLength;
+        this.cortexState.vocabLength = vocabLength;
+        this.resetNeuronsCodes();
         this.actualSignalNeurons = new Array();
         this.waveFrontNeurons = newMap();
         this.usedSignalNeuronsIdsMap = newMap();

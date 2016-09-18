@@ -21,5 +21,7 @@ var ids = {
     resolution: '#resolution',
     distressDistance: '#distressDistance',
     transportDistance: '#transportDistance',
-    patternLimit: '#patternLimit'
+    patternLimit: '#patternLimit',
+    wordLength: '#wordLength',
+    vocabLength: '#vocabLength'
 };

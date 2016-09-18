@@ -1,4 +1,3 @@
-var codes = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 function getRandomFourArray() {
     var codeFour = new Array();
     for (var i = 0; i < 4; i++) {
@@ -7,11 +6,11 @@ function getRandomFourArray() {
     return codeFour;
 }
 function addRandomOneToArray(result) {
-    result.push(codes[Math.floor(Math.random() * codes.length)]);
+    result.push(CODES[Math.floor(Math.random() * CODES.length)]);
 }
 function addRandomOneToMap(result) {
-    var letter = codes[Math.floor(Math.random() * codes.length)];
-    mapAdd(result, Math.random() * Math.random(), letter);
+    var letter = CODES[Math.floor(Math.random() * CODES.length)];
+    mapAdd(result, letter, letter);
 }
 function getRandomSixMap() {
     var codeSix = newMap();
@@ -19,4 +18,18 @@ function getRandomSixMap() {
         addRandomOneToMap(codeSix);
     }
     return codeSix;
+}
+function getRandomWordsMap(wordLength, vocabLength) {
+    var vocab = newMap();
+    var wordLettersArray;
+    var word;
+    for (var i = 0; i < vocabLength; i++) {
+        wordLettersArray = new Array();
+        for (var i_1 = 0; i_1 < wordLength; i_1++) {
+            wordLettersArray.push(CODES[Math.floor(Math.random() * CODES.length)]);
+        }
+        word = wordLettersArray.join('');
+        mapAdd(vocab, word, word);
+    }
+    return vocab;
 }

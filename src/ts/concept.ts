@@ -13,7 +13,11 @@ var light: BABYLON.PointLight;
 
 function plantConcept(): void {
   knobs = getUIControls();
-  cortexState = cortexConfigurationFrom(knobs, SCALE_UPPER_LIMIT, 3, 0.5, 0.5, 2, Resolution.High, SCALE_LOWER_LIMIT, SCALE_THRESHOLD, 1);
+  cortexState = cortexConfigurationFrom(
+    knobs, SCALE_UPPER_LIMIT,
+    15, 0.5, 0.5, 2,
+    Resolution.High, 0, SCALE_THRESHOLD,
+    1, 2, 12);
 
   uiCallback = (blastsAmount: number, synapcesAmountInBox?: number, restoreLaunch?: boolean): void => {
     if(blastsAmount != null && blastsAmount === 0) {
@@ -48,6 +52,8 @@ function plantConcept(): void {
   jQuery(ids.distressDistance).find('input').val(''+cortexState.distressDistance);
   jQuery(ids.transportDistance).find('input').val(''+cortexState.transportDistance);
   jQuery(ids.patternLimit).find('input').val(''+cortexState.patternLimit).attr('max', ''+cortexState.wavePower);
+  jQuery(ids.wordLength).find('input').val(''+cortexState.wordLength);
+  jQuery(ids.vocabLength).find('input').val(''+cortexState.vocabLength);
 
   camera = attachCamera(canvas, scene, cortexState.scale);
 
@@ -92,7 +98,9 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     outOfKnobsResolution(knobs.resolution),
     +knobs.distressDistance.val(),
     +knobs.transportDistance.val(),
-    +knobs.patternLimit.val()
+    +knobs.patternLimit.val(),
+    +knobs.wordLength.val(),
+    +knobs.vocabLength.val()
   );
 
   outOfResolution(
@@ -204,11 +212,15 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
     let distressDistance = +knobs.distressDistance.val();
     let transportDistance = +knobs.transportDistance.val();
     let patternLimit = +knobs.patternLimit.val();
+    let wordLength = +knobs.wordLength.val();
+    let vocabLength = +knobs.vocabLength.val();
 
     cortexState.wavePower = activeDendrits;
     cortexState.distressDistance = distressDistance;
     cortexState.transportDistance = transportDistance;
     cortexState.patternLimit = patternLimit;
+    cortexState.wordLength = wordLength;
+    cortexState.vocabLength = vocabLength;
 
     refillConfiguration();
 
@@ -224,7 +236,11 @@ function wireUI(engine: BABYLON.Engine, scene: BABYLON.Scene, scale: number, can
       }
     );
 
-    space.cortex.initSignal(cortexState.wavePower, cortexState.distressDistance, cortexState.transportDistance, cortexState.patternLimit);
+    space.cortex.initSignal(
+      cortexState.wavePower, cortexState.distressDistance,
+      cortexState.transportDistance, cortexState.patternLimit,
+      cortexState.wordLength, cortexState.vocabLength
+    );
   });
 
   knobs.processWaveButton.off('click').on('click',function() {
@@ -332,6 +348,8 @@ interface CortexConfiguration {
   distressDistance: number;
   transportDistance: number;
   patternLimit: number;
+  wordLength: number;
+  vocabLength: number;
 }
 
 function cortexConfigurationFrom(
@@ -344,7 +362,9 @@ function cortexConfigurationFrom(
   resolution: Resolution,
   distressDistance: number,
   transportDistance: number,
-  patternLimit: number
+  patternLimit: number,
+  wordLength: number,
+  vocabLength: number
 ): CortexConfiguration {
 
   let configuration = {
@@ -359,7 +379,9 @@ function cortexConfigurationFrom(
     resolution: resolution,
     distressDistance: distressDistance,
     transportDistance: transportDistance,
-    patternLimit: patternLimit
+    patternLimit: patternLimit,
+    wordLength: wordLength,
+    vocabLength: vocabLength
   };
 
   doScale(configuration, knobs);
