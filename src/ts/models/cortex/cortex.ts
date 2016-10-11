@@ -11,6 +11,9 @@ class Cortex implements Disposable {
   public distressDeltaAchievableNeuronsIdsMap: Map<number[]>;
   public distressedNeuronsIdsMap: Map<number>;
 
+  public spiritsMap: Map<Spirit>;
+  public spiritsIdsMap: Map<number>;
+
   private blastsArray: NeuroBlast[];
   public blasts: Map<NeuroBlast>;
   private timer: any;
@@ -24,6 +27,7 @@ class Cortex implements Disposable {
     private spaceCallback: (blastsAmount: number, density ?: number, restoreLaunch?: boolean) => void
   ) {
     this.createNeurons();
+    this.createSpirits();
     this.resetNeuronsCodes();
 
     if(isLowResolution(cortexState.resolution)) {
@@ -266,6 +270,43 @@ class Cortex implements Disposable {
     let halfScale = this.cortexState.scale/2;
     let waveStartingPoint = new BABYLON.Vector3(halfScale,halfScale,halfScale);
     this.revealDormantSignalNeurons(waveStartingPoint);
+  }
+
+  private createSpirits(): void {
+    this.spiritsMap = newMap<Spirit>();
+    let halfScale = this.cortexState.scale/2 - SPIRIT_SIZE/2;
+    let spiritsInlineLimit = Math.floor(this.cortexState.scale/SPIRIT_SIZE);
+    let spiritsAmount = Math.pow(spiritsInlineLimit, 3);
+    let x;
+    let y;
+    let z;
+    let xSteps = 0;
+    let ySteps = 0;
+    let zSteps = 0;
+
+    for(let i=0; i< spiritsAmount; i++) {
+      if(xSteps >= spiritsInlineLimit) {
+        ySteps += 1;
+        xSteps = 0;
+      }
+
+      if(ySteps >= spiritsInlineLimit) {
+        zSteps += 1;
+        xSteps = 0;
+        ySteps = 0;
+      }
+
+      x = xSteps*SPIRIT_SIZE - halfScale;
+      y = ySteps*SPIRIT_SIZE - halfScale;
+      z = zSteps*SPIRIT_SIZE - halfScale;
+
+      xSteps += 1;
+
+      let position = new BABYLON.Vector3(x, y, z);
+      let spirit = new Spirit(position, this.scene, this.cortexState);
+
+      mapAdd(this.spiritsMap, spirit.id, spirit);
+    }
   }
 
   private revealDormantSignalNeurons(basePosition: BABYLON.Vector3): void {

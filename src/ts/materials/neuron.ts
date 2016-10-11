@@ -26,7 +26,13 @@ var selectedMaterial = materialConfigFrom(
   70,
   1
 );
-
+var invisibleMaterial = materialConfigFrom(
+  colorFrom(1,0.9,0),
+  colorFrom(1,1,1),
+  colorFrom(1,0.9,0),
+  0,
+  0.1
+);
 interface NeuronMaterials {
   Medium: string;
   Progeny: string;

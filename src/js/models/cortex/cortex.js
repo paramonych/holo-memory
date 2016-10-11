@@ -7,6 +7,7 @@ var Cortex = (function () {
         this.spaceCallback = spaceCallback;
         this.firstLaunch = true;
         this.createNeurons();
+        this.createSpirits();
         this.resetNeuronsCodes();
         if (isLowResolution(cortexState.resolution)) {
             this.spaceCallback(null, this.checkSynapcesAmountInBox());
@@ -220,6 +221,36 @@ var Cortex = (function () {
         var halfScale = this.cortexState.scale / 2;
         var waveStartingPoint = new BABYLON.Vector3(halfScale, halfScale, halfScale);
         this.revealDormantSignalNeurons(waveStartingPoint);
+    };
+    Cortex.prototype.createSpirits = function () {
+        this.spiritsMap = newMap();
+        var halfScale = this.cortexState.scale / 2 - SPIRIT_SIZE / 2;
+        var spiritsInlineLimit = Math.floor(this.cortexState.scale / SPIRIT_SIZE);
+        var spiritsAmount = Math.pow(spiritsInlineLimit, 3);
+        var x;
+        var y;
+        var z;
+        var xSteps = 0;
+        var ySteps = 0;
+        var zSteps = 0;
+        for (var i = 0; i < spiritsAmount; i++) {
+            if (xSteps >= spiritsInlineLimit) {
+                ySteps += 1;
+                xSteps = 0;
+            }
+            if (ySteps >= spiritsInlineLimit) {
+                zSteps += 1;
+                xSteps = 0;
+                ySteps = 0;
+            }
+            x = xSteps * SPIRIT_SIZE - halfScale;
+            y = ySteps * SPIRIT_SIZE - halfScale;
+            z = zSteps * SPIRIT_SIZE - halfScale;
+            xSteps += 1;
+            var position = new BABYLON.Vector3(x, y, z);
+            var spirit = new Spirit(position, this.scene, this.cortexState);
+            mapAdd(this.spiritsMap, spirit.id, spirit);
+        }
     };
     Cortex.prototype.revealDormantSignalNeurons = function (basePosition) {
         var _this = this;

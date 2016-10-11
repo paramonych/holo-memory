@@ -2,6 +2,7 @@ var mediumMaterial = materialConfigFrom(colorFrom(0.5, 0.5, 0.5), colorFrom(1, 1
 var progenyMaterial = materialConfigFrom(colorFrom(0, 0, 0.35), colorFrom(0, 0, 0), colorFrom(0, 0, 0.75), 70, 1);
 var activeMaterial = materialConfigFrom(colorFrom(1, 0, 0), colorFrom(1, 1, 1), colorFrom(1, 0, 0), 70, 1);
 var selectedMaterial = materialConfigFrom(colorFrom(1, 0.9, 0), colorFrom(1, 1, 1), colorFrom(1, 0.9, 0), 70, 1);
+var invisibleMaterial = materialConfigFrom(colorFrom(1, 0.9, 0), colorFrom(1, 1, 1), colorFrom(1, 0.9, 0), 0, 0.1);
 function colorizeMaterial(config, emissive) {
     config.emissive = colorFrom(emissive.r, emissive.g, emissive.b);
     return config;

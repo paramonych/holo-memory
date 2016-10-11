@@ -40,6 +40,7 @@
         "./ts/models/cortex/spike.ts",
         "./ts/models/cortex/synapce.ts",
         "./ts/models/space.ts",
+        "./ts/models/spirit.ts",
         "./ts/models/time.ts",
         "./ts/models/utils/code.ts",
         "./ts/models/wave/blast.ts",
